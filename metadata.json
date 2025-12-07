@@ -1,0 +1,5 @@
+{
+  "name": "AI Fashion Studio",
+  "description": "Генерує професійні фото одягу для інтернет-магазинів на основі одного фото.",
+  "requestFramePermissions": []
+}
