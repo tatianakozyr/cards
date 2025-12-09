@@ -10,11 +10,9 @@ interface ImageUploaderProps {
 export const ImageUploader: React.FC<ImageUploaderProps> = ({ onImageSelected, isLoading, t }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [preview, setPreview] = useState<string | null>(null);
+  const [isDragging, setIsDragging] = useState(false);
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
+  const processFile = (file: File) => {
     // Validate file type
     if (!file.type.startsWith('image/')) {
       alert(t.uploadError);
@@ -28,6 +26,36 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({ onImageSelected, i
       onImageSelected(result, file.type);
     };
     reader.readAsDataURL(file);
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    processFile(file);
+  };
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    if (!isLoading) {
+      setIsDragging(true);
+    }
+  };
+
+  const handleDragLeave = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(false);
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(false);
+    
+    if (isLoading) return;
+
+    const file = e.dataTransfer.files?.[0];
+    if (file) {
+      processFile(file);
+    }
   };
 
   const triggerUpload = () => {
@@ -48,25 +76,34 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({ onImageSelected, i
       {!preview ? (
         <div 
           onClick={isLoading ? undefined : triggerUpload}
+          onDragOver={handleDragOver}
+          onDragLeave={handleDragLeave}
+          onDrop={handleDrop}
           className={`relative border-4 border-dashed rounded-3xl p-12 text-center transition-all duration-300 cursor-pointer overflow-hidden group
             ${isLoading 
               ? 'border-slate-200 bg-slate-50 opacity-60 cursor-not-allowed' 
-              : 'border-indigo-200 hover:border-violet-400 bg-white/60 hover:bg-white/90 shadow-xl hover:shadow-2xl hover:shadow-violet-200/50 backdrop-blur-sm'}
+              : isDragging
+                ? 'border-violet-500 bg-violet-50 scale-105 shadow-2xl ring-4 ring-violet-200'
+                : 'border-indigo-200 hover:border-violet-400 bg-white/60 hover:bg-white/90 shadow-xl hover:shadow-2xl hover:shadow-violet-200/50 backdrop-blur-sm'}
           `}
         >
-          {/* Subtle animated background gradient on hover */}
+          {/* Subtle animated background gradient on hover/drag */}
           {!isLoading && (
-             <div className="absolute inset-0 bg-gradient-to-br from-indigo-50/0 via-purple-50/0 to-pink-50/0 group-hover:from-indigo-50/50 group-hover:via-purple-50/50 group-hover:to-pink-50/50 transition-all duration-500" />
+             <div className={`absolute inset-0 bg-gradient-to-br from-indigo-50/0 via-purple-50/0 to-pink-50/0 transition-all duration-500
+                ${isDragging ? 'opacity-100 from-violet-100/50 via-purple-100/50 to-indigo-100/50' : 'group-hover:from-indigo-50/50 group-hover:via-purple-50/50 group-hover:to-pink-50/50'}
+             `} />
           )}
 
-          <div className="relative z-10">
+          <div className="relative z-10 pointer-events-none">
             <div className={`mx-auto h-20 w-20 mb-6 rounded-2xl flex items-center justify-center transition-all duration-300
-              ${isLoading ? 'bg-slate-100 text-slate-400' : 'bg-indigo-50 text-indigo-500 group-hover:bg-violet-100 group-hover:text-violet-600 group-hover:scale-110'}`}>
+              ${isLoading ? 'bg-slate-100 text-slate-400' : isDragging ? 'bg-violet-600 text-white scale-110 rotate-12' : 'bg-indigo-50 text-indigo-500 group-hover:bg-violet-100 group-hover:text-violet-600 group-hover:scale-110'}`}>
               <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
               </svg>
             </div>
-            <h3 className="text-2xl font-bold text-slate-700 mb-2 group-hover:text-violet-700 transition-colors">{t.uploadTitle}</h3>
+            <h3 className="text-2xl font-bold text-slate-700 mb-2 group-hover:text-violet-700 transition-colors">
+              {isDragging ? (t === t /* hack to keep type happy */ && "Drop file here!") : t.uploadTitle}
+            </h3>
             <p className="text-slate-500 font-medium">{t.uploadSubtitle}</p>
           </div>
         </div>
