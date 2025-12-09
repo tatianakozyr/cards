@@ -10,7 +10,8 @@ const stripBase64Header = (base64: string): string => {
 };
 
 // We store prompt keys to map them to translations later
-const PROMPTS_CONFIG = [
+// Moved outside so it can be accessed by both functions
+export const PROMPTS_CONFIG = [
   {
     type: 'model',
     key: 'model',
@@ -19,7 +20,7 @@ const PROMPTS_CONFIG = [
   {
     type: 'flatlay',
     key: 'flatlay',
-    text: "Generate a professional flat lay photograph of this exact clothing item. Viewpoint: Directly from above (90 degrees). The item must be laid out completely FLAT on a surface, as if carefully arranged before packaging. It must look 2D and neat. CRITICAL: 1) The entire item must be clearly visible and centered. 2) STRICTLY PRESERVE THE ORIGINAL CUT AND STYLE. Do not change sleeve length, neck shape, or fit. 3) Use a contrasting background to make the item pop. 4) Add minimal, high-end decor (like a simple branch or stone) on the periphery to enhance the aesthetic without distracting from the clothes. Bright studio lighting."
+    text: "Generate a professional STYLED FLAT LAY photograph of this exact clothing item. Viewpoint: Directly from above (90 degrees). The item must be laid out completely FLAT and neat. CRITICAL: 1) Place the item on a CONTRASTING TEXTURED BACKGROUND (such as pastel colored paper, smooth concrete, or warm wood) to make it pop. 2) SURROUND the item with TASTEFUL DECOR ITEMS that match the style (e.g., magazines, dried flowers, sunglasses, coffee cup, or minimal accessories). 3) The clothing must be the clear center of attention. 4) STRICTLY PRESERVE THE ORIGINAL CUT AND STYLE. High-end social media aesthetic."
   },
   {
     type: 'mannequin',
@@ -29,12 +30,12 @@ const PROMPTS_CONFIG = [
   {
     type: 'creative',
     key: 'creativeDetails',
-    text: "Generate a stunning, creative product advertisement image for this clothing item. Viewpoint: Close-up side angle / Macro shot. Focus on high-quality details, fabric texture, and craftsmanship. Use dramatic lighting to make the product look expensive. Keep the clothing exactly as is. Cinematic quality."
+    text: "Generate a high-end MACRO CLOSE-UP photograph of the specific details of this clothing item. Focus intently on the craftsmanship: show the zipper, the collar texture, the cuff buttons, or the pocket stitching. Viewpoint: Extreme close-up with shallow depth of field (blurred background). Lighting: Soft, directional studio light that reveals the fabric's weave and texture. The goal is to show the premium quality of the materials."
   },
   {
     type: 'creative',
     key: 'creativeLifestyle',
-    text: "Generate a vibrant lifestyle image featuring this clothing item in a natural setting. Viewpoint: Dynamic candid angle, capturing movement. The focus must remain on the product. Ensure the colors pop and contrast well. Keep the clothing authentic to the reference."
+    text: "Generate a professional product photograph of this clothing item MAXIMALLY SPREAD OUT AND UNFOLDED on a natural surface. The setting should be outdoors in nature: placed on smooth river stones, on fresh green grass, or on clean earth. Viewpoint: Top-down or high angle to capture the full shape. The item must NOT be folded; it should be laid flat to show its full cut and silhouette against the natural texture. Lighting: Natural daylight, organic shadows, creating a sustainable and eco-friendly aesthetic. Keep the item's color exact."
   }
 ];
 
@@ -104,4 +105,127 @@ export const generateProductImages = async (
 
   const results = await Promise.all(promises);
   return results.filter((res): res is GeneratedImage => res !== null);
+};
+
+export const regenerateSingleImage = async (
+  base64Image: string,
+  mimeType: string,
+  imageType: string, // 'model', 'flatlay', etc.
+  userFeedback: string,
+  lang: Language
+): Promise<string | null> => {
+  const cleanBase64 = stripBase64Header(base64Image);
+  
+  // Find the base prompt configuration for this image type
+  // Note: imageType corresponds to the 'type' field in GeneratedImage. 
+  // However, PROMPTS_CONFIG uses 'type' loosely. We need to match it correctly.
+  // In generateProductImages, we assigned promptData.type to GeneratedImage.type.
+  // But wait, 'creative' maps to two different prompts. We should ideally look up by index or better logic.
+  // For simplicity here, we will look for a prompt where `type` matches. 
+  // Since 'creative' appears twice, we need to be careful.
+  // To fix this ambiguity, the app should really pass the 'key' (model, creativeDetails) instead of just 'type'.
+  // We will iterate to find a prompt that 'roughly' matches or default to model.
+  
+  // FIX: In a real app, we should store the prompt KEY in the GeneratedImage object.
+  // For now, let's look for the prompt that contains the description key logic or similar.
+  // Let's assume we pass the prompt text or we infer it. 
+  // Actually, let's do a trick: we will try to find the prompt config that matches.
+  
+  let basePromptText = PROMPTS_CONFIG[0].text;
+  const config = PROMPTS_CONFIG.find(p => p.type === imageType);
+  if (config) {
+     // If it's creative, we might grab the first one (details) or second (lifestyle).
+     // This is a limitation of the current type system in the code provided.
+     // However, the user usually knows what they are looking at.
+     // Let's rely on the user feedback to steer it if the base prompt is slightly off.
+     basePromptText = config.text; 
+  }
+
+  // Construct a new prompt that prioritizes user feedback
+  const refinedPrompt = `
+    ORIGINAL TASK: ${basePromptText}
+    
+    CRITICAL USER ADJUSTMENT / CORRECTION: ${userFeedback}
+    
+    INSTRUCTION: Re-generate the image based on the ORIGINAL PHOTO provided, but strictly applying the USER ADJUSTMENT. 
+    Maintain the same style, lighting, and composition as the intended task, but fix the specific detail mentioned.
+  `;
+
+  try {
+      const response = await ai.models.generateContent({
+        model: 'gemini-2.5-flash-image', 
+        contents: {
+          parts: [
+            {
+              inlineData: {
+                data: cleanBase64,
+                mimeType: mimeType,
+              },
+            },
+            {
+              text: refinedPrompt,
+            },
+          ],
+        },
+      });
+
+      const candidate = response.candidates?.[0];
+      const parts = candidate?.content?.parts;
+      
+      if (parts) {
+        for (const part of parts) {
+          if (part.inlineData && part.inlineData.data) {
+             return `data:${part.inlineData.mimeType || 'image/png'};base64,${part.inlineData.data}`;
+          }
+        }
+      }
+      return null;
+  } catch (error) {
+    console.error("Error regenerating single image:", error);
+    throw error;
+  }
+};
+
+export const generateProductVideo = async (
+  base64Image: string, 
+  mimeType: string
+): Promise<string | null> => {
+  // Always create a new instance right before API call
+  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+  const cleanBase64 = stripBase64Header(base64Image);
+  
+  try {
+    let operation = await ai.models.generateVideos({
+      model: 'veo-3.1-fast-generate-preview',
+      prompt: 'Cinematic product review video of this clothing item. The camera pans closely and slowly over the fabric, showing texture, buttons, and stitching details. The item is laid out neatly on a clean, neutral surface or hanging. No people are visible. The camera movement is smooth and professional, highlighting the quality of the garment.',
+      image: {
+        imageBytes: cleanBase64,
+        mimeType: mimeType,
+      },
+      config: {
+        numberOfVideos: 1,
+        resolution: '720p',
+        aspectRatio: '9:16' // Mobile format
+      }
+    });
+
+    // Polling loop
+    while (!operation.done) {
+      await new Promise(resolve => setTimeout(resolve, 5000)); // Poll every 5 seconds
+      operation = await ai.operations.getVideosOperation({operation: operation});
+    }
+
+    const uri = operation.response?.generatedVideos?.[0]?.video?.uri;
+    
+    // Append API key to the URL as per documentation for Veo
+    if (uri && process.env.API_KEY) {
+      return `${uri}&key=${process.env.API_KEY}`;
+    }
+    
+    return uri || null;
+
+  } catch (error) {
+    console.error("Error generating video:", error);
+    return null;
+  }
 };

@@ -21,10 +21,10 @@ export const translations = {
     retryBtn: "Перегенерувати",
     prompts: {
       model: "На моделі (Фас, повний зріст)",
-      flatlay: "Розкладка (Пласка, ідентичний фасон)",
+      flatlay: "Стилізована розкладка (Декор, контрастний фон)",
       mannequin: "Манекен (Напівоберт)",
-      creativeDetails: "Деталі (Макро збоку)",
-      creativeLifestyle: "Лайфстайл (В русі)"
+      creativeDetails: "Макро (Блискавка, кишені, текстура)",
+      creativeLifestyle: "На природі (Розгорнутий на камінні/траві)"
     },
     payment: {
       title: "Розблокувати фото",
@@ -32,6 +32,21 @@ export const translations = {
       payBtn: "Оплатити $4.99 через PayPal",
       unlockBtn: "Я оплатив, розблокувати",
       watermark: "ПОПЕРЕДНІЙ ПЕРЕГЛЯД"
+    },
+    video: {
+      title: "Відео-огляд товару",
+      generateBtn: "Згенерувати Відео-огляд (Beta)",
+      generating: "Створюємо відео (це може зайняти хвилину)...",
+      error: "Не вдалося створити відео. Спробуйте ще раз.",
+      desc: "AI створить короткий огляд вашого товару, фокусуючись на деталях та текстурі."
+    },
+    singleRegen: {
+      editBtn: "Виправити",
+      modalTitle: "Виправити це зображення",
+      placeholder: "Що виправити? (наприклад: 'прибери манжети', 'зроби фон світлішим', 'розправ складки')",
+      submit: "Переробити",
+      cancel: "Скасувати",
+      regenerating: "Виправляємо..."
     }
   },
   en: {
@@ -54,10 +69,10 @@ export const translations = {
     retryBtn: "Regenerate",
     prompts: {
       model: "On Model (Front, Full Body)",
-      flatlay: "Flat Lay (Flat, Exact Style)",
+      flatlay: "Styled Flat Lay (Decor, Contrasting Background)",
       mannequin: "Mannequin (Semi-profile)",
-      creativeDetails: "Details (Macro Side)",
-      creativeLifestyle: "Lifestyle (In Motion)"
+      creativeDetails: "Macro (Zipper, pockets, texture)",
+      creativeLifestyle: "In Nature (Laid flat on stones/grass)"
     },
     payment: {
       title: "Unlock Photos",
@@ -65,6 +80,21 @@ export const translations = {
       payBtn: "Pay $4.99 via PayPal",
       unlockBtn: "I have paid, unlock now",
       watermark: "PREVIEW"
+    },
+    video: {
+      title: "Product Video Review",
+      generateBtn: "Generate Video Review (Beta)",
+      generating: "Creating video (this may take a minute)...",
+      error: "Failed to create video. Please try again.",
+      desc: "AI will create a short review of your item, focusing on details and texture."
+    },
+    singleRegen: {
+      editBtn: "Fix / Edit",
+      modalTitle: "Refine this Image",
+      placeholder: "What to fix? (e.g., 'remove cuffs', 'make background lighter', 'smooth out folds')",
+      submit: "Remake",
+      cancel: "Cancel",
+      regenerating: "Refining..."
     }
   },
   ru: {
@@ -87,10 +117,10 @@ export const translations = {
     retryBtn: "Перегенерировать",
     prompts: {
       model: "На модели (Фас, полный рост)",
-      flatlay: "Раскладка (Плоская, идентичный фасон)",
+      flatlay: "Стилизованная раскладка (Декор, контрастный фон)",
       mannequin: "Манекен (Полуоборот)",
-      creativeDetails: "Детали (Макро сбоку)",
-      creativeLifestyle: "Лайфстайл (В движении)"
+      creativeDetails: "Макро (Молния, карманы, текстура)",
+      creativeLifestyle: "На природе (Развернутый на камнях/траве)"
     },
     payment: {
       title: "Разблокировать фото",
@@ -98,6 +128,21 @@ export const translations = {
       payBtn: "Оплатить $4.99 через PayPal",
       unlockBtn: "Я оплатил, разблокировать",
       watermark: "ПРЕДПРОСМОТР"
+    },
+    video: {
+      title: "Видео-обзор товара",
+      generateBtn: "Сгенерировать Видео-обзор (Beta)",
+      generating: "Создаем видео (это может занять минуту)...",
+      error: "Не удалось создать видео. Попробуйте еще раз.",
+      desc: "AI создаст короткий обзор вашего товара, фокусируясь на деталях и текстуре."
+    },
+    singleRegen: {
+      editBtn: "Исправить",
+      modalTitle: "Исправить это изображение",
+      placeholder: "Что исправить? (например: 'убери манжеты', 'сделай фон светлее', 'расправь складки')",
+      submit: "Переделать",
+      cancel: "Отмена",
+      regenerating: "Исправляем..."
     }
   }
 };

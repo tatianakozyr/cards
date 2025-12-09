@@ -1,17 +1,24 @@
 import React, { useState, useCallback } from 'react';
 import { ImageUploader } from './components/ImageUploader';
 import { ResultGallery } from './components/ResultGallery';
-import { generateProductImages } from './services/geminiService';
+import { generateProductImages, generateProductVideo, regenerateSingleImage } from './services/geminiService';
 import { GeneratedImage, GenerationStatus, Language } from './types';
 import { translations } from './translations';
 
 const App: React.FC = () => {
   const [currentLang, setCurrentLang] = useState<Language>('uk');
   const [sourceImage, setSourceImage] = useState<{ base64: string, mimeType: string } | null>(null);
+  
+  // Image Generation State
   const [status, setStatus] = useState<GenerationStatus>(GenerationStatus.IDLE);
   const [results, setResults] = useState<GeneratedImage[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [isUnlocked, setIsUnlocked] = useState<boolean>(false);
+
+  // Video Generation State
+  const [videoStatus, setVideoStatus] = useState<GenerationStatus>(GenerationStatus.IDLE);
+  const [videoUrl, setVideoUrl] = useState<string | null>(null);
+  const [videoError, setVideoError] = useState<string | null>(null);
 
   const t = translations[currentLang];
 
@@ -20,7 +27,10 @@ const App: React.FC = () => {
     setResults([]);
     setError(null);
     setStatus(GenerationStatus.IDLE);
-    setIsUnlocked(false); // Reset unlock status on new image selection
+    setVideoStatus(GenerationStatus.IDLE);
+    setVideoUrl(null);
+    setVideoError(null);
+    setIsUnlocked(false);
   }, []);
 
   const handleGenerate = async () => {
@@ -28,10 +38,9 @@ const App: React.FC = () => {
 
     setStatus(GenerationStatus.LOADING);
     setError(null);
-    setIsUnlocked(false); // Reset unlock status on new generation
+    setIsUnlocked(false);
 
     try {
-      // Pass the current language to the service
       const generatedImages = await generateProductImages(sourceImage.base64, sourceImage.mimeType, currentLang);
       
       if (generatedImages.length === 0) {
@@ -48,16 +57,87 @@ const App: React.FC = () => {
     }
   };
 
+  const handleRegenerateSingle = async (id: string, type: string, feedback: string) => {
+    if (!sourceImage) return;
+
+    try {
+      const newImageUrl = await regenerateSingleImage(
+        sourceImage.base64,
+        sourceImage.mimeType,
+        type,
+        feedback,
+        currentLang
+      );
+
+      if (newImageUrl) {
+        setResults(prevResults => prevResults.map(img => {
+          if (img.id === id) {
+            return {
+              ...img,
+              url: newImageUrl,
+              // Update ID to force re-render if needed, or keep same ID to maintain position
+              id: `${img.id}-regen` 
+            };
+          }
+          return img;
+        }));
+      }
+    } catch (e) {
+      console.error("Single regeneration failed", e);
+      throw e; // Let the component handle the error display
+    }
+  };
+
+  const handleGenerateVideo = async () => {
+    if (!sourceImage) return;
+
+    // Check API Key for Veo
+    // Cast to any to avoid TS conflict with global definitions of aistudio
+    const win = window as any;
+    if (win.aistudio) {
+      const hasKey = await win.aistudio.hasSelectedApiKey();
+      if (!hasKey) {
+        try {
+          await win.aistudio.openSelectKey();
+          // Assume user selected key, proceed. 
+          // Note: In a real scenario, we might want to check hasSelectedApiKey again, 
+          // but avoiding race conditions as per instructions.
+        } catch (e) {
+          console.error("Key selection failed/cancelled", e);
+          return;
+        }
+      }
+    }
+
+    setVideoStatus(GenerationStatus.LOADING);
+    setVideoError(null);
+
+    try {
+      const url = await generateProductVideo(sourceImage.base64, sourceImage.mimeType);
+      if (url) {
+        setVideoUrl(url);
+        setVideoStatus(GenerationStatus.SUCCESS);
+      } else {
+        setVideoError(t.video.error);
+        setVideoStatus(GenerationStatus.ERROR);
+      }
+    } catch (e) {
+      console.error(e);
+      setVideoError(t.video.error);
+      setVideoStatus(GenerationStatus.ERROR);
+    }
+  };
+
   const LanguageSelector = () => (
-    <div className="flex space-x-1 bg-gray-100 p-1 rounded-lg">
+    <div className="flex space-x-1 bg-white/50 backdrop-blur-md p-1 rounded-full border border-white/20 shadow-sm">
       {(['uk', 'en', 'ru'] as Language[]).map((lang) => (
         <button
           key={lang}
           onClick={() => setCurrentLang(lang)}
-          className={`px-3 py-1 rounded-md text-sm font-medium transition-all ${
+          className={`px-3 py-1 rounded-full text-sm font-bold transition-all duration-300 ${
             currentLang === lang 
-              ? 'bg-white text-indigo-600 shadow-sm' 
-              : 'text-gray-500 hover:text-gray-700'
+              ? 'bg-white text-violet-600 shadow-md transform scale-105' 
+              : 'text-slate-500 hover:text-slate-700 hover:bg-white/50'
           }`}
         >
           {lang.toUpperCase()}
@@ -67,32 +147,46 @@ const App: React.FC = () => {
   );
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-indigo-50/30 pb-20">
+    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 pb-20 selection:bg-violet-200 selection:text-violet-900">
+      
+      {/* Decorative background blobs */}
+      <div className="fixed top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-0">
+        <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-purple-200/30 rounded-full blur-[100px]" />
+        <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-pink-200/30 rounded-full blur-[100px]" />
+        <div className="absolute top-[20%] right-[10%] w-[30%] h-[30%] bg-indigo-200/30 rounded-full blur-[100px]" />
+      </div>
+
       {/* Header */}
-      <header className="bg-white border-b border-indigo-100 sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-          <div className="flex items-center space-x-3">
-            <div className="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center text-white font-bold">
+      <header className="fixed w-full top-0 z-50 bg-white/70 backdrop-blur-xl border-b border-white/20 shadow-sm transition-all duration-300">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+          <div className="flex items-center space-x-3 group cursor-pointer">
+            <div className="w-10 h-10 bg-gradient-to-tr from-violet-600 to-indigo-600 rounded-xl flex items-center justify-center text-white font-black shadow-lg shadow-indigo-500/30 transform group-hover:rotate-12 transition-transform duration-300">
               AI
             </div>
-            <h1 className="text-xl font-bold text-gray-900 tracking-tight hidden sm:block">{t.headerTitle}</h1>
+            <h1 className="text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-violet-700 to-indigo-700 tracking-tight hidden sm:block">
+              {t.headerTitle}
+            </h1>
           </div>
           
           <div className="flex items-center space-x-4">
             <LanguageSelector />
-            <div className="text-sm text-gray-500 hidden md:block">
-              Powered by Gemini 2.5 Flash
-            </div>
           </div>
         </div>
       </header>
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-        <div className="text-center mb-12">
-          <h2 className="text-4xl font-extrabold text-gray-900 mb-4 tracking-tight">
-            {t.heroTitle}
+      <main className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-32 pb-10">
+        <div className="text-center mb-16 animate-fadeIn">
+          <span className="inline-block py-1 px-3 rounded-full bg-violet-100/50 border border-violet-200 text-violet-700 text-sm font-bold mb-4 tracking-wide uppercase">
+            Gemini 2.5 Flash & Veo Powered
+          </span>
+          <h2 className="text-5xl md:text-6xl font-black text-gray-900 mb-6 tracking-tight leading-tight">
+            {t.heroTitle.split(' ').map((word, i) => (
+              <span key={i} className={i > 1 ? "text-transparent bg-clip-text bg-gradient-to-r from-violet-600 via-fuchsia-600 to-pink-600" : ""}>
+                {word}{' '}
+              </span>
+            ))}
           </h2>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+          <p className="text-xl text-slate-600 max-w-2xl mx-auto font-medium leading-relaxed">
             {t.heroSubtitle}
           </p>
         </div>
@@ -104,29 +198,35 @@ const App: React.FC = () => {
           t={t}
         />
 
-        {/* Generate Button (Initial) */}
+        {/* Generate Images Button */}
         {sourceImage && status !== GenerationStatus.SUCCESS && (
-          <div className="flex justify-center mb-12">
+          <div className="flex justify-center mb-16">
             <button
               onClick={handleGenerate}
               disabled={status === GenerationStatus.LOADING}
               className={`
-                relative px-8 py-4 rounded-full font-bold text-lg shadow-lg hover:shadow-xl hover:-translate-y-1 active:translate-y-0 transition-all duration-300
+                relative group px-10 py-5 rounded-full font-bold text-xl shadow-2xl hover:shadow-violet-500/40 hover:-translate-y-1 active:translate-y-0 transition-all duration-300
                 ${status === GenerationStatus.LOADING 
-                  ? 'bg-gray-400 text-white cursor-not-allowed' 
-                  : 'bg-indigo-600 text-white hover:bg-indigo-700 ring-4 ring-indigo-50'}
+                  ? 'bg-slate-400 text-white cursor-not-allowed' 
+                  : 'bg-gradient-to-r from-violet-600 via-indigo-600 to-violet-600 bg-[length:200%_auto] hover:bg-right text-white'}
               `}
             >
+              <div className="absolute inset-0 rounded-full ring-4 ring-white/30 group-hover:ring-white/50 transition-all" />
               {status === GenerationStatus.LOADING ? (
-                <span className="flex items-center space-x-2">
-                  <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <span className="flex items-center space-x-3">
+                  <svg className="animate-spin -ml-1 h-6 w-6 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                   </svg>
-                  {t.generatingBtn}
+                  <span>{t.generatingBtn}</span>
                 </span>
               ) : (
-                t.generateBtn
+                <span className="flex items-center">
+                  {t.generateBtn}
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 ml-2 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                  </svg>
+                </span>
               )}
             </button>
           </div>
@@ -134,31 +234,97 @@ const App: React.FC = () => {
 
         {/* Error Message */}
         {error && (
-          <div className="max-w-2xl mx-auto mb-8 p-4 bg-red-50 border border-red-200 rounded-lg flex items-center text-red-700">
-             <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 mr-3 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-             </svg>
-             {error}
+          <div className="max-w-2xl mx-auto mb-10 p-6 bg-red-50/80 border border-red-200 rounded-2xl shadow-lg flex items-center text-red-700 backdrop-blur-sm animate-shake">
+             <div className="p-3 bg-red-100 rounded-full mr-4">
+               <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+               </svg>
+             </div>
+             <span className="font-medium">{error}</span>
           </div>
         )}
 
         {/* Results */}
         {status === GenerationStatus.SUCCESS && (
-          <div className="flex flex-col items-center">
+          <div className="flex flex-col items-center w-full">
             <ResultGallery 
               images={results} 
               t={t} 
               isUnlocked={isUnlocked} 
               onUnlock={() => setIsUnlocked(true)} 
+              onRegenerateSingle={handleRegenerateSingle}
             />
             
-            <div className="mt-12 flex flex-col sm:flex-row items-center gap-4">
-               <p className="text-gray-500 text-sm">{t.retryTitle}</p>
+            {/* Video Generation Section */}
+            <div className="w-full max-w-4xl mx-auto mt-20 mb-10 px-4">
+              <div className="relative overflow-hidden bg-white/60 backdrop-blur-lg border border-white/50 rounded-3xl p-8 shadow-xl">
+                 <div className="absolute top-0 right-0 p-4 opacity-10">
+                    <svg className="w-32 h-32 text-violet-600" fill="currentColor" viewBox="0 0 24 24"><path d="M10 9V5l-7 7 7 7v-4.1c5 0 8.5 1.6 11 5.1-1-5-4-10-11-11z"/></svg>
+                 </div>
+                 
+                 <div className="relative z-10 flex flex-col md:flex-row items-center gap-8">
+                   <div className="flex-1 text-center md:text-left">
+                     <div className="inline-flex items-center space-x-2 bg-gradient-to-r from-violet-600 to-indigo-600 text-white px-3 py-1 rounded-full text-xs font-bold mb-4">
+                        <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 24 24"><path d="M21 3H3c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-9 9H3V5h9v7zM3 19v-5h9v5H3zm11-7h7V5h-7v7zm7 7h-7v-5h7v5z"/></svg>
+                        <span>NEW FEATURE</span>
+                     </div>
+                     <h3 className="text-2xl font-black text-slate-800 mb-2">{t.video.title}</h3>
+                     <p className="text-slate-600 mb-0">{t.video.desc}</p>
+                   </div>
+
+                   <div className="flex-1 w-full flex justify-center md:justify-end">
+                      {videoStatus === GenerationStatus.IDLE && (
+                        <button 
+                          onClick={handleGenerateVideo}
+                          className="bg-slate-900 text-white px-8 py-4 rounded-full font-bold shadow-xl hover:bg-slate-800 hover:scale-105 transition-all flex items-center gap-3 w-full md:w-auto justify-center"
+                        >
+                          <svg className="w-6 h-6 text-violet-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                          </svg>
+                          {t.video.generateBtn}
+                        </button>
+                      )}
+
+                      {videoStatus === GenerationStatus.LOADING && (
+                        <div className="bg-white/80 px-8 py-4 rounded-full flex items-center gap-3 border border-violet-100 shadow-lg">
+                          <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-violet-600"></div>
+                          <span className="text-violet-700 font-bold">{t.video.generating}</span>
+                        </div>
+                      )}
+
+                      {videoStatus === GenerationStatus.SUCCESS && videoUrl && (
+                         <div className="relative w-full max-w-xs mx-auto aspect-[9/16] bg-black rounded-xl overflow-hidden shadow-2xl ring-4 ring-violet-200">
+                            <video 
+                              src={videoUrl} 
+                              controls 
+                              autoPlay 
+                              loop 
+                              className="w-full h-full object-cover"
+                            />
+                         </div>
+                      )}
+
+                      {videoStatus === GenerationStatus.ERROR && (
+                        <div className="text-red-500 font-bold flex items-center bg-red-50 px-6 py-3 rounded-full border border-red-100">
+                          <svg className="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                          </svg>
+                          {videoError}
+                          <button onClick={handleGenerateVideo} className="ml-4 underline hover:text-red-700 text-sm">Retry</button>
+                        </div>
+                      )}
+                   </div>
+                 </div>
+              </div>
+            </div>
+
+            <div className="mt-8 flex flex-col sm:flex-row items-center gap-6">
+               <p className="text-slate-500 font-medium">{t.retryTitle}</p>
                <button
                   onClick={handleGenerate}
-                  className="px-6 py-3 bg-white border border-gray-300 text-gray-700 font-semibold rounded-full shadow-sm hover:bg-gray-50 hover:border-gray-400 transition-all focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 flex items-center"
+                  className="px-8 py-3 bg-white border-2 border-slate-200 text-slate-700 font-bold rounded-full shadow-lg hover:bg-slate-50 hover:border-violet-300 hover:text-violet-600 transition-all focus:outline-none focus:ring-4 focus:ring-violet-100 flex items-center group"
                 >
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-slate-400 group-hover:text-violet-500 group-hover:rotate-180 transition-all duration-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                   </svg>
                   {t.retryBtn}
