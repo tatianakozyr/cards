@@ -13,7 +13,6 @@ const App: React.FC = () => {
   const [status, setStatus] = useState<GenerationStatus>(GenerationStatus.IDLE);
   const [results, setResults] = useState<GeneratedImage[]>([]);
   const [error, setError] = useState<string | null>(null);
-  const [isUnlocked, setIsUnlocked] = useState<boolean>(false);
 
   // Video Generation State
   const [videoStatus, setVideoStatus] = useState<GenerationStatus>(GenerationStatus.IDLE);
@@ -43,7 +42,6 @@ const App: React.FC = () => {
     setVideoError(null);
     setReviewStatus(GenerationStatus.IDLE);
     setReviewResults([]);
-    setIsUnlocked(false);
     setIsVideoEditing(false);
     setVideoFeedback("");
   }, []);
@@ -53,7 +51,6 @@ const App: React.FC = () => {
 
     setStatus(GenerationStatus.LOADING);
     setError(null);
-    setIsUnlocked(false);
 
     try {
       const generatedImages = await generateProductImages(sourceImage.base64, sourceImage.mimeType, currentLang);
@@ -273,8 +270,6 @@ const App: React.FC = () => {
             <ResultGallery 
               images={results} 
               t={t} 
-              isUnlocked={isUnlocked} 
-              onUnlock={() => setIsUnlocked(true)} 
               onRegenerateSingle={handleRegenerateSingle}
             />
             
@@ -435,8 +430,6 @@ const App: React.FC = () => {
                  <ResultGallery 
                     images={reviewResults} 
                     t={t} 
-                    isUnlocked={isUnlocked} 
-                    onUnlock={() => setIsUnlocked(true)} 
                     onRegenerateSingle={handleRegenerateSingle}
                  />
                )}
