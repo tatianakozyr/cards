@@ -1,8 +1,8 @@
 import React, { useState, useCallback } from 'react';
 import { ImageUploader } from './components/ImageUploader';
 import { ResultGallery } from './components/ResultGallery';
-import { generateProductImages, generateProductVideo, regenerateSingleImage } from './services/geminiService';
-import { GeneratedImage, GenerationStatus, Language } from './types';
+import { generateProductImages, generateProductVideo, regenerateSingleImage, generateReviewImages } from './services/geminiService';
+import { GeneratedImage, GenerationStatus, Language, ReviewSettings } from './types';
 import { translations } from './translations';
 
 const App: React.FC = () => {
@@ -22,6 +22,15 @@ const App: React.FC = () => {
   const [isVideoEditing, setIsVideoEditing] = useState(false);
   const [videoFeedback, setVideoFeedback] = useState("");
 
+  // Review Generation State
+  const [reviewStatus, setReviewStatus] = useState<GenerationStatus>(GenerationStatus.IDLE);
+  const [reviewResults, setReviewResults] = useState<GeneratedImage[]>([]);
+  const [reviewSettings, setReviewSettings] = useState<ReviewSettings>({
+    gender: 'female',
+    age: 'young',
+    ethnicity: 'white'
+  });
+
   const t = translations[currentLang];
 
   const handleImageSelected = useCallback((base64: string, mimeType: string) => {
@@ -32,6 +41,8 @@ const App: React.FC = () => {
     setVideoStatus(GenerationStatus.IDLE);
     setVideoUrl(null);
     setVideoError(null);
+    setReviewStatus(GenerationStatus.IDLE);
+    setReviewResults([]);
     setIsUnlocked(false);
     setIsVideoEditing(false);
     setVideoFeedback("");
@@ -74,17 +85,13 @@ const App: React.FC = () => {
       );
 
       if (newImageUrl) {
-        setResults(prevResults => prevResults.map(img => {
-          if (img.id === id) {
-            return {
-              ...img,
-              url: newImageUrl,
-              // Update ID to force re-render if needed, or keep same ID to maintain position
-              id: `${img.id}-regen` 
-            };
-          }
-          return img;
-        }));
+        // Check if it's a review image or standard image
+        const isReview = type === 'review';
+        if (isReview) {
+          setReviewResults(prev => prev.map(img => img.id === id ? { ...img, url: newImageUrl, id: `${img.id}-regen` } : img));
+        } else {
+          setResults(prevResults => prevResults.map(img => img.id === id ? { ...img, url: newImageUrl, id: `${img.id}-regen` } : img));
+        }
       }
     } catch (e) {
       console.error("Single regeneration failed", e);
@@ -127,6 +134,20 @@ const App: React.FC = () => {
       console.error(e);
       setVideoError(t.video.error);
       setVideoStatus(GenerationStatus.ERROR);
+    }
+  };
+
+  const handleGenerateReviews = async () => {
+    if (!sourceImage) return;
+    setReviewStatus(GenerationStatus.LOADING);
+    
+    try {
+      const images = await generateReviewImages(sourceImage.base64, sourceImage.mimeType, reviewSettings, currentLang);
+      setReviewResults(images);
+      setReviewStatus(GenerationStatus.SUCCESS);
+    } catch (e) {
+      console.error(e);
+      setReviewStatus(GenerationStatus.ERROR);
     }
   };
 
@@ -334,6 +355,91 @@ const App: React.FC = () => {
                    </div>
                  </div>
               </div>
+            </div>
+            
+            {/* Reviews Generator Section */}
+            <div className="w-full max-w-6xl mx-auto mt-10 mb-20 px-4 animate-fadeIn">
+               <div className="flex items-center justify-center mb-10">
+                  <div className="h-px w-20 bg-gradient-to-r from-transparent to-pink-300"></div>
+                  <h2 className="text-3xl font-black text-slate-800 mx-6 text-center tracking-tight">{t.reviews.title}</h2>
+                  <div className="h-px w-20 bg-gradient-to-l from-transparent to-pink-300"></div>
+               </div>
+               
+               <p className="text-center text-slate-600 mb-8 max-w-2xl mx-auto">{t.reviews.subtitle}</p>
+
+               <div className="bg-white rounded-3xl p-8 shadow-xl border border-slate-100 mb-10">
+                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                    <div>
+                       <label className="block text-sm font-bold text-slate-700 mb-2">{t.reviews.gender}</label>
+                       <select 
+                         className="w-full p-4 rounded-xl border border-slate-200 bg-slate-50 focus:border-violet-500 focus:ring-4 focus:ring-violet-100 outline-none transition-all"
+                         value={reviewSettings.gender}
+                         onChange={(e) => setReviewSettings({...reviewSettings, gender: e.target.value as any})}
+                       >
+                          <option value="female">{t.reviews.options.female}</option>
+                          <option value="male">{t.reviews.options.male}</option>
+                       </select>
+                    </div>
+                    <div>
+                       <label className="block text-sm font-bold text-slate-700 mb-2">{t.reviews.age}</label>
+                       <select 
+                         className="w-full p-4 rounded-xl border border-slate-200 bg-slate-50 focus:border-violet-500 focus:ring-4 focus:ring-violet-100 outline-none transition-all"
+                         value={reviewSettings.age}
+                         onChange={(e) => setReviewSettings({...reviewSettings, age: e.target.value as any})}
+                       >
+                          <option value="young">{t.reviews.options.young}</option>
+                          <option value="middle">{t.reviews.options.middle}</option>
+                          <option value="senior">{t.reviews.options.senior}</option>
+                       </select>
+                    </div>
+                    <div>
+                       <label className="block text-sm font-bold text-slate-700 mb-2">{t.reviews.ethnicity}</label>
+                       <select 
+                         className="w-full p-4 rounded-xl border border-slate-200 bg-slate-50 focus:border-violet-500 focus:ring-4 focus:ring-violet-100 outline-none transition-all"
+                         value={reviewSettings.ethnicity}
+                         onChange={(e) => setReviewSettings({...reviewSettings, ethnicity: e.target.value as any})}
+                       >
+                          <option value="white">{t.reviews.options.white}</option>
+                          <option value="black">{t.reviews.options.black}</option>
+                          <option value="asian">{t.reviews.options.asian}</option>
+                          <option value="latino">{t.reviews.options.latino}</option>
+                          <option value="mixed">{t.reviews.options.mixed}</option>
+                       </select>
+                    </div>
+                 </div>
+                 
+                 <div className="flex justify-center">
+                    <button
+                      onClick={handleGenerateReviews}
+                      disabled={reviewStatus === GenerationStatus.LOADING}
+                      className={`
+                        px-10 py-4 rounded-full font-bold text-lg shadow-xl hover:shadow-pink-500/30 hover:-translate-y-1 transition-all duration-300 flex items-center
+                        ${reviewStatus === GenerationStatus.LOADING
+                          ? 'bg-slate-300 text-white cursor-not-allowed'
+                          : 'bg-gradient-to-r from-pink-500 to-rose-500 text-white'}
+                      `}
+                    >
+                       {reviewStatus === GenerationStatus.LOADING ? (
+                         <>
+                           <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-3"></div>
+                           {t.generatingBtn}
+                         </>
+                       ) : (
+                         t.reviews.generateBtn
+                       )}
+                    </button>
+                 </div>
+               </div>
+
+               {reviewResults.length > 0 && (
+                 <ResultGallery 
+                    images={reviewResults} 
+                    t={t} 
+                    isUnlocked={isUnlocked} 
+                    onUnlock={() => setIsUnlocked(true)} 
+                    onRegenerateSingle={handleRegenerateSingle}
+                 />
+               )}
             </div>
 
             <div className="mt-8 flex flex-col sm:flex-row items-center gap-6">

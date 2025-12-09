@@ -1,5 +1,5 @@
 import { GoogleGenAI } from "@google/genai";
-import { GeneratedImage, Language } from "../types";
+import { GeneratedImage, Language, ReviewSettings } from "../types";
 import { translations } from "../translations";
 
 const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
@@ -37,6 +37,38 @@ export const PROMPTS_CONFIG = [
     key: 'creativeLifestyle',
     text: "Generate a professional product photograph of this clothing item MAXIMALLY SPREAD OUT AND UNFOLDED on a natural surface. The setting should be outdoors in nature: placed on smooth river stones, on fresh green grass, or on clean earth. Viewpoint: Top-down or high angle to capture the full shape. The item must NOT be folded; it should be laid flat to show its full cut and silhouette against the natural texture. Lighting: Natural daylight, organic shadows, creating a sustainable and eco-friendly aesthetic. Keep the item's color exact."
   }
+];
+
+// Scenarios for reviews (0-9 to match the 10 requested)
+const REVIEW_SCENARIOS = [
+  "Candid group selfie with friends having a picnic in a park/nature.",
+  "Relaxing on a lounge chair in a garden at a summer cottage (dacha). Casual weekend vibe.",
+  "Walking through a clothing store or shopping mall aisle. Mirror selfie or candid shot.",
+  "Walking down a busy city street, candid lifestyle shot, natural movement.",
+  "Playing with a dog in a park. Happy, active moment.",
+  "Doing a light workout or stretching (if sportswear) or just sitting on a yoga mat. If formal wear, just watching a game.", // Dynamic based on item, but let's keep it generic "sporty vibe"
+  "Sitting at a coffee shop table with a latte, casual chat setting.",
+  "Leaning against a car or sitting in the driver's seat (door open).",
+  "Unboxing the item or holding it up to show the camera (POV style) inside a room.",
+  "Selfie in a bedroom mirror at home, slightly messy room background (realism).",
+  "Standing by a river or lake, peaceful outdoor setting." // Added 11th just in case, or to replace sport if needed, but user asked for 10 distinct including these.
+]; 
+// Note: User asked for 10 specific ones. 
+// 1) Nature/Friends, 2) Dacha, 3) Shop, 4) Walk, 5) Dog, 6) Sport, 7) Cafe, 8) Car, 9) Review/Unbox, 10) Home Try-on, 11) River/Lake.
+// I will map these exactly.
+
+const REVIEW_PROMPTS_MAP = [
+  "Candid photo with friends in nature/park. The person is laughing.",
+  "Relaxing at a country house (dacha) garden, sitting on a chair.",
+  "In a shopping mall, looking in a mirror or walking.",
+  "Walking outside in the city, casual street photo.",
+  "Playing with a dog outside.",
+  "During a light sport activity or at a gym (casual).",
+  "Sitting in a cafe with a drink.",
+  "Standing next to a car in a parking lot.",
+  "Holding the item up or looking at it (Unboxing style/Review).",
+  "Trying on the clothes at home in front of a mirror (messy room).",
+  "Standing near a river or lake, outdoors."
 ];
 
 export const generateProductImages = async (
@@ -218,4 +250,93 @@ export const generateProductVideo = async (
     console.error("Error generating video:", error);
     return null;
   }
+};
+
+export const generateReviewImages = async (
+  base64Image: string,
+  mimeType: string,
+  settings: ReviewSettings,
+  lang: Language
+): Promise<GeneratedImage[]> => {
+  const cleanBase64 = stripBase64Header(base64Image);
+  const t = translations[lang];
+
+  // Pick top 10 scenarios
+  const scenarios = REVIEW_PROMPTS_MAP.slice(0, 10); 
+
+  const promises = scenarios.map(async (scenario, index) => {
+    // Construct a prompt that enforces realism, demographics, and body type
+    const promptText = `
+      Generate a REALISTIC, CANDID CLIENT REVIEW PHOTO of a person wearing this exact clothing item.
+      
+      DEMOGRAPHICS:
+      - Gender: ${settings.gender}
+      - Age: ${settings.age}
+      - Ethnicity: ${settings.ethnicity}
+      
+      BODY TYPE:
+      - Realistic, average body type.
+      - Slightly overweight / not a perfect fashion model.
+      - Real person look.
+      
+      SCENARIO: ${scenario}
+      
+      STYLE:
+      - Amateur smartphone photography style.
+      - Non-advertising look.
+      - Domestic/Everyday life setting.
+      - Lighting should be natural/casual, not professional studio.
+      - The clothing item must be clearly visible.
+    `;
+
+    try {
+      const response = await ai.models.generateContent({
+        model: 'gemini-2.5-flash-image',
+        contents: {
+          parts: [
+            {
+              inlineData: {
+                data: cleanBase64,
+                mimeType: mimeType,
+              },
+            },
+            {
+              text: promptText,
+            },
+          ],
+        },
+      });
+
+      const candidate = response.candidates?.[0];
+      const parts = candidate?.content?.parts;
+      
+      let imageUrl = '';
+      if (parts) {
+        for (const part of parts) {
+          if (part.inlineData && part.inlineData.data) {
+             imageUrl = `data:${part.inlineData.mimeType || 'image/png'};base64,${part.inlineData.data}`;
+             break;
+          }
+        }
+      }
+
+      if (!imageUrl) {
+        return null;
+      }
+
+      return {
+        id: `review-${index}-${Date.now()}`,
+        url: imageUrl,
+        type: 'review',
+        description: t.reviews.scenarios[index] || scenario // Map to translated scenario name
+      };
+
+    } catch (error) {
+      console.error(`Error generating review image ${index}:`, error);
+      return null;
+    }
+  });
+
+  const results = await Promise.all(promises);
+  return results.filter((res): res is GeneratedImage => res !== null);
 };

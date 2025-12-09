@@ -51,6 +51,39 @@ export const translations = {
       submit: "Переробити",
       cancel: "Скасувати",
       regenerating: "Виправляємо..."
+    },
+    reviews: {
+      title: "Генератор Відгуків",
+      subtitle: "Створіть 10 реалістичних фото 'від клієнтів' для соціальних доказів.",
+      gender: "Стать",
+      age: "Вік",
+      ethnicity: "Етнічна група",
+      generateBtn: "Згенерувати 10 Відгуків",
+      options: {
+        male: "Чоловік",
+        female: "Жінка",
+        young: "Молодь (18-25)",
+        middle: "Середній вік (30-45)",
+        senior: "Старший вік (50+)",
+        white: "Європеоїдна",
+        black: "Негроїдна",
+        asian: "Азіатська",
+        latino: "Латиноамериканська",
+        mixed: "Змішана"
+      },
+      scenarios: [
+        "З друзями на природі",
+        "Відпочинок на дачі",
+        "В магазині/ТЦ",
+        "Прогулянка містом",
+        "З собакою",
+        "Спорт/Активність",
+        "В кафе",
+        "Біля машини",
+        "Розпаковка/Огляд",
+        "Примірка вдома",
+        "Біля річки/озера"
+      ]
     }
   },
   en: {
@@ -103,6 +136,39 @@ export const translations = {
       submit: "Remake",
       cancel: "Cancel",
       regenerating: "Refining..."
+    },
+    reviews: {
+      title: "Review Generator",
+      subtitle: "Create 10 realistic 'customer' photos for social proof.",
+      gender: "Gender",
+      age: "Age",
+      ethnicity: "Ethnicity",
+      generateBtn: "Generate 10 Reviews",
+      options: {
+        male: "Male",
+        female: "Female",
+        young: "Young (18-25)",
+        middle: "Middle Aged (30-45)",
+        senior: "Senior (50+)",
+        white: "White",
+        black: "Black",
+        asian: "Asian",
+        latino: "Latino",
+        mixed: "Mixed"
+      },
+      scenarios: [
+        "Nature with friends",
+        "Dacha/Country house",
+        "Shopping Mall",
+        "City Walk",
+        "With a Dog",
+        "Sport/Activity",
+        "At a Cafe",
+        "Near Car",
+        "Unboxing/Review",
+        "Home Try-on",
+        "River/Lake"
+      ]
     }
   },
   ru: {
@@ -155,6 +221,39 @@ export const translations = {
       submit: "Переделать",
       cancel: "Отмена",
       regenerating: "Исправляем..."
+    },
+    reviews: {
+      title: "Генератор Отзывов",
+      subtitle: "Создайте 10 реалистичных фото 'от клиентов' для социальных доказательств.",
+      gender: "Пол",
+      age: "Возраст",
+      ethnicity: "Этническая группа",
+      generateBtn: "Сгенерировать 10 Отзывов",
+      options: {
+        male: "Мужчина",
+        female: "Женщина",
+        young: "Молодежь (18-25)",
+        middle: "Средний возраст (30-45)",
+        senior: "Старший возраст (50+)",
+        white: "Европеоидная",
+        black: "Негроидная",
+        asian: "Азиатская",
+        latino: "Латиноамериканская",
+        mixed: "Смешанная"
+      },
+      scenarios: [
+        "С друзьями на природе",
+        "Отдых на даче",
+        "В магазине/ТЦ",
+        "Прогулка по городу",
+        "С собакой",
+        "Спорт/Активность",
+        "В кафе",
+        "Возле машины",
+        "Распаковка/Обзор",
+        "Примерка дома",
+        "У реки/озера"
+      ]
     }
   }
 };

@@ -1,7 +1,7 @@
 export interface GeneratedImage {
   id: string;
   url: string;
-  type: 'model' | 'flatlay' | 'mannequin' | 'creative';
+  type: 'model' | 'flatlay' | 'mannequin' | 'creative' | 'review';
   description: string;
 }
 
@@ -18,3 +18,13 @@ export interface GenerationRequest {
 }
 
 export type Language = 'uk' | 'en' | 'ru';
+
+export type Gender = 'female' | 'male';
+export type AgeGroup = 'young' | 'middle' | 'senior';
+export type Ethnicity = 'white' | 'black' | 'asian' | 'latino' | 'mixed';
+
+export interface ReviewSettings {
+  gender: Gender;
+  age: AgeGroup;
+  ethnicity: Ethnicity;
+}
