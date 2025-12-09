@@ -116,28 +116,9 @@ export const regenerateSingleImage = async (
 ): Promise<string | null> => {
   const cleanBase64 = stripBase64Header(base64Image);
   
-  // Find the base prompt configuration for this image type
-  // Note: imageType corresponds to the 'type' field in GeneratedImage. 
-  // However, PROMPTS_CONFIG uses 'type' loosely. We need to match it correctly.
-  // In generateProductImages, we assigned promptData.type to GeneratedImage.type.
-  // But wait, 'creative' maps to two different prompts. We should ideally look up by index or better logic.
-  // For simplicity here, we will look for a prompt where `type` matches. 
-  // Since 'creative' appears twice, we need to be careful.
-  // To fix this ambiguity, the app should really pass the 'key' (model, creativeDetails) instead of just 'type'.
-  // We will iterate to find a prompt that 'roughly' matches or default to model.
-  
-  // FIX: In a real app, we should store the prompt KEY in the GeneratedImage object.
-  // For now, let's look for the prompt that contains the description key logic or similar.
-  // Let's assume we pass the prompt text or we infer it. 
-  // Actually, let's do a trick: we will try to find the prompt config that matches.
-  
   let basePromptText = PROMPTS_CONFIG[0].text;
   const config = PROMPTS_CONFIG.find(p => p.type === imageType);
   if (config) {
-     // If it's creative, we might grab the first one (details) or second (lifestyle).
-     // This is a limitation of the current type system in the code provided.
-     // However, the user usually knows what they are looking at.
-     // Let's rely on the user feedback to steer it if the base prompt is slightly off.
      basePromptText = config.text; 
   }
 
@@ -188,16 +169,25 @@ export const regenerateSingleImage = async (
 
 export const generateProductVideo = async (
   base64Image: string, 
-  mimeType: string
+  mimeType: string,
+  feedback?: string
 ): Promise<string | null> => {
   // Always create a new instance right before API call
   const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
   const cleanBase64 = stripBase64Header(base64Image);
   
+  let prompt = 'Cinematic product review video of this clothing item. The camera pans closely and slowly over the fabric, showing texture, buttons, and stitching details. The item is laid out neatly on a clean, neutral surface or hanging. No people are visible. The camera movement is smooth and professional, highlighting the quality of the garment.';
+
+  if (feedback) {
+    prompt = `ORIGINAL VIDEO CONCEPT: ${prompt} 
+    USER REVISION REQUEST: ${feedback}
+    INSTRUCTION: Generate a new video that follows the original concept but STRICTLY applies the user's revision request.`;
+  }
+
   try {
     let operation = await ai.models.generateVideos({
       model: 'veo-3.1-fast-generate-preview',
-      prompt: 'Cinematic product review video of this clothing item. The camera pans closely and slowly over the fabric, showing texture, buttons, and stitching details. The item is laid out neatly on a clean, neutral surface or hanging. No people are visible. The camera movement is smooth and professional, highlighting the quality of the garment.',
+      prompt: prompt,
       image: {
         imageBytes: cleanBase64,
         mimeType: mimeType,

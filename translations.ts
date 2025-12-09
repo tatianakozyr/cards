@@ -38,7 +38,11 @@ export const translations = {
       generateBtn: "Згенерувати Відео-огляд (Beta)",
       generating: "Створюємо відео (це може зайняти хвилину)...",
       error: "Не вдалося створити відео. Спробуйте ще раз.",
-      desc: "AI створить короткий огляд вашого товару, фокусуючись на деталях та текстурі."
+      desc: "AI створить короткий огляд вашого товару, фокусуючись на деталях та текстурі.",
+      editBtn: "Виправити відео",
+      modalTitle: "Виправити відео",
+      placeholder: "Що змінити? (наприклад: 'повільніший рух камери', 'більше зуму на тканину', 'вертикальна проводка')",
+      regenerating: "Переробляємо відео..."
     },
     singleRegen: {
       editBtn: "Виправити",
@@ -86,7 +90,11 @@ export const translations = {
       generateBtn: "Generate Video Review (Beta)",
       generating: "Creating video (this may take a minute)...",
       error: "Failed to create video. Please try again.",
-      desc: "AI will create a short review of your item, focusing on details and texture."
+      desc: "AI will create a short review of your item, focusing on details and texture.",
+      editBtn: "Fix / Edit Video",
+      modalTitle: "Refine Video",
+      placeholder: "What to change? (e.g., 'slower camera movement', 'zoom more on fabric', 'vertical pan')",
+      regenerating: "Remaking video..."
     },
     singleRegen: {
       editBtn: "Fix / Edit",
@@ -134,7 +142,11 @@ export const translations = {
       generateBtn: "Сгенерировать Видео-обзор (Beta)",
       generating: "Создаем видео (это может занять минуту)...",
       error: "Не удалось создать видео. Попробуйте еще раз.",
-      desc: "AI создаст короткий обзор вашего товара, фокусируясь на деталях и текстуре."
+      desc: "AI создаст короткий обзор вашего товара, фокусируясь на деталях и текстуре.",
+      editBtn: "Исправить видео",
+      modalTitle: "Исправить видео",
+      placeholder: "Что изменить? (например: 'медленнее камера', 'больше зума на ткань', 'вертикальная проводка')",
+      regenerating: "Переделываем видео..."
     },
     singleRegen: {
       editBtn: "Исправить",

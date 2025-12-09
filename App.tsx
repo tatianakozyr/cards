@@ -19,6 +19,8 @@ const App: React.FC = () => {
   const [videoStatus, setVideoStatus] = useState<GenerationStatus>(GenerationStatus.IDLE);
   const [videoUrl, setVideoUrl] = useState<string | null>(null);
   const [videoError, setVideoError] = useState<string | null>(null);
+  const [isVideoEditing, setIsVideoEditing] = useState(false);
+  const [videoFeedback, setVideoFeedback] = useState("");
 
   const t = translations[currentLang];
 
@@ -31,6 +33,8 @@ const App: React.FC = () => {
     setVideoUrl(null);
     setVideoError(null);
     setIsUnlocked(false);
+    setIsVideoEditing(false);
+    setVideoFeedback("");
   }, []);
 
   const handleGenerate = async () => {
@@ -88,7 +92,7 @@ const App: React.FC = () => {
     }
   };
 
-  const handleGenerateVideo = async () => {
+  const handleGenerateVideo = async (feedback?: string) => {
     if (!sourceImage) return;
 
     // Check API Key for Veo
@@ -99,9 +103,6 @@ const App: React.FC = () => {
       if (!hasKey) {
         try {
           await win.aistudio.openSelectKey();
-          // Assume user selected key, proceed. 
-          // Note: In a real scenario, we might want to check hasSelectedApiKey again, 
-          // but avoiding race conditions as per instructions.
         } catch (e) {
           console.error("Key selection failed/cancelled", e);
           return;
@@ -111,9 +112,10 @@ const App: React.FC = () => {
 
     setVideoStatus(GenerationStatus.LOADING);
     setVideoError(null);
+    setIsVideoEditing(false); // Close modal if open
 
     try {
-      const url = await generateProductVideo(sourceImage.base64, sourceImage.mimeType);
+      const url = await generateProductVideo(sourceImage.base64, sourceImage.mimeType, feedback);
       if (url) {
         setVideoUrl(url);
         setVideoStatus(GenerationStatus.SUCCESS);
@@ -272,10 +274,10 @@ const App: React.FC = () => {
                      <p className="text-slate-600 mb-0">{t.video.desc}</p>
                    </div>
 
-                   <div className="flex-1 w-full flex justify-center md:justify-end">
+                   <div className="flex-1 w-full flex flex-col items-center md:items-end justify-center">
                       {videoStatus === GenerationStatus.IDLE && (
                         <button 
-                          onClick={handleGenerateVideo}
+                          onClick={() => handleGenerateVideo()}
                           className="bg-slate-900 text-white px-8 py-4 rounded-full font-bold shadow-xl hover:bg-slate-800 hover:scale-105 transition-all flex items-center gap-3 w-full md:w-auto justify-center"
                         >
                           <svg className="w-6 h-6 text-violet-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -288,20 +290,36 @@ const App: React.FC = () => {
                       {videoStatus === GenerationStatus.LOADING && (
                         <div className="bg-white/80 px-8 py-4 rounded-full flex items-center gap-3 border border-violet-100 shadow-lg">
                           <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-violet-600"></div>
-                          <span className="text-violet-700 font-bold">{t.video.generating}</span>
+                          <span className="text-violet-700 font-bold">
+                            {isVideoEditing ? t.video.regenerating : t.video.generating}
+                          </span>
                         </div>
                       )}
 
                       {videoStatus === GenerationStatus.SUCCESS && videoUrl && (
-                         <div className="relative w-full max-w-xs mx-auto aspect-[9/16] bg-black rounded-xl overflow-hidden shadow-2xl ring-4 ring-violet-200">
-                            <video 
-                              src={videoUrl} 
-                              controls 
-                              autoPlay 
-                              loop 
-                              className="w-full h-full object-cover"
-                            />
-                         </div>
+                        <div className="flex flex-col items-center gap-4">
+                           <div className="relative w-full max-w-xs mx-auto aspect-[9/16] bg-black rounded-xl overflow-hidden shadow-2xl ring-4 ring-violet-200">
+                              <video 
+                                src={videoUrl} 
+                                controls 
+                                autoPlay 
+                                loop 
+                                className="w-full h-full object-cover"
+                              />
+                           </div>
+                           <button 
+                             onClick={() => {
+                               setIsVideoEditing(true);
+                               setVideoFeedback("");
+                             }}
+                             className="px-6 py-2 bg-white text-slate-800 font-bold rounded-full shadow-lg hover:bg-violet-50 hover:text-violet-700 transition-all flex items-center text-sm"
+                           >
+                             <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                             </svg>
+                             {t.video.editBtn}
+                           </button>
+                        </div>
                       )}
 
                       {videoStatus === GenerationStatus.ERROR && (
@@ -310,7 +328,7 @@ const App: React.FC = () => {
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                           </svg>
                           {videoError}
-                          <button onClick={handleGenerateVideo} className="ml-4 underline hover:text-red-700 text-sm">Retry</button>
+                          <button onClick={() => handleGenerateVideo()} className="ml-4 underline hover:text-red-700 text-sm">Retry</button>
                         </div>
                       )}
                    </div>
@@ -333,6 +351,47 @@ const App: React.FC = () => {
           </div>
         )}
       </main>
+
+      {/* Video Editing Modal */}
+      {isVideoEditing && (
+        <div className="fixed inset-0 z-[100] bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 animate-fadeIn">
+          <div className="bg-white rounded-3xl p-8 max-w-lg w-full shadow-2xl transform transition-all scale-100 ring-1 ring-white/20">
+             <h3 className="text-2xl font-bold text-slate-800 mb-4">{t.video.modalTitle}</h3>
+             
+             <div className="mb-6">
+               <label className="block text-sm font-bold text-slate-700 mb-2">
+                 {t.video.placeholder}
+               </label>
+               <textarea
+                 className="w-full p-4 rounded-xl border-2 border-slate-700 bg-slate-800 text-white placeholder:text-slate-400 focus:border-violet-500 focus:ring-4 focus:ring-violet-100 transition-all outline-none resize-none h-32"
+                 placeholder="e.g. Slower movement, show details..."
+                 value={videoFeedback}
+                 onChange={(e) => setVideoFeedback(e.target.value)}
+                 autoFocus
+               />
+             </div>
+
+             <div className="flex justify-end space-x-3">
+               <button 
+                 onClick={() => setIsVideoEditing(false)}
+                 className="px-6 py-3 rounded-full font-bold text-slate-500 hover:bg-slate-100 transition-colors"
+               >
+                 {t.singleRegen.cancel}
+               </button>
+               <button 
+                 onClick={() => handleGenerateVideo(videoFeedback)}
+                 disabled={!videoFeedback.trim()}
+                 className={`px-8 py-3 rounded-full font-bold text-white shadow-lg transition-all transform hover:-translate-y-0.5
+                    ${videoFeedback.trim() ? 'bg-violet-600 hover:bg-violet-700 hover:shadow-violet-500/30' : 'bg-slate-300 cursor-not-allowed'}
+                 `}
+               >
+                 {t.singleRegen.submit}
+               </button>
+             </div>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 };

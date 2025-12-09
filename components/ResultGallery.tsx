@@ -242,7 +242,7 @@ export const ResultGallery: React.FC<ResultGalleryProps> = ({
                  {t.singleRegen.placeholder}
                </label>
                <textarea
-                 className="w-full p-4 rounded-xl border-2 border-slate-200 focus:border-violet-500 focus:ring-4 focus:ring-violet-100 transition-all outline-none resize-none h-32 text-slate-700 placeholder:text-slate-400"
+                 className="w-full p-4 rounded-xl border-2 border-slate-700 bg-slate-800 text-white placeholder:text-slate-400 focus:border-violet-500 focus:ring-4 focus:ring-violet-100 transition-all outline-none resize-none h-32"
                  placeholder="e.g. Remove the cuff on the pants..."
                  value={feedback}
                  onChange={(e) => setFeedback(e.target.value)}
