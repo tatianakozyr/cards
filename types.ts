@@ -1,7 +1,7 @@
 export interface GeneratedImage {
   id: string;
   url: string;
-  type: 'model' | 'flatlay' | 'mannequin' | 'creative' | 'review';
+  type: 'model' | 'flatlay' | 'mannequin' | 'macro-collar' | 'macro-cuff' | 'macro-pocket' | 'creative-lifestyle' | 'review';
   description: string;
 }
 

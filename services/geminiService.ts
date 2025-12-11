@@ -28,34 +28,40 @@ export const PROMPTS_CONFIG = [
     text: "Generate a 'ghost mannequin' effect image of this exact clothing item. Viewpoint: 3/4 turned angle (semi-profile). The clothes should appear 3D and voluminous as if worn by an invisible person, floating in the air against a clean, subtle gradient background. Emphasize the cut and fit from this semi-turned perspective. Do not change the color or texture of the item."
   },
   {
-    type: 'creative',
-    key: 'creativeDetails',
-    text: "Generate a high-end MACRO CLOSE-UP photograph of the specific details of this clothing item. Focus intently on the craftsmanship: show the zipper, the collar texture, the cuff buttons, or the pocket stitching. Viewpoint: Extreme close-up with shallow depth of field (blurred background). Lighting: Soft, directional studio light that reveals the fabric's weave and texture. The goal is to show the premium quality of the materials."
+    type: 'macro-collar',
+    key: 'macroCollar',
+    text: "Generate a high-end MACRO CLOSE-UP photograph focusing strictly on the COLLAR, NECKLINE or TOP DETAIL of this clothing item. Viewpoint: Extreme close-up. Focus intently on the stitching, the label area, buttons (if any), and the fabric texture around the neck. Lighting: Soft, directional studio light that reveals the fabric's weave. The goal is to show the premium quality of the neckline construction."
   },
   {
-    type: 'creative',
+    type: 'macro-cuff',
+    key: 'macroCuff',
+    text: "Generate a high-end MACRO CLOSE-UP photograph focusing strictly on the SLEEVE CUFF, ARM HEM or BOTTOM EDGE of this clothing item. Viewpoint: Extreme close-up. Show the ribbing, buttons, or hem stitching in great detail. Lighting: Soft, clear light. The goal is to show the material quality at the extremities."
+  },
+  {
+    type: 'macro-pocket',
+    key: 'macroPocket',
+    text: "Generate a high-end MACRO CLOSE-UP photograph focusing strictly on a POCKET, ZIPPER, BUTTON or unique STITCHING DETAIL of this clothing item. If the item has no pockets, focus on the fabric texture/weave in the center. Viewpoint: Extreme close-up. Shallow depth of field (bokeh). The goal is to highlight craftsmanship."
+  },
+  {
+    type: 'creative-lifestyle',
     key: 'creativeLifestyle',
     text: "Generate a professional product photograph of this clothing item MAXIMALLY SPREAD OUT AND UNFOLDED on a natural surface. The setting should be outdoors in nature: placed on smooth river stones, on fresh green grass, or on clean earth. Viewpoint: Top-down or high angle to capture the full shape. The item must NOT be folded; it should be laid flat to show its full cut and silhouette against the natural texture. Lighting: Natural daylight, organic shadows, creating a sustainable and eco-friendly aesthetic. Keep the item's color exact."
   }
 ];
 
-// Scenarios for reviews (0-9 to match the 10 requested)
-const REVIEW_SCENARIOS = [
-  "Candid group selfie with friends having a picnic in a park/nature.",
-  "Relaxing on a lounge chair in a garden at a summer cottage (dacha). Casual weekend vibe.",
-  "Walking through a clothing store or shopping mall aisle. Mirror selfie or candid shot.",
-  "Walking down a busy city street, candid lifestyle shot, natural movement.",
-  "Playing with a dog in a park. Happy, active moment.",
-  "Doing a light workout or stretching (if sportswear) or just sitting on a yoga mat. If formal wear, just watching a game.", // Dynamic based on item, but let's keep it generic "sporty vibe"
-  "Sitting at a coffee shop table with a latte, casual chat setting.",
-  "Leaning against a car or sitting in the driver's seat (door open).",
-  "Unboxing the item or holding it up to show the camera (POV style) inside a room.",
-  "Selfie in a bedroom mirror at home, slightly messy room background (realism).",
-  "Standing by a river or lake, peaceful outdoor setting." // Added 11th just in case, or to replace sport if needed, but user asked for 10 distinct including these.
-]; 
-// Note: User asked for 10 specific ones. 
-// 1) Nature/Friends, 2) Dacha, 3) Shop, 4) Walk, 5) Dog, 6) Sport, 7) Cafe, 8) Car, 9) Review/Unbox, 10) Home Try-on, 11) River/Lake.
-// I will map these exactly.
+// Explicit physical traits to ensure diversity in reviews
+const DISTINCT_LOOKS = [
+  "wearing stylish glasses and hair tied back",
+  "with curly / wavy voluminous hair",
+  "with short, modern chic hair",
+  "wearing a beanie or hat",
+  "with long straight hair and a bright smile",
+  "wearing statement earrings/accessories",
+  "with a casual messy bun hairstyle",
+  "with dyed or highlighted hair strands",
+  "with a fringe / bangs hairstyle",
+  "with a very natural, no-makeup look"
+];
 
 const REVIEW_PROMPTS_MAP = [
   "Candid photo with friends in nature/park. The person is laughing.",
@@ -116,7 +122,8 @@ export const generateProductImages = async (
 
       if (!imageUrl) {
         console.warn(`No image generated for prompt: ${promptData.key}`);
-        throw new Error("No image data returned");
+        // Return null instead of throwing to allow partial success
+        return null;
       }
 
       // Get localized description based on the key
@@ -265,7 +272,11 @@ export const generateReviewImages = async (
   const scenarios = REVIEW_PROMPTS_MAP.slice(0, 10); 
 
   const promises = scenarios.map(async (scenario, index) => {
+    // Select a distinct look for this index to enforce variety
+    const distinctLook = DISTINCT_LOOKS[index % DISTINCT_LOOKS.length];
+
     // Construct a prompt that enforces realism, demographics, and body type
+    // Explicitly ask for variation to avoid same-face syndrome
     const promptText = `
       Generate a REALISTIC, CANDID CLIENT REVIEW PHOTO of a person wearing this exact clothing item.
       
@@ -274,19 +285,24 @@ export const generateReviewImages = async (
       - Age: ${settings.age}
       - Ethnicity: ${settings.ethnicity}
       
+      IDENTITY INSTRUCTION (CRITICAL - MUST BE UNIQUE):
+      - This person MUST look different from others.
+      - **SPECIFIC TRAIT TO APPLY**: Person is ${distinctLook}.
+      - VARY facial features significantly.
+      
       BODY TYPE:
-      - Realistic, average body type.
-      - Slightly overweight / not a perfect fashion model.
-      - Real person look.
+      - Realistic, average body type (not a fashion model).
+      - Authentic posture.
       
       SCENARIO: ${scenario}
       
       STYLE:
       - Amateur smartphone photography style.
-      - Non-advertising look.
+      - Poor/Natural lighting (flash or daylight).
       - Domestic/Everyday life setting.
-      - Lighting should be natural/casual, not professional studio.
-      - The clothing item must be clearly visible.
+      - The clothing item must be clearly visible on the person.
+      
+      Random Seed: ${Date.now()}-${index}-${Math.random()}
     `;
 
     try {
