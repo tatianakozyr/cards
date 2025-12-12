@@ -8,12 +8,15 @@ export interface GeneratedImage {
     | 'flatlay-decor' 
     | 'flatlay-shoes' 
     | 'flatlay-accessories' 
-    | 'mannequin' 
+    | 'mannequin-far' 
+    | 'mannequin-close'
+    | 'mannequin-angle'
     | 'macro-collar' 
     | 'macro-cuff' 
     | 'macro-pocket' 
     | 'nature-1' 
     | 'nature-2' 
+    | 'nature-3'
     | 'review';
   description: string;
 }

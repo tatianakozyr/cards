@@ -28,7 +28,8 @@ export const ResultGallery: React.FC<ResultGalleryProps> = ({
       if (img.type.startsWith('model')) category = 'model';
       else if (img.type.startsWith('flatlay')) category = 'flatlay';
       else if (img.type.startsWith('macro')) category = 'macro';
-      else if (img.type === 'mannequin') category = 'mannequin';
+      // Updated check for new mannequin-far and mannequin-close types
+      else if (img.type.startsWith('mannequin')) category = 'mannequin';
       else if (img.type.startsWith('nature')) category = 'nature';
       else if (img.type === 'review') category = 'review';
       

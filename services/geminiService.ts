@@ -12,21 +12,21 @@ const stripBase64Header = (base64: string): string => {
 // We store prompt keys to map them to translations later
 // Moved outside so it can be accessed by both functions
 export const PROMPTS_CONFIG = [
-  // --- 3 MODEL SHOTS (Faceless) ---
+  // --- 3 MODEL SHOTS (Faceless, Ukrainian Appearance) ---
   {
     type: 'model-front',
     key: 'modelFront',
-    text: "Generate a professional 1:1 SQUARE format fashion photography shot of a model wearing this exact clothing item. Viewpoint: FRONT view. IMPORTANT: The model's face must NOT be visible (crop just below nose). The frame MUST include the model's feet. Focus entirely on how the clothes fit. Background: Clean neutral studio wall. Keep the exact color/pattern. High resolution."
+    text: "Generate a professional 1:1 SQUARE format fashion photography shot of a model wearing this exact clothing item. \n\nCRITICAL MODEL INSTRUCTION:\n- The model MUST have UKRAINIAN APPEARANCE (Slavic features, fair to olive skin tone).\n- IGNORE the ethnicity/race of the model in the original reference photo.\n\nVIEWPOINT: FRONT view.\n\nCOMPOSITION:\n- The model's face must NOT be visible (crop just below nose).\n- The frame MUST include the model's feet.\n- Focus entirely on how the clothes fit.\n\nBackground: Clean neutral studio wall. Keep the exact color/pattern. High resolution."
   },
   {
     type: 'model-back',
     key: 'modelBack',
-    text: "Generate a professional 1:1 SQUARE format fashion photography shot of a model wearing this exact clothing item. Viewpoint: BACK view. IMPORTANT: The model's face must NOT be visible. Focus on the fit from behind. Background: Clean neutral studio wall. Keep the exact color/pattern."
+    text: "Generate a professional 1:1 SQUARE format fashion photography shot of a model wearing this exact clothing item. \n\nCRITICAL MODEL INSTRUCTION:\n- The model MUST have UKRAINIAN APPEARANCE (Slavic features, fair to olive skin tone).\n- IGNORE the ethnicity/race of the model in the original reference photo.\n\nVIEWPOINT: BACK view.\n\nCOMPOSITION:\n- The model's face must NOT be visible.\n- Focus on the fit from behind.\n\nBackground: Clean neutral studio wall. Keep the exact color/pattern."
   },
   {
     type: 'model-profile',
     key: 'modelProfile',
-    text: "Generate a professional 1:1 SQUARE format fashion photography shot of a model wearing this exact clothing item. Viewpoint: SIDE PROFILE view. IMPORTANT: The model's face must NOT be visible. Show the silhouette and fit from the side. Background: Clean neutral studio wall. Keep the exact color/pattern."
+    text: "Generate a professional 1:1 SQUARE format fashion photography shot of a model wearing this exact clothing item. \n\nCRITICAL MODEL INSTRUCTION:\n- The model MUST have UKRAINIAN APPEARANCE (Slavic features, fair to olive skin tone).\n- IGNORE the ethnicity/race of the model in the original reference photo.\n\nVIEWPOINT: SIDE PROFILE view.\n\nCOMPOSITION:\n- The model's face must NOT be visible.\n- Show the silhouette and fit from the side.\n\nBackground: Clean neutral studio wall. Keep the exact color/pattern."
   },
 
   // --- 3 FLATLAY SHOTS (Different Backgrounds) ---
@@ -63,23 +63,38 @@ export const PROMPTS_CONFIG = [
     text: "Generate a 1:1 SQUARE high-end MACRO CLOSE-UP focusing strictly on a POCKET or unique TEXTURE detail. Shallow depth of field (bokeh)."
   },
 
-  // --- 1 GHOST MANNEQUIN ---
+  // --- 3 GHOST MANNEQUIN SHOTS (Far, Close, Angle) ---
   {
-    type: 'mannequin',
-    key: 'mannequin',
-    text: "Generate a 1:1 SQUARE 'GHOST MANNEQUIN' effect (floating in air). The clothes appear 3D and voluminous as if worn by an invisible person. Clean gradient background. Emphasize cut and 3D shape."
+    type: 'mannequin-far',
+    key: 'mannequinFar',
+    text: "Generate a 1:1 SQUARE 'GHOST MANNEQUIN' effect (floating in air). \n\nDISTANCE: FAR / FULL VIEW.\n- Show the ENTIRE item from top to bottom with some margin.\n- The clothes appear 3D and voluminous as if worn by an invisible person. Clean gradient background."
+  },
+  {
+    type: 'mannequin-close',
+    key: 'mannequinClose',
+    text: "Generate a 1:1 SQUARE 'GHOST MANNEQUIN' effect (floating in air). \n\nDISTANCE: CLOSE-UP / ZOOMED IN.\n- Focus on the upper body/torso fit.\n- Crop tight to show fabric drape.\n- The clothes appear 3D and voluminous. Clean gradient background."
+  },
+  {
+    type: 'mannequin-angle',
+    key: 'mannequinAngle',
+    text: "Generate a 1:1 SQUARE 'GHOST MANNEQUIN' effect (floating in air). \n\nANGLE: 3/4 TURN / SIDE ANGLE.\n- Show the item slightly turned to reveal depth and side construction.\n- Dynamic voluminous look. Clean gradient background."
   },
 
-  // --- 2 NATURE SHOTS ---
+  // --- 3 NATURE SHOTS (Specific Surfaces) ---
   {
     type: 'nature-1',
     key: 'nature1',
-    text: "Generate a professional 1:1 SQUARE product photo. The item is laid out on SMOOTH RIVER STONES or GRAVEL outdoors. Natural daylight. High contrast. Eco-style."
+    text: "Generate a professional 1:1 SQUARE product photo. The item is laid out naturally on CLEAN WHITE BEACH SAND. Bright sunlight, summer vibe. Minimalist nature texture."
   },
   {
     type: 'nature-2',
     key: 'nature2',
-    text: "Generate a professional 1:1 SQUARE product photo. The item is laid out on SAND or CLEAN WOOD in a forest setting. Dappled sunlight through trees. Organic aesthetic."
+    text: "Generate a professional 1:1 SQUARE product photo. The item is laid out on GREY RIVER STONES / PEBBLES. High texture contrast. Zen nature vibe."
+  },
+  {
+    type: 'nature-3',
+    key: 'nature3',
+    text: "Generate a professional 1:1 SQUARE product photo. The item is laid out on FRESH GREEN GRASS / LAWN. Dappled sunlight. Organic eco-friendly vibe."
   }
 ];
 
