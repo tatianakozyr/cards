@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { GeneratedImage } from '../types';
 import { Translation } from '../translations';
 
@@ -17,6 +17,33 @@ export const ResultGallery: React.FC<ResultGalleryProps> = ({
   const [editingImage, setEditingImage] = useState<GeneratedImage | null>(null);
   const [feedback, setFeedback] = useState("");
   const [loadingIds, setLoadingIds] = useState<Set<string>>(new Set());
+
+  // Group images by category for display
+  const groupedImages = useMemo(() => {
+    const groups: Record<string, GeneratedImage[]> = {};
+    const order = ['model', 'flatlay', 'macro', 'mannequin', 'nature', 'review', 'other'];
+
+    images.forEach(img => {
+      let category = 'other';
+      if (img.type.startsWith('model')) category = 'model';
+      else if (img.type.startsWith('flatlay')) category = 'flatlay';
+      else if (img.type.startsWith('macro')) category = 'macro';
+      else if (img.type === 'mannequin') category = 'mannequin';
+      else if (img.type.startsWith('nature')) category = 'nature';
+      else if (img.type === 'review') category = 'review';
+      
+      if (!groups[category]) groups[category] = [];
+      groups[category].push(img);
+    });
+
+    return order
+      .filter(key => groups[key] && groups[key].length > 0)
+      .map(key => ({
+        key,
+        title: t.gallerySections[key as keyof typeof t.gallerySections] || key,
+        items: groups[key]
+      }));
+  }, [images, t]);
 
   if (images.length === 0) return null;
 
@@ -56,89 +83,104 @@ export const ResultGallery: React.FC<ResultGalleryProps> = ({
            <div className="h-px w-20 bg-gradient-to-l from-transparent to-violet-300"></div>
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {images.map((img) => {
-            const isLoading = loadingIds.has(img.id);
-            return (
-              <div key={img.id} className="bg-white rounded-3xl shadow-xl hover:shadow-2xl shadow-indigo-100 hover:shadow-violet-200 overflow-hidden transition-all duration-300 flex flex-col h-full transform hover:-translate-y-2 ring-1 ring-black/5 relative">
-                
-                {isLoading && (
-                  <div className="absolute inset-0 z-50 bg-white/80 backdrop-blur-sm flex items-center justify-center flex-col">
-                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-violet-600 mb-3"></div>
-                    <p className="text-violet-800 font-bold animate-pulse">{t.singleRegen.regenerating}</p>
-                  </div>
-                )}
-
-                <div 
-                  className="relative aspect-[3/4] overflow-hidden bg-slate-100 group cursor-pointer"
-                  onClick={() => setSelectedImage(img)}
-                >
-                  {/* Main Image */}
-                  <img 
-                    src={img.url} 
-                    alt={img.description} 
-                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                  />
-                  
-                  {/* Gradient Overlay for Text Visibility */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-60"></div>
-                  
-                  {/* Hover Actions */}
-                  <div className="absolute inset-0 bg-violet-900/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-wrap items-center justify-center gap-3 z-30 backdrop-blur-[2px] p-4 content-center">
-                     {/* Edit Button */}
-                     <button 
-                       onClick={(e) => handleEditClick(e, img)}
-                       className="bg-white px-4 py-2 rounded-full text-slate-800 font-bold shadow-xl hover:bg-violet-50 hover:text-violet-700 transition-all duration-300 flex items-center text-sm"
-                       title="Refine this image"
-                     >
-                       <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
-                       </svg>
-                       {t.singleRegen.editBtn}
-                     </button>
-
-                     {/* Zoom Button */}
-                     <button 
-                       onClick={(e) => {
-                         e.stopPropagation();
-                         setSelectedImage(img);
-                       }}
-                       className="bg-white p-3 rounded-full text-violet-600 shadow-xl hover:bg-violet-50 hover:scale-110 transition-all duration-300"
-                       title="Zoom"
-                     >
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" />
-                        </svg>
-                     </button>
-
-                     {/* Download Button */}
-                     <a 
-                       href={img.url} 
-                       download={`product-ai-${img.id}.png`}
-                       onClick={(e) => e.stopPropagation()}
-                       className="bg-violet-600 p-3 rounded-full text-white shadow-xl hover:bg-violet-700 hover:scale-110 transition-all duration-300"
-                       title={t.downloadBtn}
-                     >
-                       <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-                       </svg>
-                     </a>
-                  </div>
-
-                  {/* Type Tag over image */}
-                  <div className="absolute bottom-4 left-4 z-20">
-                      <span className="text-xs font-bold px-3 py-1.5 rounded-lg bg-white/90 text-violet-900 uppercase tracking-wide shadow-lg backdrop-blur-sm">
-                         {img.type}
-                      </span>
-                  </div>
-                </div>
-                
-                <div className="p-6 flex-grow bg-white relative z-10">
-                  <p className="text-sm text-slate-600 font-medium leading-relaxed">{img.description}</p>
-                </div>
+        <div className="space-y-16">
+          {groupedImages.map((section) => (
+            <div key={section.key} className="animate-fadeIn">
+              {/* Section Header - Only show if we have multiple sections or if strictly requested (except for generic 'other' or single 'review' maybe, but let's show all for clarity) */}
+              <div className="mb-6 flex items-center">
+                 <h3 className="text-xl font-bold text-slate-700 uppercase tracking-wider bg-white/50 px-4 py-1 rounded-full border border-slate-200 shadow-sm backdrop-blur-sm">
+                   {section.title}
+                 </h3>
+                 <div className="h-px flex-grow bg-slate-200 ml-4"></div>
               </div>
-            );
-          })}
+
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {section.items.map((img) => {
+                  const isLoading = loadingIds.has(img.id);
+                  return (
+                    <div key={img.id} className="bg-white rounded-3xl shadow-xl hover:shadow-2xl shadow-indigo-100 hover:shadow-violet-200 overflow-hidden transition-all duration-300 flex flex-col h-full transform hover:-translate-y-2 ring-1 ring-black/5 relative">
+                      
+                      {isLoading && (
+                        <div className="absolute inset-0 z-50 bg-white/80 backdrop-blur-sm flex items-center justify-center flex-col">
+                          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-violet-600 mb-3"></div>
+                          <p className="text-violet-800 font-bold animate-pulse">{t.singleRegen.regenerating}</p>
+                        </div>
+                      )}
+
+                      {/* Changed from aspect-[3/4] to aspect-square for 1:1 ratio */}
+                      <div 
+                        className="relative aspect-square overflow-hidden bg-slate-100 group cursor-pointer"
+                        onClick={() => setSelectedImage(img)}
+                      >
+                        {/* Main Image */}
+                        <img 
+                          src={img.url} 
+                          alt={img.description} 
+                          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                        />
+                        
+                        {/* Gradient Overlay for Text Visibility */}
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-60"></div>
+                        
+                        {/* Hover Actions */}
+                        <div className="absolute inset-0 bg-violet-900/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-wrap items-center justify-center gap-3 z-30 backdrop-blur-[2px] p-4 content-center">
+                           {/* Edit Button */}
+                           <button 
+                             onClick={(e) => handleEditClick(e, img)}
+                             className="bg-white px-4 py-2 rounded-full text-slate-800 font-bold shadow-xl hover:bg-violet-50 hover:text-violet-700 transition-all duration-300 flex items-center text-sm"
+                             title="Refine this image"
+                           >
+                             <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                             </svg>
+                             {t.singleRegen.editBtn}
+                           </button>
+
+                           {/* Zoom Button */}
+                           <button 
+                             onClick={(e) => {
+                               e.stopPropagation();
+                               setSelectedImage(img);
+                             }}
+                             className="bg-white p-3 rounded-full text-violet-600 shadow-xl hover:bg-violet-50 hover:scale-110 transition-all duration-300"
+                             title="Zoom"
+                           >
+                              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" />
+                              </svg>
+                           </button>
+
+                           {/* Download Button */}
+                           <a 
+                             href={img.url} 
+                             download={`product-ai-${img.id}.png`}
+                             onClick={(e) => e.stopPropagation()}
+                             className="bg-violet-600 p-3 rounded-full text-white shadow-xl hover:bg-violet-700 hover:scale-110 transition-all duration-300"
+                             title={t.downloadBtn}
+                           >
+                             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                             </svg>
+                           </a>
+                        </div>
+
+                        {/* Type Tag over image */}
+                        <div className="absolute bottom-4 left-4 z-20">
+                            <span className="text-xs font-bold px-3 py-1.5 rounded-lg bg-white/90 text-violet-900 uppercase tracking-wide shadow-lg backdrop-blur-sm">
+                               {img.type}
+                            </span>
+                        </div>
+                      </div>
+                      
+                      <div className="p-6 flex-grow bg-white relative z-10">
+                        <p className="text-sm text-slate-600 font-medium leading-relaxed">{img.description}</p>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          ))}
         </div>
       </div>
 

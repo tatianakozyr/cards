@@ -4,14 +4,14 @@ export const translations = {
   uk: {
     headerTitle: "Fashion Studio",
     heroTitle: "Створіть ідеальну картку товару",
-    heroSubtitle: "Завантажте одне фото одягу, а наш AI створить 7 професійних варіантів для вашого інтернет-магазину.",
+    heroSubtitle: "Завантажте одне фото одягу, а наш AI створить 12 професійних варіантів (квадратні 1:1) для вашого магазину.",
     uploadTitle: "Завантажте фото одягу",
     uploadSubtitle: "Натисніть тут, щоб вибрати файл (PNG, JPG)",
     uploadError: "Будь ласка, завантажте зображення (JPEG, PNG).",
     changePhoto: "Змінити фото",
     yourPhoto: "Ваше вихідне фото",
     processing: "Обробка...",
-    generateBtn: "Згенерувати 7 Фото",
+    generateBtn: "Згенерувати 12 Фото",
     generatingBtn: "Генеруємо магію...",
     errorGeneric: "Виникла помилка при з'єднанні з AI сервісом.",
     errorNoImage: "Не вдалося згенерувати зображення. Спробуйте інше фото або пізніше.",
@@ -20,31 +20,34 @@ export const translations = {
     retryTitle: "Не сподобався результат?",
     retryBtn: "Перегенерувати",
     prompts: {
-      model: "На моделі (Фас, повний зріст)",
-      flatlay: "Стилізована розкладка (Декор, контрастний фон)",
-      mannequin: "Манекен (Напівоберт)",
+      modelFront: "Модель: Вигляд спереду (Без обличчя)",
+      modelBack: "Модель: Вигляд ззаду",
+      modelProfile: "Модель: Вигляд у профіль",
+      flatlayDecor: "Розкладка: Студія з декором",
+      flatlayShoes: "Розкладка: З взуттям (Інший фон)",
+      flatlayAccessories: "Розкладка: З аксесуарами (Інший фон)",
+      mannequin: "В повітрі (Манекен-невидимка)",
       macroCollar: "Макро: Комір/Горловина",
       macroCuff: "Макро: Манжет/Рукав",
       macroPocket: "Макро: Кишеня/Фактура",
-      creativeLifestyle: "На природі (Розгорнутий на камінні/траві)"
+      nature1: "На природі: Каміння/Трава",
+      nature2: "На природі: Дерево/Пісок"
+    },
+    gallerySections: {
+      model: "Фото на моделі",
+      flatlay: "Предметна зйомка (Flatlay)",
+      macro: "Деталі та фактура (Макро)",
+      mannequin: "Об'ємний вигляд (Манекен)",
+      nature: "Іміджеві фото на природі",
+      review: "Фото відгуки",
+      other: "Інше"
     },
     payment: {
       title: "Розблокувати фото",
       description: "Щоб завантажити зображення у високій якості без водяних знаків, будь ласка, здійсніть оплату $4.99.",
-      payBtn: "Оплатити $4.99 через PayPal",
+      payBtn: "Оплатить $4.99 через PayPal",
       unlockBtn: "Я оплатив, розблокувати",
       watermark: "ПОПЕРЕДНІЙ ПЕРЕГЛЯД"
-    },
-    video: {
-      title: "Відео-огляд товару",
-      generateBtn: "Згенерувати Відео-огляд (Beta)",
-      generating: "Створюємо відео (це може зайняти хвилину)...",
-      error: "Не вдалося створити відео. Спробуйте ще раз.",
-      desc: "AI створить короткий огляд вашого товару, фокусуючись на деталях та текстурі.",
-      editBtn: "Виправити відео",
-      modalTitle: "Виправити відео",
-      placeholder: "Що змінити? (наприклад: 'повільніший рух камери', 'більше зуму на тканину', 'вертикальна проводка')",
-      regenerating: "Переробляємо відео..."
     },
     singleRegen: {
       editBtn: "Виправити",
@@ -56,22 +59,17 @@ export const translations = {
     },
     reviews: {
       title: "Генератор Відгуків",
-      subtitle: "Створіть 10 реалістичних фото 'від клієнтів' для соціальних доказів.",
+      subtitle: "Створіть 10 реалістичних фото 'від клієнтів' (українська зовнішність, реальні фігури).",
       gender: "Стать",
-      age: "Вік",
-      ethnicity: "Етнічна група",
+      age: "Вікова група",
       generateBtn: "Згенерувати 10 Відгуків",
       options: {
         male: "Чоловік",
         female: "Жінка",
-        young: "Молодь (18-25)",
-        middle: "Середній вік (30-45)",
-        senior: "Старший вік (50+)",
-        white: "Європеоїдна",
-        black: "Негроїдна",
-        asian: "Азіатська",
-        latino: "Латиноамериканська",
-        mixed: "Змішана"
+        age20_30: "20-30 років",
+        age30_40: "30-40 років",
+        age40_50: "40-50 років",
+        age50_plus: "50+ років"
       },
       scenarios: [
         "З друзями на природі",
@@ -91,14 +89,14 @@ export const translations = {
   en: {
     headerTitle: "Fashion Studio",
     heroTitle: "Create the Perfect Product Card",
-    heroSubtitle: "Upload one photo of clothing, and our AI will create 7 professional variations for your online store.",
+    heroSubtitle: "Upload one photo of clothing, and our AI will create 12 professional variations (square 1:1) for your store.",
     uploadTitle: "Upload Clothing Photo",
     uploadSubtitle: "Click here to select a file (PNG, JPG)",
     uploadError: "Please upload an image (JPEG, PNG).",
     changePhoto: "Change Photo",
     yourPhoto: "Your Source Photo",
     processing: "Processing...",
-    generateBtn: "Generate 7 Photos",
+    generateBtn: "Generate 12 Photos",
     generatingBtn: "Generating magic...",
     errorGeneric: "An error occurred while connecting to the AI service.",
     errorNoImage: "Failed to generate images. Please try another photo or try again later.",
@@ -107,13 +105,27 @@ export const translations = {
     retryTitle: "Didn't like the result?",
     retryBtn: "Regenerate",
     prompts: {
-      model: "On Model (Front, Full Body)",
-      flatlay: "Styled Flat Lay (Decor, Contrasting Background)",
-      mannequin: "Mannequin (Semi-profile)",
+      modelFront: "Model: Front View (Faceless)",
+      modelBack: "Model: Back View",
+      modelProfile: "Model: Profile View",
+      flatlayDecor: "Flatlay: Studio with Decor",
+      flatlayShoes: "Flatlay: With Shoes (Diff. Background)",
+      flatlayAccessories: "Flatlay: With Accessories (Diff. Background)",
+      mannequin: "Floating (Ghost Mannequin)",
       macroCollar: "Macro: Collar/Neckline",
       macroCuff: "Macro: Cuff/Sleeve",
       macroPocket: "Macro: Pocket/Texture",
-      creativeLifestyle: "In Nature (Laid flat on stones/grass)"
+      nature1: "Nature: Stones/Grass",
+      nature2: "Nature: Wood/Sand"
+    },
+    gallerySections: {
+      model: "Model Photography",
+      flatlay: "Styled Flatlay",
+      macro: "Macro Details & Texture",
+      mannequin: "Ghost Mannequin",
+      nature: "Nature Lifestyle",
+      review: "Customer Reviews",
+      other: "Other"
     },
     payment: {
       title: "Unlock Photos",
@@ -121,17 +133,6 @@ export const translations = {
       payBtn: "Pay $4.99 via PayPal",
       unlockBtn: "I have paid, unlock now",
       watermark: "PREVIEW"
-    },
-    video: {
-      title: "Product Video Review",
-      generateBtn: "Generate Video Review (Beta)",
-      generating: "Creating video (this may take a minute)...",
-      error: "Failed to create video. Please try again.",
-      desc: "AI will create a short review of your item, focusing on details and texture.",
-      editBtn: "Fix / Edit Video",
-      modalTitle: "Refine Video",
-      placeholder: "What to change? (e.g., 'slower camera movement', 'zoom more on fabric', 'vertical pan')",
-      regenerating: "Remaking video..."
     },
     singleRegen: {
       editBtn: "Fix / Edit",
@@ -143,22 +144,17 @@ export const translations = {
     },
     reviews: {
       title: "Review Generator",
-      subtitle: "Create 10 realistic 'customer' photos for social proof.",
+      subtitle: "Create 10 realistic 'customer' photos (Ukrainian appearance, real body types).",
       gender: "Gender",
-      age: "Age",
-      ethnicity: "Ethnicity",
+      age: "Age Group",
       generateBtn: "Generate 10 Reviews",
       options: {
         male: "Male",
         female: "Female",
-        young: "Young (18-25)",
-        middle: "Middle Aged (30-45)",
-        senior: "Senior (50+)",
-        white: "White",
-        black: "Black",
-        asian: "Asian",
-        latino: "Latino",
-        mixed: "Mixed"
+        age20_30: "20-30 years",
+        age30_40: "30-40 years",
+        age40_50: "40-50 years",
+        age50_plus: "50+ years"
       },
       scenarios: [
         "Nature with friends",
@@ -178,14 +174,14 @@ export const translations = {
   ru: {
     headerTitle: "Fashion Studio",
     heroTitle: "Создайте идеальную карточку товара",
-    heroSubtitle: "Загрузите одно фото одежды, а наш AI создаст 7 профессиональных вариантов для вашего интернет-магазина.",
+    heroSubtitle: "Загрузите одно фото одежды, а наш AI создаст 12 профессиональных вариантов (квадрат 1:1) для вашего магазина.",
     uploadTitle: "Загрузите фото одежды",
     uploadSubtitle: "Нажмите здесь, чтобы выбрать файл (PNG, JPG)",
     uploadError: "Пожалуйста, загрузите изображение (JPEG, PNG).",
     changePhoto: "Изменить фото",
     yourPhoto: "Ваше исходное фото",
     processing: "Обработка...",
-    generateBtn: "Сгенерировать 7 Фото",
+    generateBtn: "Сгенерировать 12 Фото",
     generatingBtn: "Генерируем магию...",
     errorGeneric: "Возникла ошибка при соединении с AI сервисом.",
     errorNoImage: "Не удалось сгенерировать изображения. Попробуйте другое фото или позже.",
@@ -194,13 +190,27 @@ export const translations = {
     retryTitle: "Не понравился результат?",
     retryBtn: "Перегенерировать",
     prompts: {
-      model: "На модели (Фас, полный рост)",
-      flatlay: "Стилизованная раскладка (Декор, контрастный фон)",
-      mannequin: "Манекен (Полуоборот)",
+      modelFront: "Модель: Вид спереди (Без лица)",
+      modelBack: "Модель: Вид сзади",
+      modelProfile: "Модель: Вид в профиль",
+      flatlayDecor: "Раскладка: Студия с декором",
+      flatlayShoes: "Раскладка: С обувью (Др. фон)",
+      flatlayAccessories: "Раскладка: С аксессуарами (Др. фон)",
+      mannequin: "В воздухе (Манекен-невидимка)",
       macroCollar: "Макро: Воротник",
       macroCuff: "Макро: Манжет",
       macroPocket: "Макро: Карман/Фактура",
-      creativeLifestyle: "На природе (Развернутый на камнях/траве)"
+      nature1: "На природе: Камни/Трава",
+      nature2: "На природе: Дерево/Песок"
+    },
+    gallerySections: {
+      model: "Фото на модели",
+      flatlay: "Предметная съемка (Flatlay)",
+      macro: "Детали и фактура (Макро)",
+      mannequin: "Объемный вид (Манекен)",
+      nature: "Имиджевые фото на природе",
+      review: "Фото отзывы",
+      other: "Другое"
     },
     payment: {
       title: "Разблокировать фото",
@@ -208,17 +218,6 @@ export const translations = {
       payBtn: "Оплатить $4.99 через PayPal",
       unlockBtn: "Я оплатил, разблокировать",
       watermark: "ПРЕДПРОСМОТР"
-    },
-    video: {
-      title: "Видео-обзор товара",
-      generateBtn: "Сгенерировать Видео-обзор (Beta)",
-      generating: "Создаем видео (это может занять минуту)...",
-      error: "Не удалось создать видео. Попробуйте еще раз.",
-      desc: "AI создаст короткий обзор вашего товара, фокусируясь на деталях и текстуре.",
-      editBtn: "Исправить видео",
-      modalTitle: "Исправить видео",
-      placeholder: "Что изменить? (например: 'медленнее камера', 'больше зума на ткань', 'вертикальная проводка')",
-      regenerating: "Переделываем видео..."
     },
     singleRegen: {
       editBtn: "Исправить",
@@ -230,22 +229,17 @@ export const translations = {
     },
     reviews: {
       title: "Генератор Отзывов",
-      subtitle: "Создайте 10 реалистичных фото 'от клиентов' для социальных доказательств.",
+      subtitle: "Создайте 10 реалистичных фото 'от клиентов' (украинская внешность, реальные фигуры).",
       gender: "Пол",
-      age: "Возраст",
-      ethnicity: "Этническая группа",
+      age: "Возрастная группа",
       generateBtn: "Сгенерировать 10 Отзывов",
       options: {
         male: "Мужчина",
         female: "Женщина",
-        young: "Молодежь (18-25)",
-        middle: "Средний возраст (30-45)",
-        senior: "Старший возраст (50+)",
-        white: "Европеоидная",
-        black: "Негроидная",
-        asian: "Азиатская",
-        latino: "Латиноамериканская",
-        mixed: "Смешанная"
+        age20_30: "20-30 лет",
+        age30_40: "30-40 лет",
+        age40_50: "40-50 лет",
+        age50_plus: "50+ лет"
       },
       scenarios: [
         "С друзьями на природе",

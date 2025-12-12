@@ -1,7 +1,7 @@
 import React, { useState, useCallback } from 'react';
 import { ImageUploader } from './components/ImageUploader';
 import { ResultGallery } from './components/ResultGallery';
-import { generateProductImages, generateProductVideo, regenerateSingleImage, generateReviewImages } from './services/geminiService';
+import { generateProductImages, regenerateSingleImage, generateReviewImages } from './services/geminiService';
 import { GeneratedImage, GenerationStatus, Language, ReviewSettings } from './types';
 import { translations } from './translations';
 
@@ -14,20 +14,12 @@ const App: React.FC = () => {
   const [results, setResults] = useState<GeneratedImage[]>([]);
   const [error, setError] = useState<string | null>(null);
 
-  // Video Generation State
-  const [videoStatus, setVideoStatus] = useState<GenerationStatus>(GenerationStatus.IDLE);
-  const [videoUrl, setVideoUrl] = useState<string | null>(null);
-  const [videoError, setVideoError] = useState<string | null>(null);
-  const [isVideoEditing, setIsVideoEditing] = useState(false);
-  const [videoFeedback, setVideoFeedback] = useState("");
-
   // Review Generation State
   const [reviewStatus, setReviewStatus] = useState<GenerationStatus>(GenerationStatus.IDLE);
   const [reviewResults, setReviewResults] = useState<GeneratedImage[]>([]);
   const [reviewSettings, setReviewSettings] = useState<ReviewSettings>({
     gender: 'female',
-    age: 'young',
-    ethnicity: 'white'
+    age: '20-30',
   });
 
   const t = translations[currentLang];
@@ -37,13 +29,8 @@ const App: React.FC = () => {
     setResults([]);
     setError(null);
     setStatus(GenerationStatus.IDLE);
-    setVideoStatus(GenerationStatus.IDLE);
-    setVideoUrl(null);
-    setVideoError(null);
     setReviewStatus(GenerationStatus.IDLE);
     setReviewResults([]);
-    setIsVideoEditing(false);
-    setVideoFeedback("");
   }, []);
 
   const handleGenerate = async () => {
@@ -93,44 +80,6 @@ const App: React.FC = () => {
     } catch (e) {
       console.error("Single regeneration failed", e);
       throw e; // Let the component handle the error display
-    }
-  };
-
-  const handleGenerateVideo = async (feedback?: string) => {
-    if (!sourceImage) return;
-
-    // Check API Key for Veo
-    // Cast to any to avoid TS conflict with global definitions of aistudio
-    const win = window as any;
-    if (win.aistudio) {
-      const hasKey = await win.aistudio.hasSelectedApiKey();
-      if (!hasKey) {
-        try {
-          await win.aistudio.openSelectKey();
-        } catch (e) {
-          console.error("Key selection failed/cancelled", e);
-          return;
-        }
-      }
-    }
-
-    setVideoStatus(GenerationStatus.LOADING);
-    setVideoError(null);
-    setIsVideoEditing(false); // Close modal if open
-
-    try {
-      const url = await generateProductVideo(sourceImage.base64, sourceImage.mimeType, feedback);
-      if (url) {
-        setVideoUrl(url);
-        setVideoStatus(GenerationStatus.SUCCESS);
-      } else {
-        setVideoError(t.video.error);
-        setVideoStatus(GenerationStatus.ERROR);
-      }
-    } catch (e) {
-      console.error(e);
-      setVideoError(t.video.error);
-      setVideoStatus(GenerationStatus.ERROR);
     }
   };
 
@@ -197,7 +146,7 @@ const App: React.FC = () => {
       <main className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-32 pb-10">
         <div className="text-center mb-16 animate-fadeIn">
           <span className="inline-block py-1 px-3 rounded-full bg-violet-100/50 border border-violet-200 text-violet-700 text-sm font-bold mb-4 tracking-wide uppercase">
-            Gemini 2.5 Flash & Veo Powered
+            Gemini 2.5 Flash Powered
           </span>
           <h2 className="text-5xl md:text-6xl font-black text-gray-900 mb-6 tracking-tight leading-tight">
             {t.heroTitle.split(' ').map((word, i) => (
@@ -273,87 +222,8 @@ const App: React.FC = () => {
               onRegenerateSingle={handleRegenerateSingle}
             />
             
-            {/* Video Generation Section */}
-            <div className="w-full max-w-4xl mx-auto mt-20 mb-10 px-4">
-              <div className="relative overflow-hidden bg-white/60 backdrop-blur-lg border border-white/50 rounded-3xl p-8 shadow-xl">
-                 <div className="absolute top-0 right-0 p-4 opacity-10">
-                    <svg className="w-32 h-32 text-violet-600" fill="currentColor" viewBox="0 0 24 24"><path d="M10 9V5l-7 7 7 7v-4.1c5 0 8.5 1.6 11 5.1-1-5-4-10-11-11z"/></svg>
-                 </div>
-                 
-                 <div className="relative z-10 flex flex-col md:flex-row items-center gap-8">
-                   <div className="flex-1 text-center md:text-left">
-                     <div className="inline-flex items-center space-x-2 bg-gradient-to-r from-violet-600 to-indigo-600 text-white px-3 py-1 rounded-full text-xs font-bold mb-4">
-                        <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 24 24"><path d="M21 3H3c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-9 9H3V5h9v7zM3 19v-5h9v5H3zm11-7h7V5h-7v7zm7 7h-7v-5h7v5z"/></svg>
-                        <span>NEW FEATURE</span>
-                     </div>
-                     <h3 className="text-2xl font-black text-slate-800 mb-2">{t.video.title}</h3>
-                     <p className="text-slate-600 mb-0">{t.video.desc}</p>
-                   </div>
-
-                   <div className="flex-1 w-full flex flex-col items-center md:items-end justify-center">
-                      {videoStatus === GenerationStatus.IDLE && (
-                        <button 
-                          onClick={() => handleGenerateVideo()}
-                          className="bg-slate-900 text-white px-8 py-4 rounded-full font-bold shadow-xl hover:bg-slate-800 hover:scale-105 transition-all flex items-center gap-3 w-full md:w-auto justify-center"
-                        >
-                          <svg className="w-6 h-6 text-violet-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                          </svg>
-                          {t.video.generateBtn}
-                        </button>
-                      )}
-
-                      {videoStatus === GenerationStatus.LOADING && (
-                        <div className="bg-white/80 px-8 py-4 rounded-full flex items-center gap-3 border border-violet-100 shadow-lg">
-                          <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-violet-600"></div>
-                          <span className="text-violet-700 font-bold">
-                            {isVideoEditing ? t.video.regenerating : t.video.generating}
-                          </span>
-                        </div>
-                      )}
-
-                      {videoStatus === GenerationStatus.SUCCESS && videoUrl && (
-                        <div className="flex flex-col items-center gap-4">
-                           <div className="relative w-full max-w-xs mx-auto aspect-[9/16] bg-black rounded-xl overflow-hidden shadow-2xl ring-4 ring-violet-200">
-                              <video 
-                                src={videoUrl} 
-                                controls 
-                                autoPlay 
-                                loop 
-                                className="w-full h-full object-cover"
-                              />
-                           </div>
-                           <button 
-                             onClick={() => {
-                               setIsVideoEditing(true);
-                               setVideoFeedback("");
-                             }}
-                             className="px-6 py-2 bg-white text-slate-800 font-bold rounded-full shadow-lg hover:bg-violet-50 hover:text-violet-700 transition-all flex items-center text-sm"
-                           >
-                             <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
-                             </svg>
-                             {t.video.editBtn}
-                           </button>
-                        </div>
-                      )}
-
-                      {videoStatus === GenerationStatus.ERROR && (
-                        <div className="text-red-500 font-bold flex items-center bg-red-50 px-6 py-3 rounded-full border border-red-100">
-                          <svg className="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                          </svg>
-                          {videoError}
-                          <button onClick={() => handleGenerateVideo()} className="ml-4 underline hover:text-red-700 text-sm">Retry</button>
-                        </div>
-                      )}
-                   </div>
-                 </div>
-              </div>
-            </div>
-            
             {/* Reviews Generator Section */}
-            <div className="w-full max-w-6xl mx-auto mt-10 mb-20 px-4 animate-fadeIn">
+            <div className="w-full max-w-6xl mx-auto mt-20 mb-20 px-4 animate-fadeIn">
                <div className="flex items-center justify-center mb-10">
                   <div className="h-px w-20 bg-gradient-to-r from-transparent to-pink-300"></div>
                   <h2 className="text-3xl font-black text-slate-800 mx-6 text-center tracking-tight">{t.reviews.title}</h2>
@@ -362,8 +232,8 @@ const App: React.FC = () => {
                
                <p className="text-center text-slate-600 mb-8 max-w-2xl mx-auto">{t.reviews.subtitle}</p>
 
-               <div className="bg-white rounded-3xl p-8 shadow-xl border border-slate-100 mb-10">
-                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+               <div className="bg-white rounded-3xl p-8 shadow-xl border border-slate-100 mb-10 max-w-3xl mx-auto">
+                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
                     <div>
                        <label className="block text-sm font-bold text-slate-700 mb-2">{t.reviews.gender}</label>
                        <select 
@@ -382,23 +252,10 @@ const App: React.FC = () => {
                          value={reviewSettings.age}
                          onChange={(e) => setReviewSettings({...reviewSettings, age: e.target.value as any})}
                        >
-                          <option value="young">{t.reviews.options.young}</option>
-                          <option value="middle">{t.reviews.options.middle}</option>
-                          <option value="senior">{t.reviews.options.senior}</option>
-                       </select>
-                    </div>
-                    <div>
-                       <label className="block text-sm font-bold text-slate-700 mb-2">{t.reviews.ethnicity}</label>
-                       <select 
-                         className="w-full p-4 rounded-xl border border-slate-200 bg-slate-50 focus:border-violet-500 focus:ring-4 focus:ring-violet-100 outline-none transition-all"
-                         value={reviewSettings.ethnicity}
-                         onChange={(e) => setReviewSettings({...reviewSettings, ethnicity: e.target.value as any})}
-                       >
-                          <option value="white">{t.reviews.options.white}</option>
-                          <option value="black">{t.reviews.options.black}</option>
-                          <option value="asian">{t.reviews.options.asian}</option>
-                          <option value="latino">{t.reviews.options.latino}</option>
-                          <option value="mixed">{t.reviews.options.mixed}</option>
+                          <option value="20-30">{t.reviews.options.age20_30}</option>
+                          <option value="30-40">{t.reviews.options.age30_40}</option>
+                          <option value="40-50">{t.reviews.options.age40_50}</option>
+                          <option value="50+">{t.reviews.options.age50_plus}</option>
                        </select>
                     </div>
                  </div>
@@ -450,47 +307,6 @@ const App: React.FC = () => {
           </div>
         )}
       </main>
-
-      {/* Video Editing Modal */}
-      {isVideoEditing && (
-        <div className="fixed inset-0 z-[100] bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 animate-fadeIn">
-          <div className="bg-white rounded-3xl p-8 max-w-lg w-full shadow-2xl transform transition-all scale-100 ring-1 ring-white/20">
-             <h3 className="text-2xl font-bold text-slate-800 mb-4">{t.video.modalTitle}</h3>
-             
-             <div className="mb-6">
-               <label className="block text-sm font-bold text-slate-700 mb-2">
-                 {t.video.placeholder}
-               </label>
-               <textarea
-                 className="w-full p-4 rounded-xl border-2 border-slate-700 bg-slate-800 text-white placeholder:text-slate-400 focus:border-violet-500 focus:ring-4 focus:ring-violet-100 transition-all outline-none resize-none h-32"
-                 placeholder="e.g. Slower movement, show details..."
-                 value={videoFeedback}
-                 onChange={(e) => setVideoFeedback(e.target.value)}
-                 autoFocus
-               />
-             </div>
-
-             <div className="flex justify-end space-x-3">
-               <button 
-                 onClick={() => setIsVideoEditing(false)}
-                 className="px-6 py-3 rounded-full font-bold text-slate-500 hover:bg-slate-100 transition-colors"
-               >
-                 {t.singleRegen.cancel}
-               </button>
-               <button 
-                 onClick={() => handleGenerateVideo(videoFeedback)}
-                 disabled={!videoFeedback.trim()}
-                 className={`px-8 py-3 rounded-full font-bold text-white shadow-lg transition-all transform hover:-translate-y-0.5
-                    ${videoFeedback.trim() ? 'bg-violet-600 hover:bg-violet-700 hover:shadow-violet-500/30' : 'bg-slate-300 cursor-not-allowed'}
-                 `}
-               >
-                 {t.singleRegen.submit}
-               </button>
-             </div>
-          </div>
-        </div>
-      )}
-
     </div>
   );
 };

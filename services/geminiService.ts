@@ -12,40 +12,74 @@ const stripBase64Header = (base64: string): string => {
 // We store prompt keys to map them to translations later
 // Moved outside so it can be accessed by both functions
 export const PROMPTS_CONFIG = [
+  // --- 3 MODEL SHOTS (Faceless) ---
   {
-    type: 'model',
-    key: 'model',
-    text: "Generate a professional FULL-BODY fashion photography shot of a model wearing this exact clothing item. Viewpoint: Front view. IMPORTANT: The model's face must NOT be visible (crop just below nose). The frame MUST include the model's feet and shoes. Do not cut off legs. Focus entirely on how the clothes fit. The background should be neutral studio lighting. Keep the exact color, pattern, and shape of the clothing from the reference image. High resolution."
+    type: 'model-front',
+    key: 'modelFront',
+    text: "Generate a professional 1:1 SQUARE format fashion photography shot of a model wearing this exact clothing item. Viewpoint: FRONT view. IMPORTANT: The model's face must NOT be visible (crop just below nose). The frame MUST include the model's feet. Focus entirely on how the clothes fit. Background: Clean neutral studio wall. Keep the exact color/pattern. High resolution."
   },
   {
-    type: 'flatlay',
-    key: 'flatlay',
-    text: "Generate a professional STYLED FLAT LAY photograph of this exact clothing item. Viewpoint: Directly from above (90 degrees). The item must be laid out completely FLAT and neat. CRITICAL: 1) Place the item on a CONTRASTING TEXTURED BACKGROUND (such as pastel colored paper, smooth concrete, or warm wood) to make it pop. 2) SURROUND the item with TASTEFUL DECOR ITEMS that match the style (e.g., magazines, dried flowers, sunglasses, coffee cup, or minimal accessories). 3) The clothing must be the clear center of attention. 4) STRICTLY PRESERVE THE ORIGINAL CUT AND STYLE. High-end social media aesthetic."
+    type: 'model-back',
+    key: 'modelBack',
+    text: "Generate a professional 1:1 SQUARE format fashion photography shot of a model wearing this exact clothing item. Viewpoint: BACK view. IMPORTANT: The model's face must NOT be visible. Focus on the fit from behind. Background: Clean neutral studio wall. Keep the exact color/pattern."
   },
   {
-    type: 'mannequin',
-    key: 'mannequin',
-    text: "Generate a 'ghost mannequin' effect image of this exact clothing item. Viewpoint: 3/4 turned angle (semi-profile). The clothes should appear 3D and voluminous as if worn by an invisible person, floating in the air against a clean, subtle gradient background. Emphasize the cut and fit from this semi-turned perspective. Do not change the color or texture of the item."
+    type: 'model-profile',
+    key: 'modelProfile',
+    text: "Generate a professional 1:1 SQUARE format fashion photography shot of a model wearing this exact clothing item. Viewpoint: SIDE PROFILE view. IMPORTANT: The model's face must NOT be visible. Show the silhouette and fit from the side. Background: Clean neutral studio wall. Keep the exact color/pattern."
   },
+
+  // --- 3 FLATLAY SHOTS (Different Backgrounds) ---
+  {
+    type: 'flatlay-decor',
+    key: 'flatlayDecor',
+    text: "Generate a professional 1:1 SQUARE format STYLED FLAT LAY. The item is laid flat and neat. Background: CONTRASTING PASTEL PAPER (e.g., soft pink, mint, or beige depending on item color). Decor: Minimalist magazines and dried flowers. The item is the star. No folds."
+  },
+  {
+    type: 'flatlay-shoes',
+    key: 'flatlayShoes',
+    text: "Generate a professional 1:1 SQUARE format STYLED FLAT LAY. The item is laid flat. Background: SMOOTH CONCRETE or WHITE MARBLE texture. Props: Pair of stylish SHOES/SNEAKERS that match the outfit perfectly placed nearby. Modern street style vibe."
+  },
+  {
+    type: 'flatlay-accessories',
+    key: 'flatlayAccessories',
+    text: "Generate a professional 1:1 SQUARE format STYLED FLAT LAY. The item is laid flat. Background: WARM WOODEN SURFACE. Props: Matching ACCESSORIES (bag, sunglasses, or jewelry) arranged artistically around the item. Warm, cozy boutique vibe."
+  },
+
+  // --- 3 MACRO SHOTS ---
   {
     type: 'macro-collar',
     key: 'macroCollar',
-    text: "Generate a high-end MACRO CLOSE-UP photograph focusing strictly on the COLLAR, NECKLINE or TOP DETAIL of this clothing item. Viewpoint: Extreme close-up. Focus intently on the stitching, the label area, buttons (if any), and the fabric texture around the neck. Lighting: Soft, directional studio light that reveals the fabric's weave. The goal is to show the premium quality of the neckline construction."
+    text: "Generate a 1:1 SQUARE high-end MACRO CLOSE-UP focusing strictly on the COLLAR or NECKLINE. Extreme detail on stitching and label. Soft studio lighting."
   },
   {
     type: 'macro-cuff',
     key: 'macroCuff',
-    text: "Generate a high-end MACRO CLOSE-UP photograph focusing strictly on the SLEEVE CUFF, ARM HEM or BOTTOM EDGE of this clothing item. Viewpoint: Extreme close-up. Show the ribbing, buttons, or hem stitching in great detail. Lighting: Soft, clear light. The goal is to show the material quality at the extremities."
+    text: "Generate a 1:1 SQUARE high-end MACRO CLOSE-UP focusing strictly on the SLEEVE CUFF or ARM HEM. Extreme detail on ribbing/buttons. Soft studio lighting."
   },
   {
     type: 'macro-pocket',
     key: 'macroPocket',
-    text: "Generate a high-end MACRO CLOSE-UP photograph focusing strictly on a POCKET, ZIPPER, BUTTON or unique STITCHING DETAIL of this clothing item. If the item has no pockets, focus on the fabric texture/weave in the center. Viewpoint: Extreme close-up. Shallow depth of field (bokeh). The goal is to highlight craftsmanship."
+    text: "Generate a 1:1 SQUARE high-end MACRO CLOSE-UP focusing strictly on a POCKET or unique TEXTURE detail. Shallow depth of field (bokeh)."
+  },
+
+  // --- 1 GHOST MANNEQUIN ---
+  {
+    type: 'mannequin',
+    key: 'mannequin',
+    text: "Generate a 1:1 SQUARE 'GHOST MANNEQUIN' effect (floating in air). The clothes appear 3D and voluminous as if worn by an invisible person. Clean gradient background. Emphasize cut and 3D shape."
+  },
+
+  // --- 2 NATURE SHOTS ---
+  {
+    type: 'nature-1',
+    key: 'nature1',
+    text: "Generate a professional 1:1 SQUARE product photo. The item is laid out on SMOOTH RIVER STONES or GRAVEL outdoors. Natural daylight. High contrast. Eco-style."
   },
   {
-    type: 'creative-lifestyle',
-    key: 'creativeLifestyle',
-    text: "Generate a professional product photograph of this clothing item MAXIMALLY SPREAD OUT AND UNFOLDED on a natural surface. The setting should be outdoors in nature: placed on smooth river stones, on fresh green grass, or on clean earth. Viewpoint: Top-down or high angle to capture the full shape. The item must NOT be folded; it should be laid flat to show its full cut and silhouette against the natural texture. Lighting: Natural daylight, organic shadows, creating a sustainable and eco-friendly aesthetic. Keep the item's color exact."
+    type: 'nature-2',
+    key: 'nature2',
+    text: "Generate a professional 1:1 SQUARE product photo. The item is laid out on SAND or CLEAN WOOD in a forest setting. Dappled sunlight through trees. Organic aesthetic."
   }
 ];
 
@@ -89,7 +123,7 @@ export const generateProductImages = async (
   const promises = PROMPTS_CONFIG.map(async (promptData, index) => {
     try {
       const response = await ai.models.generateContent({
-        model: 'gemini-2.5-flash-image', // Using the standard image generation/editing model
+        model: 'gemini-2.5-flash-image', 
         contents: {
           parts: [
             {
@@ -103,6 +137,11 @@ export const generateProductImages = async (
             },
           ],
         },
+        config: {
+          imageConfig: {
+            aspectRatio: "1:1" // Enforce Square format
+          }
+        }
       });
 
       // Extract image from response
@@ -149,7 +188,7 @@ export const generateProductImages = async (
 export const regenerateSingleImage = async (
   base64Image: string,
   mimeType: string,
-  imageType: string, // 'model', 'flatlay', etc.
+  imageType: string, 
   userFeedback: string,
   lang: Language
 ): Promise<string | null> => {
@@ -168,7 +207,7 @@ export const regenerateSingleImage = async (
     CRITICAL USER ADJUSTMENT / CORRECTION: ${userFeedback}
     
     INSTRUCTION: Re-generate the image based on the ORIGINAL PHOTO provided, but strictly applying the USER ADJUSTMENT. 
-    Maintain the same style, lighting, and composition as the intended task, but fix the specific detail mentioned.
+    Maintain the same style, lighting, and composition as the intended task (SQUARE 1:1 Format), but fix the specific detail mentioned.
   `;
 
   try {
@@ -187,6 +226,11 @@ export const regenerateSingleImage = async (
             },
           ],
         },
+        config: {
+          imageConfig: {
+            aspectRatio: "1:1"
+          }
+        }
       });
 
       const candidate = response.candidates?.[0];
@@ -203,59 +247,6 @@ export const regenerateSingleImage = async (
   } catch (error) {
     console.error("Error regenerating single image:", error);
     throw error;
-  }
-};
-
-export const generateProductVideo = async (
-  base64Image: string, 
-  mimeType: string,
-  feedback?: string
-): Promise<string | null> => {
-  // Always create a new instance right before API call
-  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
-  const cleanBase64 = stripBase64Header(base64Image);
-  
-  let prompt = 'Cinematic product review video of this clothing item. The camera pans closely and slowly over the fabric, showing texture, buttons, and stitching details. The item is laid out neatly on a clean, neutral surface or hanging. No people are visible. The camera movement is smooth and professional, highlighting the quality of the garment.';
-
-  if (feedback) {
-    prompt = `ORIGINAL VIDEO CONCEPT: ${prompt} 
-    USER REVISION REQUEST: ${feedback}
-    INSTRUCTION: Generate a new video that follows the original concept but STRICTLY applies the user's revision request.`;
-  }
-
-  try {
-    let operation = await ai.models.generateVideos({
-      model: 'veo-3.1-fast-generate-preview',
-      prompt: prompt,
-      image: {
-        imageBytes: cleanBase64,
-        mimeType: mimeType,
-      },
-      config: {
-        numberOfVideos: 1,
-        resolution: '720p',
-        aspectRatio: '9:16' // Mobile format
-      }
-    });
-
-    // Polling loop
-    while (!operation.done) {
-      await new Promise(resolve => setTimeout(resolve, 5000)); // Poll every 5 seconds
-      operation = await ai.operations.getVideosOperation({operation: operation});
-    }
-
-    const uri = operation.response?.generatedVideos?.[0]?.video?.uri;
-    
-    // Append API key to the URL as per documentation for Veo
-    if (uri && process.env.API_KEY) {
-      return `${uri}&key=${process.env.API_KEY}`;
-    }
-    
-    return uri || null;
-
-  } catch (error) {
-    console.error("Error generating video:", error);
-    return null;
   }
 };
 
@@ -280,19 +271,23 @@ export const generateReviewImages = async (
     const promptText = `
       Generate a REALISTIC, CANDID CLIENT REVIEW PHOTO of a person wearing this exact clothing item.
       
+      OUTPUT FORMAT: Square 1:1 Aspect Ratio.
+      
       DEMOGRAPHICS:
       - Gender: ${settings.gender}
-      - Age: ${settings.age}
-      - Ethnicity: ${settings.ethnicity}
+      - Age Range: ${settings.age}
+      - APPEARANCE: Ukrainian appearance (Slavic features).
+      
+      BODY TYPE (IMPORTANT):
+      - Slightly overweight.
+      - Realistic "average" body type. 
+      - NOT a skinny fashion model. 
+      - Looks like a real customer.
       
       IDENTITY INSTRUCTION (CRITICAL - MUST BE UNIQUE):
       - This person MUST look different from others.
       - **SPECIFIC TRAIT TO APPLY**: Person is ${distinctLook}.
       - VARY facial features significantly.
-      
-      BODY TYPE:
-      - Realistic, average body type (not a fashion model).
-      - Authentic posture.
       
       SCENARIO: ${scenario}
       
@@ -321,6 +316,11 @@ export const generateReviewImages = async (
             },
           ],
         },
+        config: {
+          imageConfig: {
+            aspectRatio: "1:1"
+          }
+        }
       });
 
       const candidate = response.candidates?.[0];

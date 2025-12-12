@@ -1,7 +1,20 @@
 export interface GeneratedImage {
   id: string;
   url: string;
-  type: 'model' | 'flatlay' | 'mannequin' | 'macro-collar' | 'macro-cuff' | 'macro-pocket' | 'creative-lifestyle' | 'review';
+  type: 
+    | 'model-front' 
+    | 'model-back' 
+    | 'model-profile' 
+    | 'flatlay-decor' 
+    | 'flatlay-shoes' 
+    | 'flatlay-accessories' 
+    | 'mannequin' 
+    | 'macro-collar' 
+    | 'macro-cuff' 
+    | 'macro-pocket' 
+    | 'nature-1' 
+    | 'nature-2' 
+    | 'review';
   description: string;
 }
 
@@ -20,11 +33,11 @@ export interface GenerationRequest {
 export type Language = 'uk' | 'en' | 'ru';
 
 export type Gender = 'female' | 'male';
-export type AgeGroup = 'young' | 'middle' | 'senior';
-export type Ethnicity = 'white' | 'black' | 'asian' | 'latino' | 'mixed';
+// Updated age groups per request
+export type AgeGroup = '20-30' | '30-40' | '40-50' | '50+';
 
 export interface ReviewSettings {
   gender: Gender;
   age: AgeGroup;
-  ethnicity: Ethnicity;
+  // Ethnicity removed
 }
