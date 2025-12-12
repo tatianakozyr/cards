@@ -277,13 +277,12 @@ export const generateReviewImages = async (
   // Pick top 10 scenarios
   const scenarios = REVIEW_PROMPTS_MAP.slice(0, 10); 
 
-  const promises = scenarios.map(async (scenario, index) => {
+  const promises = scenarios.map(async (scenario, index): Promise<GeneratedImage | null> => {
     // Select a distinct look for this index to enforce variety
     const distinctLook = DISTINCT_LOOKS[index % DISTINCT_LOOKS.length];
 
-    // Construct a prompt that enforces realism, demographics, and body type
-    // Explicitly ask for variation to avoid same-face syndrome
-    const promptText = `
+    // --- 1. Image Generation Prompt ---
+    const imagePromptText = `
       Generate a REALISTIC, CANDID CLIENT REVIEW PHOTO of a person wearing this exact clothing item.
       
       OUTPUT FORMAT: Square 1:1 Aspect Ratio.
@@ -315,32 +314,44 @@ export const generateReviewImages = async (
       Random Seed: ${Date.now()}-${index}-${Math.random()}
     `;
 
+    // --- 2. Text Generation Prompt ---
+    const textPromptText = `
+      Write a short, enthusiastic, positive, 5-star customer review (1-2 sentences) for a clothing item.
+      
+      LANGUAGE: ${lang === 'uk' ? 'Ukrainian' : lang === 'ru' ? 'Russian' : 'English'}
+      
+      CONTEXT of the photo: ${scenario}
+      PERSONA: ${settings.gender}, ${settings.age}, Ukrainian customer.
+      
+      TONE: Natural, like a real social media comment or shop review. Use emojis.
+      CONTENT: Mention fit, quality, or how it feels in the specific context (e.g., if walking a dog, say it's comfy for walks).
+      
+      OUTPUT: Just the review text, nothing else.
+    `;
+
     try {
-      const response = await ai.models.generateContent({
+      // Execute both requests in parallel
+      const imagePromise = ai.models.generateContent({
         model: 'gemini-2.5-flash-image',
         contents: {
           parts: [
-            {
-              inlineData: {
-                data: cleanBase64,
-                mimeType: mimeType,
-              },
-            },
-            {
-              text: promptText,
-            },
+            { inlineData: { data: cleanBase64, mimeType: mimeType } },
+            { text: imagePromptText },
           ],
         },
-        config: {
-          imageConfig: {
-            aspectRatio: "1:1"
-          }
-        }
+        config: { imageConfig: { aspectRatio: "1:1" } }
       });
 
-      const candidate = response.candidates?.[0];
+      const textPromise = ai.models.generateContent({
+        model: 'gemini-2.5-flash', // Use text model for text
+        contents: textPromptText,
+      });
+
+      const [imageResponse, textResponse] = await Promise.all([imagePromise, textPromise]);
+
+      // Process Image
+      const candidate = imageResponse.candidates?.[0];
       const parts = candidate?.content?.parts;
-      
       let imageUrl = '';
       if (parts) {
         for (const part of parts) {
@@ -351,19 +362,21 @@ export const generateReviewImages = async (
         }
       }
 
-      if (!imageUrl) {
-        return null;
-      }
+      if (!imageUrl) return null;
+
+      // Process Text
+      const textReview = textResponse.text?.trim() || "Чудова якість! ⭐⭐⭐⭐⭐";
 
       return {
         id: `review-${index}-${Date.now()}`,
         url: imageUrl,
         type: 'review',
-        description: t.reviews.scenarios[index] || scenario // Map to translated scenario name
+        description: t.reviews.scenarios[index] || scenario,
+        textReview: textReview
       };
 
     } catch (error) {
-      console.error(`Error generating review image ${index}:`, error);
+      console.error(`Error generating review image/text ${index}:`, error);
       return null;
     }
   });

@@ -19,6 +19,7 @@ export interface GeneratedImage {
     | 'nature-3'
     | 'review';
   description: string;
+  textReview?: string; // New field for the text content of the review
 }
 
 export enum GenerationStatus {

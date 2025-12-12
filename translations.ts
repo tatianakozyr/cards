@@ -62,7 +62,7 @@ export const translations = {
     },
     reviews: {
       title: "Генератор Відгуків",
-      subtitle: "Створіть 10 реалістичних фото 'від клієнтів' (українська зовнішність, реальні фігури).",
+      subtitle: "Створіть 10 реалістичних фото + унікальні текстові відгуки (українська зовнішність, реальні фігури).",
       gender: "Стать",
       age: "Вікова група",
       generateBtn: "Згенерувати 10 Відгуків",
@@ -150,7 +150,7 @@ export const translations = {
     },
     reviews: {
       title: "Review Generator",
-      subtitle: "Create 10 realistic 'customer' photos (Ukrainian appearance, real body types).",
+      subtitle: "Create 10 realistic 'customer' photos + unique text reviews (Ukrainian appearance, real body types).",
       gender: "Gender",
       age: "Age Group",
       generateBtn: "Generate 10 Reviews",
@@ -238,7 +238,7 @@ export const translations = {
     },
     reviews: {
       title: "Генератор Отзывов",
-      subtitle: "Создайте 10 реалистичных фото 'от клиентов' (украинская внешность, реальные фигуры).",
+      subtitle: "Создайте 10 реалистичных фото + уникальные текстовые отзывы (украинская внешность, реальные фигуры).",
       gender: "Пол",
       age: "Возрастная группа",
       generateBtn: "Сгенерировать 10 Отзывов",

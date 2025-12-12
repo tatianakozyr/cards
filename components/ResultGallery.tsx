@@ -173,8 +173,21 @@ export const ResultGallery: React.FC<ResultGalleryProps> = ({
                         </div>
                       </div>
                       
-                      <div className="p-6 flex-grow bg-white relative z-10">
-                        <p className="text-sm text-slate-600 font-medium leading-relaxed">{img.description}</p>
+                      <div className="p-6 flex-grow bg-white relative z-10 flex flex-col justify-between">
+                        <p className="text-sm text-slate-600 font-medium leading-relaxed mb-3">{img.description}</p>
+                        
+                        {/* Review Text Display */}
+                        {img.textReview && (
+                          <div className="bg-slate-50 p-4 rounded-xl border border-slate-100 mt-2 relative">
+                             {/* Triangle arrow for speech bubble */}
+                             <div className="absolute -top-2 left-6 w-0 h-0 border-l-[8px] border-l-transparent border-r-[8px] border-r-transparent border-b-[8px] border-b-slate-100"></div>
+                             
+                             <div className="flex text-yellow-400 mb-1 text-sm">
+                               {[1,2,3,4,5].map(i => <span key={i}>★</span>)}
+                             </div>
+                             <p className="text-sm italic text-slate-700 font-medium">"{img.textReview}"</p>
+                          </div>
+                        )}
                       </div>
                     </div>
                   );
@@ -246,13 +259,21 @@ export const ResultGallery: React.FC<ResultGalleryProps> = ({
                </svg>
              </button>
 
-             <div className="relative w-auto h-auto max-w-full max-h-full">
+             <div className="relative w-auto h-auto max-w-full max-h-full flex flex-col items-center">
                 <img 
                   src={selectedImage.url} 
                   alt="Full view" 
-                  className="max-w-full max-h-[90vh] object-contain rounded-2xl shadow-2xl ring-1 ring-white/10"
+                  className="max-w-full max-h-[85vh] object-contain rounded-2xl shadow-2xl ring-1 ring-white/10"
                   onClick={(e) => e.stopPropagation()} 
                 />
+                
+                {/* Text Review in Full Screen */}
+                {selectedImage.textReview && (
+                   <div className="mt-6 bg-white/10 backdrop-blur-md p-6 rounded-2xl max-w-2xl text-center border border-white/20">
+                      <div className="flex justify-center text-yellow-400 mb-2 text-xl">★★★★★</div>
+                      <p className="text-white text-lg font-medium italic">"{selectedImage.textReview}"</p>
+                   </div>
+                )}
              </div>
 
              <a 
