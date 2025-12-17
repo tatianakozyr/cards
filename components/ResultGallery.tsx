@@ -87,7 +87,7 @@ export const ResultGallery: React.FC<ResultGalleryProps> = ({
         <div className="space-y-16">
           {groupedImages.map((section) => (
             <div key={section.key} className="animate-fadeIn">
-              {/* Section Header - Only show if we have multiple sections or if strictly requested (except for generic 'other' or single 'review' maybe, but let's show all for clarity) */}
+              {/* Section Header */}
               <div className="mb-6 flex items-center">
                  <h3 className="text-xl font-bold text-slate-700 uppercase tracking-wider bg-white/50 px-4 py-1 rounded-full border border-slate-200 shadow-sm backdrop-blur-sm">
                    {section.title}
@@ -98,8 +98,16 @@ export const ResultGallery: React.FC<ResultGalleryProps> = ({
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 {section.items.map((img) => {
                   const isLoading = loadingIds.has(img.id);
+                  const isReview = img.type === 'review';
+                  
+                  // Styles specifically for review items vs normal product items
+                  const aspectRatioClass = isReview ? 'aspect-[3/4]' : 'aspect-square';
+                  const containerClass = isReview 
+                     ? "bg-white rounded-xl shadow-lg border border-slate-200 hover:shadow-xl transition-all duration-300 overflow-hidden transform hover:-translate-y-1" // Phone post style
+                     : "bg-white rounded-3xl shadow-xl hover:shadow-2xl shadow-indigo-100 hover:shadow-violet-200 overflow-hidden transition-all duration-300 flex flex-col h-full transform hover:-translate-y-2 ring-1 ring-black/5"; // Premium card style
+
                   return (
-                    <div key={img.id} className="bg-white rounded-3xl shadow-xl hover:shadow-2xl shadow-indigo-100 hover:shadow-violet-200 overflow-hidden transition-all duration-300 flex flex-col h-full transform hover:-translate-y-2 ring-1 ring-black/5 relative">
+                    <div key={img.id} className={`${containerClass} relative`}>
                       
                       {isLoading && (
                         <div className="absolute inset-0 z-50 bg-white/80 backdrop-blur-sm flex items-center justify-center flex-col">
@@ -108,28 +116,26 @@ export const ResultGallery: React.FC<ResultGalleryProps> = ({
                         </div>
                       )}
 
-                      {/* Changed from aspect-[3/4] to aspect-square for 1:1 ratio */}
                       <div 
-                        className="relative aspect-square overflow-hidden bg-slate-100 group cursor-pointer"
+                        className={`relative ${aspectRatioClass} overflow-hidden bg-slate-100 group cursor-pointer`}
                         onClick={() => setSelectedImage(img)}
                       >
                         {/* Main Image */}
                         <img 
                           src={img.url} 
                           alt={img.description} 
-                          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                         />
                         
                         {/* Gradient Overlay for Text Visibility */}
                         <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-60"></div>
                         
                         {/* Hover Actions */}
-                        <div className="absolute inset-0 bg-violet-900/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-wrap items-center justify-center gap-3 z-30 backdrop-blur-[2px] p-4 content-center">
+                        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-wrap items-center justify-center gap-3 z-30 backdrop-blur-[2px] p-4 content-center">
                            {/* Edit Button */}
                            <button 
                              onClick={(e) => handleEditClick(e, img)}
                              className="bg-white px-4 py-2 rounded-full text-slate-800 font-bold shadow-xl hover:bg-violet-50 hover:text-violet-700 transition-all duration-300 flex items-center text-sm"
-                             title="Refine this image"
                            >
                              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
@@ -144,7 +150,6 @@ export const ResultGallery: React.FC<ResultGalleryProps> = ({
                                setSelectedImage(img);
                              }}
                              className="bg-white p-3 rounded-full text-violet-600 shadow-xl hover:bg-violet-50 hover:scale-110 transition-all duration-300"
-                             title="Zoom"
                            >
                               <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" />
@@ -157,35 +162,39 @@ export const ResultGallery: React.FC<ResultGalleryProps> = ({
                              download={`product-ai-${img.id}.png`}
                              onClick={(e) => e.stopPropagation()}
                              className="bg-violet-600 p-3 rounded-full text-white shadow-xl hover:bg-violet-700 hover:scale-110 transition-all duration-300"
-                             title={t.downloadBtn}
                            >
                              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
                              </svg>
                            </a>
                         </div>
-
-                        {/* Type Tag over image */}
-                        <div className="absolute bottom-4 left-4 z-20">
-                            <span className="text-xs font-bold px-3 py-1.5 rounded-lg bg-white/90 text-violet-900 uppercase tracking-wide shadow-lg backdrop-blur-sm">
-                               {img.type}
-                            </span>
-                        </div>
                       </div>
                       
-                      <div className="p-6 flex-grow bg-white relative z-10 flex flex-col justify-between">
-                        <p className="text-sm text-slate-600 font-medium leading-relaxed mb-3">{img.description}</p>
+                      <div className="p-4 flex-grow bg-white relative z-10 flex flex-col justify-between">
+                        {/* Only show description for non-reviews or very briefly for reviews */}
+                        {!isReview && (
+                            <p className="text-sm text-slate-600 font-medium leading-relaxed mb-3">{img.description}</p>
+                        )}
                         
-                        {/* Review Text Display */}
-                        {img.textReview && (
-                          <div className="bg-slate-50 p-4 rounded-xl border border-slate-100 mt-2 relative">
-                             {/* Triangle arrow for speech bubble */}
-                             <div className="absolute -top-2 left-6 w-0 h-0 border-l-[8px] border-l-transparent border-r-[8px] border-r-transparent border-b-[8px] border-b-slate-100"></div>
-                             
-                             <div className="flex text-yellow-400 mb-1 text-sm">
-                               {[1,2,3,4,5].map(i => <span key={i}>★</span>)}
+                        {/* Review Text Display - Styled like a social comment */}
+                        {img.textReview && isReview && (
+                          <div className="mt-1">
+                             <div className="flex items-center space-x-2 mb-2">
+                                <div className="w-8 h-8 rounded-full bg-slate-200 flex items-center justify-center text-xs font-bold text-slate-500">
+                                   {/* Random initials simulation based on ID */}
+                                   U{img.id.slice(-1)}
+                                </div>
+                                <div className="flex flex-col">
+                                   <span className="text-xs font-bold text-slate-800">User_{img.id.slice(0,4)}</span>
+                                   <div className="flex text-yellow-400 text-[10px]">
+                                     {[1,2,3,4,5].map(i => <span key={i}>★</span>)}
+                                   </div>
+                                </div>
                              </div>
-                             <p className="text-sm italic text-slate-700 font-medium">"{img.textReview}"</p>
+                             <p className="text-sm text-slate-700 leading-snug">
+                               {img.textReview}
+                             </p>
+                             <p className="text-[10px] text-slate-400 mt-2 uppercase tracking-wide">{img.description}</p>
                           </div>
                         )}
                       </div>

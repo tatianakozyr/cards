@@ -113,17 +113,17 @@ const DISTINCT_LOOKS = [
 ];
 
 const REVIEW_PROMPTS_MAP = [
-  "Candid photo with friends in nature/park. The person is laughing.",
-  "Relaxing at a country house (dacha) garden, sitting on a chair.",
-  "In a shopping mall, looking in a mirror or walking.",
-  "Walking outside in the city, casual street photo.",
-  "Playing with a dog outside.",
-  "During a light sport activity or at a gym (casual).",
-  "Sitting in a cafe with a drink.",
-  "Standing next to a car in a parking lot.",
-  "Holding the item up or looking at it (Unboxing style/Review).",
-  "Trying on the clothes at home in front of a mirror (messy room).",
-  "Standing near a river or lake, outdoors."
+  "Selfie in a mirror at home (messy room background).",
+  "Standing in a fitting room (shopping mall lighting).",
+  "Outdoors in a park, holding a coffee cup, casual pose.",
+  "Sitting on a couch/sofa at home, relaxed pose.",
+  "Full body shot in a hallway mirror.",
+  "Walking on the street (blurry background, dynamic).",
+  "Close up selfie showing the top part of the item.",
+  "In a car (passenger seat selfie).",
+  "With a pet (dog or cat) at home.",
+  "Picnic style on grass/blanket.",
+  "Near a textured wall (brick or concrete) outside."
 ];
 
 export const generateProductImages = async (
@@ -210,9 +210,21 @@ export const regenerateSingleImage = async (
   const cleanBase64 = stripBase64Header(base64Image);
   
   let basePromptText = PROMPTS_CONFIG[0].text;
-  const config = PROMPTS_CONFIG.find(p => p.type === imageType);
-  if (config) {
-     basePromptText = config.text; 
+  let currentAspectRatio = "1:1";
+
+  // Check if it's a review type regeneration
+  if (imageType === 'review') {
+    basePromptText = `
+      Generate a REALISTIC, LOW-QUALITY SMARTPHONE PHOTO of a user review.
+      FORMAT: VERTICAL 3:4.
+      STYLE: Amateur, grainy, imperfect lighting, authentic social media style.
+    `;
+    currentAspectRatio = "3:4";
+  } else {
+    const config = PROMPTS_CONFIG.find(p => p.type === imageType);
+    if (config) {
+       basePromptText = config.text; 
+    }
   }
 
   // Construct a new prompt that prioritizes user feedback
@@ -222,7 +234,7 @@ export const regenerateSingleImage = async (
     CRITICAL USER ADJUSTMENT / CORRECTION: ${userFeedback}
     
     INSTRUCTION: Re-generate the image based on the ORIGINAL PHOTO provided, but strictly applying the USER ADJUSTMENT. 
-    Maintain the same style, lighting, and composition as the intended task (SQUARE 1:1 Format), but fix the specific detail mentioned.
+    Maintain the same style, lighting, and composition as the intended task (Format: ${currentAspectRatio}), but fix the specific detail mentioned.
   `;
 
   try {
@@ -243,7 +255,7 @@ export const regenerateSingleImage = async (
         },
         config: {
           imageConfig: {
-            aspectRatio: "1:1"
+            aspectRatio: currentAspectRatio as any
           }
         }
       });
@@ -283,9 +295,18 @@ export const generateReviewImages = async (
 
     // --- 1. Image Generation Prompt ---
     const imagePromptText = `
-      Generate a REALISTIC, CANDID CLIENT REVIEW PHOTO of a person wearing this exact clothing item.
+      Generate a REALISTIC, CANDID USER GENERATED CONTENT (UGC) photo.
+      The person is wearing this exact clothing item.
       
-      OUTPUT FORMAT: Square 1:1 Aspect Ratio.
+      FORMAT: Vertical Portrait (3:4).
+      
+      STYLE & QUALITY (CRITICAL):
+      - AMATEUR SMARTPHONE PHOTO.
+      - IMPERFECT COMPOSITION (Selfie angle or casual snapshot).
+      - DIGITAL NOISE / GRAIN IS DESIRED.
+      - REALISTIC LIGHTING (Bad lighting, harsh flash, or uneven natural light).
+      - NOT a professional studio photo. 
+      - LOOKS LIKE A REAL SOCIAL MEDIA REVIEW.
       
       DEMOGRAPHICS:
       - Gender: ${settings.gender}
@@ -293,23 +314,13 @@ export const generateReviewImages = async (
       - APPEARANCE: Ukrainian appearance (Slavic features).
       
       BODY TYPE (IMPORTANT):
-      - Slightly overweight.
       - Realistic "average" body type. 
       - NOT a skinny fashion model. 
-      - Looks like a real customer.
       
-      IDENTITY INSTRUCTION (CRITICAL - MUST BE UNIQUE):
-      - This person MUST look different from others.
-      - **SPECIFIC TRAIT TO APPLY**: Person is ${distinctLook}.
-      - VARY facial features significantly.
+      IDENTITY INSTRUCTION:
+      - Person is ${distinctLook}.
       
       SCENARIO: ${scenario}
-      
-      STYLE:
-      - Amateur smartphone photography style.
-      - Poor/Natural lighting (flash or daylight).
-      - Domestic/Everyday life setting.
-      - The clothing item must be clearly visible on the person.
       
       Random Seed: ${Date.now()}-${index}-${Math.random()}
     `;
@@ -323,8 +334,8 @@ export const generateReviewImages = async (
       CONTEXT of the photo: ${scenario}
       PERSONA: ${settings.gender}, ${settings.age}, Ukrainian customer.
       
-      TONE: Natural, like a real social media comment or shop review. Use emojis.
-      CONTENT: Mention fit, quality, or how it feels in the specific context (e.g., if walking a dog, say it's comfy for walks).
+      TONE: Informal, using slang or emojis. Like a real Instagram/TikTok comment.
+      CONTENT: Mention fit, quality, or how it feels.
       
       OUTPUT: Just the review text, nothing else.
     `;
@@ -339,7 +350,7 @@ export const generateReviewImages = async (
             { text: imagePromptText },
           ],
         },
-        config: { imageConfig: { aspectRatio: "1:1" } }
+        config: { imageConfig: { aspectRatio: "3:4" } }
       });
 
       const textPromise = ai.models.generateContent({
