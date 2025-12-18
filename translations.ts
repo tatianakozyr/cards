@@ -32,9 +32,9 @@ export const translations = {
       macroCollar: "Макро: Комір/Горловина",
       macroCuff: "Макро: Манжет/Рукав",
       macroPocket: "Макро: Кишеня/Фактура",
-      nature1: "На природі: Текстура Піску",
-      nature2: "На природі: Річкове Каміння",
-      nature3: "На природі: Зелена Трава"
+      nature1: "На природі: Зелена Трава",
+      nature2: "На природі: Щебінь",
+      nature3: "На природі: Асфальт"
     },
     gallerySections: {
       model: "Фото на моделі (Українська зовнішність)",
@@ -120,9 +120,9 @@ export const translations = {
       macroCollar: "Macro: Collar/Neckline",
       macroCuff: "Macro: Cuff/Sleeve",
       macroPocket: "Macro: Pocket/Texture",
-      nature1: "Nature: Sand Texture",
-      nature2: "Nature: River Stones",
-      nature3: "Nature: Green Grass"
+      nature1: "Nature: Green Grass",
+      nature2: "Nature: Crushed Stone",
+      nature3: "Nature: Asphalt"
     },
     gallerySections: {
       model: "Model Photography (Slavic Appearance)",
@@ -208,9 +208,9 @@ export const translations = {
       macroCollar: "Макро: Воротник",
       macroCuff: "Макро: Манжет",
       macroPocket: "Макро: Карман/Фактура",
-      nature1: "На природе: Текстура Песка",
-      nature2: "На природе: Речные Камни",
-      nature3: "На природе: Зеленая Трава"
+      nature1: "На природе: Зеленая Трава",
+      nature2: "На природе: Щебень",
+      nature3: "На природе: Асфальт"
     },
     gallerySections: {
       model: "Фото на модели (Украинская внешность)",
