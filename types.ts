@@ -22,7 +22,7 @@ export interface GeneratedImage {
     | 'review';
   description: string;
   textReview?: string;
-  correctionCount: number; // New field to track corrections
+  correctionCount: number;
 }
 
 export enum GenerationStatus {
@@ -39,10 +39,10 @@ export interface GenerationRequest {
 
 export type Language = 'uk' | 'en' | 'ru';
 
-export type Gender = 'female' | 'male';
 export type AgeGroup = '30-40' | '40-50' | '50+';
 
 export interface ReviewSettings {
-  gender: Gender;
+  situations: string[]; // Changed from single situation to multiple
+  reviewLanguage: Language;
   age: AgeGroup;
 }

@@ -1,3 +1,4 @@
+
 import React, { useState, useCallback } from 'react';
 import { ImageUploader } from './components/ImageUploader';
 import { ResultGallery } from './components/ResultGallery';
@@ -9,19 +10,18 @@ const App: React.FC = () => {
   const [currentLang, setCurrentLang] = useState<Language>('uk');
   const [sourceImage, setSourceImage] = useState<{ base64: string, mimeType: string } | null>(null);
   
-  // Results categorized
   const [allImages, setAllImages] = useState<GeneratedImage[]>([]);
   const [loadingCategories, setLoadingCategories] = useState<Set<string>>(new Set());
   const [error, setError] = useState<string | null>(null);
 
-  // Review Generation State
+  const t = translations[currentLang];
+
   const [reviewStatus, setReviewStatus] = useState<GenerationStatus>(GenerationStatus.IDLE);
   const [reviewSettings, setReviewSettings] = useState<ReviewSettings>({
-    gender: 'male',
+    situations: [], // Changed to empty array initially
+    reviewLanguage: currentLang,
     age: '30-40',
   });
-
-  const t = translations[currentLang];
 
   const handleImageSelected = useCallback((base64: string, mimeType: string) => {
     setSourceImage({ base64, mimeType });
@@ -43,7 +43,6 @@ const App: React.FC = () => {
       if (images.length === 0) {
         setError(t.errorNoImage);
       } else {
-        // Replace or Append? User usually wants fresh ones for the block
         setAllImages(prev => {
           const filtered = prev.filter(img => {
              if (category === 'model') return !img.type.startsWith('model');
@@ -70,11 +69,16 @@ const App: React.FC = () => {
 
   const handleRegenerateSingle = async (id: string, type: string, feedback: string) => {
     if (!sourceImage) return;
+    
+    // Find the image to fix in the state
+    const currentImg = allImages.find(img => img.id === id);
+    if (!currentImg) return;
 
     try {
       const newImageUrl = await regenerateSingleImage(
         sourceImage.base64,
         sourceImage.mimeType,
+        currentImg.url, // Passing current image URL for consistency
         type,
         feedback,
         currentLang
@@ -93,12 +97,25 @@ const App: React.FC = () => {
     }
   };
 
+  const toggleSituation = (key: string) => {
+    setReviewSettings(prev => {
+      const situations = prev.situations.includes(key)
+        ? prev.situations.filter(s => s !== key)
+        : [...prev.situations, key];
+      return { ...prev, situations };
+    });
+  };
+
   const handleGenerateReviews = async () => {
-    if (!sourceImage) return;
+    if (!sourceImage || reviewSettings.situations.length === 0) return;
     setReviewStatus(GenerationStatus.LOADING);
     
     try {
-      const images = await generateReviewImages(sourceImage.base64, sourceImage.mimeType, reviewSettings, currentLang);
+      // Map keys to their translated texts
+      const situationTexts = reviewSettings.situations.map(key => (t.reviews.situations as any)[key]);
+      const settingsForService = { ...reviewSettings, situations: situationTexts };
+
+      const images = await generateReviewImages(sourceImage.base64, sourceImage.mimeType, settingsForService, currentLang);
       setAllImages(prev => {
         const filtered = prev.filter(img => img.type !== 'review');
         return [...filtered, ...images];
@@ -113,15 +130,18 @@ const App: React.FC = () => {
   };
 
   const LanguageSelector = () => (
-    <div className="flex space-x-1 bg-white/50 backdrop-blur-md p-1 rounded-full border border-white/20 shadow-sm">
+    <div className="flex space-x-1 bg-white/50 backdrop-blur-md p-1 rounded-full border border-slate-200 shadow-sm">
       {(['uk', 'en', 'ru'] as Language[]).map((lang) => (
         <button
           key={lang}
-          onClick={() => setCurrentLang(lang)}
-          className={`px-3 py-1 rounded-full text-sm font-bold transition-all duration-300 ${
+          onClick={() => {
+            setCurrentLang(lang);
+            setReviewSettings(prev => ({ ...prev, reviewLanguage: lang }));
+          }}
+          className={`px-3 py-1 rounded-full text-xs font-bold transition-all duration-300 ${
             currentLang === lang 
-              ? 'bg-white text-violet-600 shadow-md transform scale-105' 
-              : 'text-slate-500 hover:text-slate-700 hover:bg-white/50'
+              ? 'bg-indigo-600 text-white shadow-md' 
+              : 'text-slate-500 hover:text-indigo-600'
           }`}
         >
           {lang.toUpperCase()}
@@ -133,21 +153,21 @@ const App: React.FC = () => {
   const categories: Exclude<ImageCategory, 'review'>[] = ['model', 'flatlay', 'macro', 'mannequin', 'nature'];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 pb-20 selection:bg-violet-200">
+    <div className="min-h-screen bg-slate-50 pb-20 selection:bg-indigo-100">
       <header className="fixed w-full top-0 z-50 bg-white/80 backdrop-blur-xl border-b border-slate-200 shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 h-20 flex items-center justify-between">
-          <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 bg-indigo-600 rounded-xl flex items-center justify-center text-white font-black shadow-lg">FS</div>
-            <h1 className="text-xl font-black text-slate-800 tracking-tight">{t.headerTitle}</h1>
+        <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
+          <div className="flex items-center space-x-2">
+            <div className="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center text-white font-black text-sm">MS</div>
+            <h1 className="text-lg font-black text-slate-800 tracking-tight">{t.headerTitle}</h1>
           </div>
           <LanguageSelector />
         </div>
       </header>
 
-      <main className="relative z-10 max-w-7xl mx-auto px-4 pt-32">
-        <div className="text-center mb-12">
-          <h2 className="text-4xl font-black text-slate-900 mb-4">{t.heroTitle}</h2>
-          <p className="text-lg text-slate-600 max-w-2xl mx-auto">{t.heroSubtitle}</p>
+      <main className="relative z-10 max-w-7xl mx-auto px-4 pt-24">
+        <div className="text-center mb-10">
+          <h2 className="text-3xl font-black text-slate-900 mb-2">{t.heroTitle}</h2>
+          <p className="text-slate-500 max-w-2xl mx-auto">{t.heroSubtitle}</p>
         </div>
 
         <ImageUploader 
@@ -157,23 +177,21 @@ const App: React.FC = () => {
         />
 
         {sourceImage && (
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-16">
+          <div className="flex flex-wrap justify-center gap-3 mb-12">
             {categories.map(cat => (
               <button
                 key={cat}
                 onClick={() => handleGenerateCategory(cat)}
                 disabled={loadingCategories.has(cat)}
-                className={`flex flex-col items-center justify-center p-6 rounded-3xl border-2 transition-all group
+                className={`flex items-center space-x-2 px-6 py-4 rounded-2xl border-2 transition-all font-bold text-sm
                   ${loadingCategories.has(cat) 
-                    ? 'bg-slate-50 border-slate-100 cursor-not-allowed opacity-50' 
-                    : 'bg-white border-slate-200 hover:border-indigo-500 hover:shadow-xl hover:-translate-y-1'}
+                    ? 'bg-slate-100 border-slate-100 cursor-not-allowed text-slate-400' 
+                    : 'bg-white border-slate-200 hover:border-indigo-600 hover:text-indigo-600 hover:shadow-md'}
                 `}
               >
-                <div className="text-slate-800 font-bold mb-2 group-hover:text-indigo-600">{t.gallerySections[cat]}</div>
-                {loadingCategories.has(cat) ? (
-                  <div className="animate-spin h-5 w-5 border-2 border-indigo-600 border-t-transparent rounded-full" />
-                ) : (
-                  <div className="text-xs text-slate-400 font-medium">{t.generateBtn}</div>
+                <span>{t.gallerySections[cat]}</span>
+                {loadingCategories.has(cat) && (
+                  <div className="animate-spin h-4 w-4 border-2 border-indigo-600 border-t-transparent rounded-full" />
                 )}
               </button>
             ))}
@@ -195,44 +213,79 @@ const App: React.FC = () => {
         )}
 
         {sourceImage && (
-          <div className="mt-20 max-w-3xl mx-auto bg-white rounded-3xl p-8 border border-slate-200 shadow-sm">
-             <div className="text-center mb-8">
-                <h3 className="text-2xl font-black text-slate-800">{t.reviews.title}</h3>
+          <div className="mt-16 max-w-5xl mx-auto bg-white rounded-3xl p-8 border border-slate-200 shadow-xl">
+             <div className="text-center mb-10">
+                <span className="text-xs font-black text-indigo-600 uppercase tracking-widest bg-indigo-50 px-3 py-1 rounded-full mb-4 inline-block">UGC Generator</span>
+                <h3 className="text-2xl font-black text-slate-800 mb-2">{t.reviews.title}</h3>
                 <p className="text-slate-500">{t.reviews.subtitle}</p>
              </div>
              
-             <div className="grid grid-cols-2 gap-4 mb-8">
-                <div>
-                   <label className="block text-xs font-black text-slate-400 uppercase mb-2 ml-1">{t.reviews.gender}</label>
-                   <select 
-                     className="w-full p-4 rounded-2xl bg-slate-50 border border-slate-100 outline-none focus:ring-2 focus:ring-indigo-500"
-                     value={reviewSettings.gender}
-                     onChange={(e) => setReviewSettings({...reviewSettings, gender: e.target.value as any})}
-                   >
-                      <option value="male">{t.reviews.options.male}</option>
-                      <option value="female">{t.reviews.options.female}</option>
-                   </select>
+             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+                <div className="md:col-span-2">
+                   <label className="block text-xs font-black text-slate-400 uppercase mb-4 ml-1">{t.reviews.situation} (виберіть декілька)</label>
+                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 h-64 overflow-y-auto p-2 border border-slate-100 rounded-2xl bg-slate-50/50">
+                      {Object.keys(t.reviews.situations).map(key => {
+                        const isSelected = reviewSettings.situations.includes(key);
+                        return (
+                          <button
+                            key={key}
+                            onClick={() => toggleSituation(key)}
+                            className={`p-3 text-left text-xs font-bold rounded-xl border transition-all ${
+                              isSelected 
+                                ? 'bg-indigo-600 border-indigo-600 text-white shadow-md' 
+                                : 'bg-white border-slate-100 text-slate-600 hover:border-indigo-200'
+                            }`}
+                          >
+                            {(t.reviews.situations as any)[key]}
+                          </button>
+                        );
+                      })}
+                   </div>
                 </div>
-                <div>
-                   <label className="block text-xs font-black text-slate-400 uppercase mb-2 ml-1">{t.reviews.age}</label>
-                   <select 
-                     className="w-full p-4 rounded-2xl bg-slate-50 border border-slate-100 outline-none focus:ring-2 focus:ring-indigo-500"
-                     value={reviewSettings.age}
-                     onChange={(e) => setReviewSettings({...reviewSettings, age: e.target.value as any})}
-                   >
-                      <option value="30-40">{t.reviews.options.age30_40}</option>
-                      <option value="40-50">{t.reviews.options.age40_50}</option>
-                      <option value="50+">{t.reviews.options.age50_plus}</option>
-                   </select>
+                
+                <div className="space-y-6">
+                   <div>
+                      <label className="block text-xs font-black text-slate-400 uppercase mb-2 ml-1">{t.reviews.age}</label>
+                      <select 
+                        className="w-full p-4 rounded-2xl bg-slate-50 border border-slate-200 outline-none focus:ring-2 focus:ring-indigo-500"
+                        value={reviewSettings.age}
+                        onChange={(e) => setReviewSettings({...reviewSettings, age: e.target.value as any})}
+                      >
+                         <option value="30-40">{t.reviews.options.age30_40}</option>
+                         <option value="40-50">{t.reviews.options.age40_50}</option>
+                         <option value="50+">{t.reviews.options.age50_plus}</option>
+                      </select>
+                   </div>
+                   <div>
+                      <label className="block text-xs font-black text-slate-400 uppercase mb-2 ml-1">{t.reviews.reviewLang}</label>
+                      <select 
+                        className="w-full p-4 rounded-2xl bg-slate-50 border border-slate-200 outline-none focus:ring-2 focus:ring-indigo-500"
+                        value={reviewSettings.reviewLanguage}
+                        onChange={(e) => setReviewSettings({...reviewSettings, reviewLanguage: e.target.value as any})}
+                      >
+                         <option value="uk">Українська</option>
+                         <option value="en">English</option>
+                         <option value="ru">Русский</option>
+                      </select>
+                   </div>
                 </div>
              </div>
              
              <button
                onClick={handleGenerateReviews}
-               disabled={reviewStatus === GenerationStatus.LOADING}
-               className="w-full py-5 rounded-2xl bg-indigo-600 text-white font-black shadow-lg hover:bg-indigo-700 disabled:bg-slate-300 transition-all flex items-center justify-center"
+               disabled={reviewStatus === GenerationStatus.LOADING || reviewSettings.situations.length === 0}
+               className="w-full py-5 rounded-2xl bg-indigo-600 text-white font-black shadow-lg hover:bg-indigo-700 disabled:bg-slate-300 transition-all flex items-center justify-center space-x-3 group"
              >
-               {reviewStatus === GenerationStatus.LOADING ? <div className="animate-spin h-5 w-5 border-2 border-white border-t-transparent rounded-full" /> : t.reviews.generateBtn}
+               {reviewStatus === GenerationStatus.LOADING ? (
+                 <div className="animate-spin h-5 w-5 border-2 border-white border-t-transparent rounded-full" />
+               ) : (
+                 <>
+                   <span>{t.reviews.generateBtn} ({reviewSettings.situations.length})</span>
+                   <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 transform group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                   </svg>
+                 </>
+               )}
              </button>
           </div>
         )}
