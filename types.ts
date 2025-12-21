@@ -1,3 +1,5 @@
+export type ImageCategory = 'model' | 'flatlay' | 'macro' | 'mannequin' | 'nature' | 'review';
+
 export interface GeneratedImage {
   id: string;
   url: string;
@@ -19,7 +21,8 @@ export interface GeneratedImage {
     | 'nature-3'
     | 'review';
   description: string;
-  textReview?: string; // New field for the text content of the review
+  textReview?: string;
+  correctionCount: number; // New field to track corrections
 }
 
 export enum GenerationStatus {
@@ -37,11 +40,9 @@ export interface GenerationRequest {
 export type Language = 'uk' | 'en' | 'ru';
 
 export type Gender = 'female' | 'male';
-// Updated age groups per request
-export type AgeGroup = '20-30' | '30-40' | '40-50' | '50+';
+export type AgeGroup = '30-40' | '40-50' | '50+';
 
 export interface ReviewSettings {
   gender: Gender;
   age: AgeGroup;
-  // Ethnicity removed
 }

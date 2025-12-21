@@ -1,5 +1,5 @@
 import { GoogleGenAI } from "@google/genai";
-import { GeneratedImage, Language, ReviewSettings } from "../types";
+import { GeneratedImage, Language, ReviewSettings, ImageCategory } from "../types";
 import { translations } from "../translations";
 
 const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
@@ -11,33 +11,39 @@ const stripBase64Header = (base64: string): string => {
 export const PROMPTS_CONFIG = [
   // --- 3 MODEL SHOTS ---
   {
+    category: 'model',
     type: 'model-front',
     key: 'modelFront',
-    text: "Generate a professional 1:1 SQUARE format fashion photography shot of a model wearing this exact clothing item. \n\nCRITICAL MODEL INSTRUCTION:\n- The model MUST have UKRAINIAN APPEARANCE (Slavic features).\n- IGNORE original model ethnicity.\n\nVIEWPOINT: FRONT view.\n- The model's face must NOT be visible (crop just below nose).\n- Include model's feet. Clean neutral studio wall."
+    text: "Generate a professional 1:1 SQUARE format fashion photography shot of a model wearing this exact clothing item. \n\nCRITICAL MODEL INSTRUCTION:\n- The model MUST have UKRAINIAN APPEARANCE (Slavic features).\n- IGNORE original model ethnicity.\n\nVIEWPOINT: FRONT view.\n\nCROP & COMPOSITION (CRITICAL):\n- The camera must be positioned so that the FACE DOES NOT FIT into the top of the frame.\n- Start the frame from the NECK or COLLARBONES downward.\n- The head is physically outside the image bounds.\n- Include model's feet. Clean neutral studio wall."
   },
   {
+    category: 'model',
     type: 'model-back',
     key: 'modelBack',
-    text: "Generate a professional 1:1 SQUARE format fashion photography shot of a model wearing this exact clothing item. \n\nCRITICAL MODEL INSTRUCTION: UKRAINIAN APPEARANCE.\n\nVIEWPOINT: BACK view.\n- No face visible. Focus on the fit from behind. Clean neutral studio wall."
+    text: "Generate a professional 1:1 SQUARE format fashion photography shot of a model wearing this exact clothing item. \n\nCRITICAL MODEL INSTRUCTION: UKRAINIAN APPEARANCE.\n\nVIEWPOINT: BACK view.\n\nCROP & COMPOSITION:\n- The frame must be cropped below head level.\n- Focus on the fit from behind. The head and hair are excluded from the frame. Clean neutral studio wall."
   },
   {
+    category: 'model',
     type: 'model-profile',
     key: 'modelProfile',
-    text: "Generate a professional 1:1 SQUARE format fashion photography shot of a model wearing this exact clothing item. \n\nCRITICAL MODEL INSTRUCTION: UKRAINIAN APPEARANCE.\n\nVIEWPOINT: SIDE PROFILE view.\n- No face visible. Show the silhouette and fit from the side. Clean neutral studio wall."
+    text: "Generate a professional 1:1 SQUARE format fashion photography shot of a model wearing this exact clothing item. \n\nCRITICAL MODEL INSTRUCTION: UKRAINIAN APPEARANCE.\n\nVIEWPOINT: SIDE PROFILE view.\n\nCROP & COMPOSITION:\n- The frame starts from the shoulders/neck downward.\n- Ensure the face is completely outside the top border of the shot. Clean neutral studio wall."
   },
 
   // --- 3 FLATLAY SHOTS ---
   {
+    category: 'flatlay',
     type: 'flatlay-decor',
     key: 'flatlayDecor',
     text: "Generate a professional 1:1 SQUARE format STYLED FLAT LAY. Background: CONTRASTING PASTEL PAPER. Decor: Minimalist magazines and dried flowers."
   },
   {
+    category: 'flatlay',
     type: 'flatlay-shoes',
     key: 'flatlayShoes',
     text: "Generate a professional 1:1 SQUARE format STYLED FLAT LAY. Background: SMOOTH CONCRETE or WHITE MARBLE texture. Props: Pair of stylish SHOES/SNEAKERS nearby."
   },
   {
+    category: 'flatlay',
     type: 'flatlay-accessories',
     key: 'flatlayAccessories',
     text: "Generate a professional 1:1 SQUARE format STYLED FLAT LAY. Background: WARM WOODEN SURFACE. Props: Matching ACCESSORIES arranged artistically."
@@ -45,16 +51,19 @@ export const PROMPTS_CONFIG = [
 
   // --- 3 MACRO SHOTS ---
   {
+    category: 'macro',
     type: 'macro-collar',
     key: 'macroCollar',
     text: "Generate a 1:1 SQUARE high-end MACRO CLOSE-UP focusing strictly on the COLLAR or NECKLINE. Extreme detail on stitching and label."
   },
   {
+    category: 'macro',
     type: 'macro-cuff',
     key: 'macroCuff',
     text: "Generate a 1:1 SQUARE high-end MACRO CLOSE-UP focusing strictly on the SLEEVE CUFF. Extreme detail on ribbing/buttons."
   },
   {
+    category: 'macro',
     type: 'macro-pocket',
     key: 'macroPocket',
     text: "Generate a 1:1 SQUARE high-end MACRO CLOSE-UP focusing strictly on a POCKET or unique TEXTURE detail."
@@ -62,41 +71,47 @@ export const PROMPTS_CONFIG = [
 
   // --- 3 GHOST MANNEQUIN SHOTS ---
   {
+    category: 'mannequin',
     type: 'mannequin-far',
     key: 'mannequinFar',
     text: "Generate a 1:1 SQUARE 'GHOST MANNEQUIN' effect (floating). FAR / FULL VIEW. Clean gradient background."
   },
   {
+    category: 'mannequin',
     type: 'mannequin-close',
     key: 'mannequinClose',
     text: "Generate a 1:1 SQUARE 'GHOST MANNEQUIN' effect. CLOSE-UP / ZOOMED IN on torso fit."
   },
   {
+    category: 'mannequin',
     type: 'mannequin-angle',
     key: 'mannequinAngle',
     text: "Generate a 1:1 SQUARE 'GHOST MANNEQUIN' effect. 3/4 TURN / SIDE ANGLE revealing depth."
   },
 
-  // --- 3 NATURE SHOTS (Grass, Crushed Stone, Asphalt) ---
+  // --- 3 NATURE SHOTS ---
   {
+    category: 'nature',
     type: 'nature-1',
     key: 'nature1',
     text: "Generate a professional 1:1 SQUARE product photo. The item is laid out naturally on FRESH GREEN GRASS / LAWN. Bright sunlight, organic vibe."
   },
   {
+    category: 'nature',
     type: 'nature-2',
     key: 'nature2',
     text: "Generate a professional 1:1 SQUARE product photo. The item is laid out on GREY CRUSHED STONE / GRAVEL surface. High texture contrast, urban outdoor vibe."
   },
   {
+    category: 'nature',
     type: 'nature-3',
     key: 'nature3',
-    text: "Generate a professional 1:1 SQUARE product photo. The item is laid out on DARK URBAN ASPHALT surface. Modern, clean street fashion style."
+    text: "Generate a professional 1:1 SQUARE product photo. The item is laid out on a NATURAL DARK SLATE or STONE SLAB surface. Luxury natural texture, high detail."
   }
 ];
 
 const DISTINCT_LOOKS = [
-  "wearing stylish glasses and hair tied back",
+  "with a clean-shaven or bearded face and short masculine hair",
   "with curly / wavy voluminous hair",
   "with short, modern chic hair",
   "wearing a beanie or hat",
@@ -109,28 +124,29 @@ const DISTINCT_LOOKS = [
 ];
 
 const REVIEW_PROMPTS_MAP = [
-  "Selfie in a mirror at home (messy room background).",
-  "Standing in a fitting room (shopping mall lighting).",
-  "Outdoors in a park, holding a coffee cup, casual pose.",
-  "Sitting on a couch/sofa at home, relaxed pose.",
-  "Full body shot in a hallway mirror.",
-  "Walking on the street (blurry background, dynamic).",
-  "Close up selfie showing the top part of the item.",
-  "In a car (passenger seat selfie).",
-  "With a pet (dog or cat) at home.",
-  "Picnic style on grass/blanket.",
-  "Near a textured wall (brick or concrete) outside."
+  "Selfie in a mirror at home.",
+  "Standing in a fitting room.",
+  "Outdoors in a park.",
+  "Sitting on a couch at home.",
+  "Full body shot in a mirror.",
+  "Walking on the street.",
+  "Close up selfie.",
+  "In a car.",
+  "With a pet at home.",
+  "Picnic style outdoors."
 ];
 
-export const generateProductImages = async (
-  base64Image: string, 
+export const generateCategoryImages = async (
+  base64Image: string,
   mimeType: string,
+  category: Exclude<ImageCategory, 'review'>,
   lang: Language
 ): Promise<GeneratedImage[]> => {
   const cleanBase64 = stripBase64Header(base64Image);
   const t = translations[lang];
-  
-  const promises = PROMPTS_CONFIG.map(async (promptData, index) => {
+  const configToRun = PROMPTS_CONFIG.filter(item => item.category === category);
+
+  const promises = configToRun.map(async (promptData, index) => {
     try {
       const response = await ai.models.generateContent({
         model: 'gemini-2.5-flash-image', 
@@ -159,13 +175,14 @@ export const generateProductImages = async (
       const description = t.prompts[promptData.key as keyof typeof t.prompts];
 
       return {
-        id: `img-${index}-${Date.now()}`,
+        id: `img-${category}-${index}-${Date.now()}`,
         url: imageUrl,
         type: promptData.type as any,
-        description: description
+        description: description,
+        correctionCount: 0
       };
     } catch (error) {
-      console.error(`Error generating image ${index + 1}:`, error);
+      console.error(`Error generating image in category ${category}:`, error);
       return null;
     }
   });
@@ -230,33 +247,34 @@ export const generateReviewImages = async (
   const scenarios = REVIEW_PROMPTS_MAP.slice(0, 10); 
 
   const promises = scenarios.map(async (scenario, index): Promise<GeneratedImage | null> => {
-    const distinctLook = DISTINCT_LOOKS[index % DISTINCT_LOOKS.length];
+    let distinctLook = DISTINCT_LOOKS[index % DISTINCT_LOOKS.length];
+
+    const genderConstraint = settings.gender === 'male'
+      ? "The person is a man and MUST HAVE SHORT HAIR. No long hair, no ponytails, no braids."
+      : "The person is a woman and MUST NOT WEAR ANY HATS, CAPS, BEANIES, OR HEADWEAR.";
+    
+    if (settings.gender === 'male' && distinctLook.includes('hair tied back')) {
+        distinctLook = "with masculine short hair";
+    }
+    if (settings.gender === 'female' && (distinctLook.includes('beanie') || distinctLook.includes('hat'))) {
+        distinctLook = "with long healthy natural hair";
+    }
 
     const imagePromptText = `
       Generate a REALISTIC, CANDID USER GENERATED CONTENT (UGC) photo.
       The person is wearing this exact clothing item.
-      
       FORMAT: Vertical Portrait (3:4).
-      
-      STYLE & QUALITY (CRITICAL):
-      - AMATEUR SMARTPHONE PHOTO QUALITY.
-      - IMPERFECT COMPOSITION (Selfie angle or casual snapshot).
-      - DIGITAL NOISE AND GRAIN ARE MANDATORY.
-      - REALISTIC LIGHTING (Dim, harsh flash, or natural uneven light).
-      - NOT A STUDIO PHOTO. 
-      - LOOKS LIKE A REAL SOCIAL MEDIA REVIEW.
-      
+      STYLE: AMATEUR SMARTPHONE PHOTO, digital noise, realistic lighting.
       DEMOGRAPHICS: ${settings.gender}, ${settings.age} years old, Ukrainian appearance.
       IDENTITY: Person is ${distinctLook}.
+      ${genderConstraint}
       SCENARIO: ${scenario}
-      
       Random Seed: ${Date.now()}-${index}-${Math.random()}
     `;
 
     const textPromptText = `
       Write a short, enthusiastic, 5-star customer review (1-2 sentences) in ${lang === 'uk' ? 'Ukrainian' : lang === 'ru' ? 'Russian' : 'English'}.
       Context: ${scenario}. Use emojis.
-      Output: Just the text.
     `;
 
     try {
@@ -298,7 +316,8 @@ export const generateReviewImages = async (
         url: imageUrl,
         type: 'review',
         description: t.reviews.scenarios[index] || scenario,
-        textReview: textReview
+        textReview: textReview,
+        correctionCount: 0
       };
     } catch (error) {
       console.error(`Error generating review ${index}:`, error);
