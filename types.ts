@@ -1,3 +1,4 @@
+
 export type ImageCategory = 'model' | 'flatlay' | 'macro' | 'mannequin' | 'nature' | 'review';
 
 export interface GeneratedImage {

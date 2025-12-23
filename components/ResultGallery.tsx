@@ -1,3 +1,4 @@
+
 import React, { useState, useMemo } from 'react';
 import { GeneratedImage } from '../types';
 import { Translation } from '../translations';
@@ -55,14 +56,15 @@ export const ResultGallery: React.FC<ResultGalleryProps> = ({
     setFeedback("");
   };
 
-  const submitRegeneration = async () => {
-    if (!editingImage || !feedback.trim()) return;
+  const submitRegeneration = async (forcedFeedback?: string) => {
+    const finalFeedback = forcedFeedback || feedback;
+    if (!editingImage || !finalFeedback.trim()) return;
     const id = editingImage.id;
     setLoadingIds(prev => new Set(prev).add(id));
     setEditingImage(null);
 
     try {
-      await onRegenerateSingle(id, editingImage.type, feedback);
+      await onRegenerateSingle(id, editingImage.type, finalFeedback);
     } catch (e) {
       console.error(e);
       alert("Failed to regenerate image.");
@@ -163,6 +165,7 @@ export const ResultGallery: React.FC<ResultGalleryProps> = ({
         <div className="fixed inset-0 z-[100] bg-slate-900/40 backdrop-blur-md flex items-center justify-center p-4">
           <div className="bg-white rounded-3xl p-8 max-w-lg w-full shadow-2xl">
              <h3 className="text-xl font-black text-slate-900 mb-6">{t.singleRegen.modalTitle}</h3>
+             
              <textarea
                className="w-full p-4 rounded-2xl bg-slate-50 border border-slate-100 focus:ring-2 focus:ring-indigo-500 outline-none h-32 text-sm"
                placeholder={t.singleRegen.placeholder}
@@ -171,7 +174,7 @@ export const ResultGallery: React.FC<ResultGalleryProps> = ({
              />
              <div className="flex justify-end space-x-2 mt-6">
                <button onClick={() => setEditingImage(null)} className="px-6 py-3 font-bold text-slate-400">{t.singleRegen.cancel}</button>
-               <button onClick={submitRegeneration} disabled={!feedback.trim()} className="px-6 py-3 rounded-2xl bg-indigo-600 text-white font-black shadow-lg disabled:opacity-50">
+               <button onClick={() => submitRegeneration()} disabled={!feedback.trim()} className="px-6 py-3 rounded-2xl bg-indigo-600 text-white font-black shadow-lg disabled:opacity-50">
                  {t.singleRegen.submit}
                </button>
              </div>

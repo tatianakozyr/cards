@@ -1,3 +1,4 @@
+
 import { Language } from "./types";
 
 export const translations = {
@@ -26,9 +27,9 @@ export const translations = {
       flatlayDecor: "Студія: Декор",
       flatlayShoes: "Студія: З взуттям",
       flatlayAccessories: "Студія: Аксесуари",
-      mannequinFar: "У повітрі: Загальний план",
-      mannequinClose: "У повітрі: Крупно",
-      mannequinAngle: "У повітрі: Ракурс",
+      mannequinFar: "У повітрі: Віддалено",
+      mannequinClose: "У повітрі: Наближено",
+      mannequinAngle: "У повітрі: Впівоберти",
       macroCollar: "Деталі: Комір",
       macroCuff: "Деталі: Манжет",
       macroPocket: "Деталі: Кишеня",
@@ -60,7 +61,15 @@ export const translations = {
       cancel: "Скасувати",
       regenerating: "Оновлюємо...",
       limitReached: "Ліміт 3 виправлень вичерпано",
-      remaining: "Виправлень залишилось: "
+      remaining: "Виправлень залишилось: ",
+      suggestions: "Швидкі варіанти:",
+      mannequinFixes: {
+        warm: "Тепле сонячне світло",
+        cool: "Холодне студійне світло",
+        dark: "Темний драматичний фон",
+        abstract: "Абстрактний геометричний фон",
+        white: "Чистий білий фон"
+      }
     },
     reviews: {
       title: "Генератор Побутових Відгуків",
@@ -120,9 +129,9 @@ export const translations = {
       flatlayDecor: "Studio: Decor",
       flatlayShoes: "Studio: With Shoes",
       flatlayAccessories: "Studio: Accessories",
-      mannequinFar: "Air: Full View",
-      mannequinClose: "Air: Zoom",
-      mannequinAngle: "Air: Angle",
+      mannequinFar: "Air: Full Shot",
+      mannequinClose: "Air: Zoom Shot",
+      mannequinAngle: "Air: 3/4 View",
       macroCollar: "Detail: Collar",
       macroCuff: "Detail: Cuff",
       macroPocket: "Detail: Pocket",
@@ -154,7 +163,15 @@ export const translations = {
       cancel: "Cancel",
       regenerating: "Updating...",
       limitReached: "Max 3 fixes reached",
-      remaining: "Fixes left: "
+      remaining: "Fixes left: ",
+      suggestions: "Quick Options:",
+      mannequinFixes: {
+        warm: "Warm Golden Hour Light",
+        cool: "Cool Studio Lighting",
+        dark: "Moody Dark Background",
+        abstract: "Abstract Geometric Background",
+        white: "Clean White Background"
+      }
     },
     reviews: {
       title: "Candid Review Generator",
@@ -203,20 +220,20 @@ export const translations = {
     generatingBtn: "Генерируем...",
     errorGeneric: "Ошибка AI сервиса.",
     errorNoImage: "Не удалось сгенерировать.",
-    resultsTitle: "Результаты",
+    resultsTitle: "Results",
     downloadBtn: "Скачать",
     retryTitle: "Не понравилось?",
     retryBtn: "Переделать",
     prompts: {
       modelFront: "Модель: Спереди (Без лица)",
       modelBack: "Модель: Сзади (Без головы)",
-      modelProfile: "Модель: Профиль (Без лица)",
+      modelProfile: "Модель: Профіль (Без лица)",
       flatlayDecor: "Студия: Декор",
       flatlayShoes: "Студия: С обувью",
       flatlayAccessories: "Студия: Аксессуары",
-      mannequinFar: "В воздухе: Общий план",
-      mannequinClose: "В воздухе: Крупно",
-      mannequinAngle: "В воздухе: Ракурс",
+      mannequinFar: "В воздухе: Удаленно",
+      mannequinClose: "В воздухе: Вблизи",
+      mannequinAngle: "В воздухе: Вполоборота",
       macroCollar: "Детали: Воротник",
       macroCuff: "Детали: Манжет",
       macroPocket: "Детали: Карман",
@@ -244,11 +261,19 @@ export const translations = {
       editBtn: "Исправить",
       modalTitle: "Исправить изображение",
       placeholder: "Например: 'сделай чуть светлее'",
-      submit: "Обновить",
+      submit: "Оновити",
       cancel: "Отмена",
       regenerating: "Обновляем...",
       limitReached: "Лимит 3 исправлений исчерпан",
-      remaining: "Осталось исправлений: "
+      remaining: "Осталось исправлений: ",
+      suggestions: "Быстрые варианты:",
+      mannequinFixes: {
+        warm: "Теплый солнечный свет",
+        cool: "Холодный студийный свет",
+        dark: "Темный драматичный фон",
+        abstract: "Абстрактный геометрический фон",
+        white: "Чистый белый фон"
+      }
     },
     reviews: {
       title: "Генератор Бытовых Отзывов",
