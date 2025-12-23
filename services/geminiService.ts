@@ -87,19 +87,19 @@ export const PROMPTS_CONFIG = [
     category: 'mannequin',
     type: 'mannequin-far',
     key: 'mannequinFar',
-    text: "Professional 1:1 SQUARE product photo of the garment worn by an INVISIBLE GHOST MANNEQUIN. Remote full shot. Perfectly centered. Clean white studio background. Sharp shadows."
+    text: "Professional 1:1 SQUARE ghost mannequin product photo. ONLY the garment is visible, floating in the air. Remote full shot. Perfectly centered. NO body parts, NO face, NO hands, NO shoes, NO mannequin stand. Purely the garment alone. Clean white studio background. Sharp shadows."
   },
   {
     category: 'mannequin',
     type: 'mannequin-close',
     key: 'mannequinClose',
-    text: "Professional 1:1 SQUARE product photo of the garment worn by an INVISIBLE GHOST MANNEQUIN. Close-up zoomed shot of the torso and chest area. High detail. White background."
+    text: "Professional 1:1 SQUARE ghost mannequin product photo. Close-up zoomed shot of the garment torso, floating in air. ONLY the garment is visible. NO body parts, NO shoes, NO mannequin visible. High fabric detail. Clean white background."
   },
   {
     category: 'mannequin',
     type: 'mannequin-angle',
     key: 'mannequinAngle',
-    text: "Professional 1:1 SQUARE product photo of the garment worn by an INVISIBLE GHOST MANNEQUIN. 3/4 turn (half-turn) angle view. Dynamic lighting. White studio background."
+    text: "Professional 1:1 SQUARE ghost mannequin product photo. 3/4 turn angle view of the garment floating in the air. ONLY the garment is visible. NO body parts, NO shoes, NO accessories, NO mannequin visible. Clean white studio background."
   },
   {
     category: 'nature',
