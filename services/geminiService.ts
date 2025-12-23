@@ -29,24 +29,68 @@ export const PROMPTS_CONFIG = [
     key: 'modelProfile',
     text: "Professional 1:1 SQUARE fashion shot. MAN wearing this item. SIDE PROFILE. Face outside top border. Studio wall."
   },
+  // --- Flatlay Section (Updated with 10 detailed sport/active themes) ---
   {
     category: 'flatlay',
-    type: 'flatlay-decor',
-    key: 'flatlayDecor',
-    text: "1:1 SQUARE STYLED FLAT LAY. Background: PASTEL PAPER. Decor: Magazines."
+    type: 'flatlay-gym',
+    key: 'flatlayGym',
+    text: "Professional 1:1 SQUARE flatlay. The central focus is the GARMENT. Composition: flat lay with training sneakers, sports bottle, and towel. Background: dark grey concrete gym floor. High contrast lighting. Authentic athletic vibe."
   },
   {
     category: 'flatlay',
-    type: 'flatlay-shoes',
-    key: 'flatlayShoes',
-    text: "1:1 SQUARE STYLED FLAT LAY. Background: CONCRETE. Props: Sneakers."
+    type: 'flatlay-street',
+    key: 'flatlayStreet',
+    text: "Professional 1:1 SQUARE flatlay. The central focus is the GARMENT. Composition: street/chunky sneakers, baseball cap, and over-ear headphones. Background: cold grey asphalt. Urban sport style, cool neutral tones."
   },
   {
     category: 'flatlay',
-    type: 'flatlay-accessories',
-    key: 'flatlayAccessories',
-    text: "1:1 SQUARE STYLED FLAT LAY. Background: WOOD. Props: Men's accessories."
+    type: 'flatlay-running',
+    key: 'flatlayRunning',
+    text: "Professional 1:1 SQUARE flatlay. The central focus is the GARMENT. Composition: lightweight running shoes, sports watch, and headband/buff. Background: matte light grey studio surface. Breathable and movement-oriented atmosphere."
   },
+  {
+    category: 'flatlay',
+    type: 'flatlay-cold',
+    key: 'flatlayCold',
+    text: "Professional 1:1 SQUARE flatlay. The central focus is the GARMENT. Composition: winter training gloves, neck buff, and a metal thermos. Background: dark graphite concrete. Cold-weather training theme."
+  },
+  {
+    category: 'flatlay',
+    type: 'flatlay-home',
+    key: 'flatlayHome',
+    text: "Professional 1:1 SQUARE flatlay. The central focus is the GARMENT. Composition: fitness resistance bands, bottle of water, and a sports timer/watch. Background: warm natural wood surface. Home discipline theme."
+  },
+  {
+    category: 'flatlay',
+    type: 'flatlay-minimal',
+    key: 'flatlayMinimal',
+    text: "Professional 1:1 SQUARE flatlay. The central focus is the GARMENT. Composition: minimal sneakers, sleek digital watch, and a smartphone. Background: perfectly clean solid grey surface. Functional and modern aesthetic."
+  },
+  {
+    category: 'flatlay',
+    type: 'flatlay-outdoor',
+    key: 'flatlayOutdoor',
+    text: "Professional 1:1 SQUARE flatlay. The central focus is the GARMENT. Composition: trail running shoes, folded lightweight windbreaker, and an outdoor flask. Background: dark wood and natural stone elements. Wilderness and freedom theme."
+  },
+  {
+    category: 'flatlay',
+    type: 'flatlay-power',
+    key: 'flatlayPower',
+    text: "Professional 1:1 SQUARE flatlay. The central focus is the GARMENT. Composition: weightlifting straps/gloves, protein shaker, and a rugged watch. Background: industrial rough concrete. Strength and power vibe."
+  },
+  {
+    category: 'flatlay',
+    type: 'flatlay-after',
+    key: 'flatlayAfter',
+    text: "Professional 1:1 SQUARE flatlay. The central focus is the GARMENT. Composition: folded towel, thermos, and sneakers. Background: warm grey-brown aesthetic surface. Recovery and post-training calm theme."
+  },
+  {
+    category: 'flatlay',
+    type: 'flatlay-active',
+    key: 'flatlayActive',
+    text: "Professional 1:1 SQUARE flatlay. The central focus is the GARMENT. Composition: lifestyle sneakers, urban backpack, and wireless headphones. Background: city urban concrete. All-day active movement theme."
+  },
+  // --- End of Flatlay Section ---
   {
     category: 'macro',
     type: 'macro-collar',
@@ -163,8 +207,7 @@ export const generateCategoryImages = async (
         id: `img-${category}-${index}-${Date.now()}`,
         url: imageUrl,
         type: promptData.type as any,
-        description: description,
-        correctionCount: 0
+        description: description
       };
     } catch (error) {
       console.error(`Error generating image in category ${category}:`, error);
@@ -174,66 +217,6 @@ export const generateCategoryImages = async (
 
   const results = await Promise.all(promises);
   return results.filter((res): res is GeneratedImage => res !== null);
-};
-
-export const regenerateSingleImage = async (
-  sourceBase64: string,
-  sourceMimeType: string,
-  currentGeneratedBase64: string,
-  imageType: string, 
-  userFeedback: string,
-  lang: Language
-): Promise<string | null> => {
-  const cleanSource = stripBase64Header(sourceBase64);
-  const cleanCurrent = stripBase64Header(currentGeneratedBase64);
-  const currentAspectRatio = imageType === 'review' ? "3:4" : "1:1";
-
-  // New logic: Primary focus on the GENERATED image (current state)
-  const refinedPrompt = `
-    ACTION: YOU ARE AN EXPERT PHOTO EDITOR. 
-    YOUR TASK IS TO MODIFY THE "IMAGE_TO_EDIT" TO SATISFY THIS REQUEST: "${userFeedback}".
-
-    RESOURCES PROVIDED:
-    1. IMAGE_TO_EDIT (The generated image you must modify).
-    2. SOURCE_GARMENT_REFERENCE (The original clothing photo). 
-    
-    CRITICAL INSTRUCTIONS:
-    - Focus 100% on changing the "IMAGE_TO_EDIT". 
-    - Use "SOURCE_GARMENT_REFERENCE" ONLY as a reference to ensure the clothing item itself (texture, color, labels) remains identical. Do not restart from the source photo.
-    - Transform the background, lighting, model pose, or composition of the "IMAGE_TO_EDIT" based ONLY on the user request: "${userFeedback}".
-    - The output must be a new high-quality image that looks like a corrected version of the current one.
-  `;
-
-  try {
-      const response = await ai.models.generateContent({
-        model: 'gemini-2.5-flash-image', 
-        contents: {
-          parts: [
-            { inlineData: { data: cleanCurrent, mimeType: 'image/png' }, text: "IMAGE_TO_EDIT (Primary workspace - modify this!)" },
-            { inlineData: { data: cleanSource, mimeType: sourceMimeType }, text: "SOURCE_GARMENT_REFERENCE (Reference for clothing identity only)" },
-            { text: refinedPrompt },
-          ],
-        },
-        config: { 
-          imageConfig: { aspectRatio: currentAspectRatio as any },
-          temperature: 0.95 // High temperature for creative editing
-        }
-      });
-
-      const candidate = response.candidates?.[0];
-      const parts = candidate?.content?.parts;
-      if (parts) {
-        for (const part of parts) {
-          if (part.inlineData && part.inlineData.data) {
-             return `data:${part.inlineData.mimeType || 'image/png'};base64,${part.inlineData.data}`;
-          }
-        }
-      }
-      return null;
-  } catch (error) {
-    console.error("Error regeneration failed:", error);
-    throw error;
-  }
 };
 
 /**
@@ -368,8 +351,7 @@ export const generateReviewImages = async (
         url: imageUrl,
         type: 'review',
         description: situation,
-        textReview: txtResp.text?.trim() || "Great quality!",
-        correctionCount: 0
+        textReview: txtResp.text?.trim() || "Great quality!"
       };
     } catch (error) {
       console.error("Error generating review image:", error);

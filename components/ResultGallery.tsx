@@ -6,20 +6,13 @@ import React, { useState, useMemo } from 'react';
 interface ResultGalleryProps {
   images: GeneratedImage[];
   t: Translation;
-  onRegenerateSingle: (id: string, type: string, feedback: string) => Promise<void>;
 }
 
 export const ResultGallery: React.FC<ResultGalleryProps> = ({ 
   images, 
-  t, 
-  onRegenerateSingle 
+  t 
 }) => {
   const [selectedImage, setSelectedImage] = useState<GeneratedImage | null>(null);
-  const [editingImage, setEditingImage] = useState<GeneratedImage | null>(null);
-  const [feedback, setFeedback] = useState("");
-  const [loadingIds, setLoadingIds] = useState<Set<string>>(new Set());
-
-  const MAX_CORRECTIONS = 3;
 
   const groupedImages = useMemo(() => {
     const groups: Record<string, GeneratedImage[]> = {};
@@ -49,38 +42,6 @@ export const ResultGallery: React.FC<ResultGalleryProps> = ({
 
   if (images.length === 0) return null;
 
-  const handleEditClick = (e: React.MouseEvent, img: GeneratedImage) => {
-    e.stopPropagation();
-    if (img.correctionCount >= MAX_CORRECTIONS) return;
-    setEditingImage(img);
-    setFeedback("");
-  };
-
-  const submitRegeneration = async (forcedFeedback?: string) => {
-    const finalFeedback = forcedFeedback || feedback;
-    if (!editingImage || !finalFeedback.trim()) return;
-    
-    const id = editingImage.id;
-    const type = editingImage.type;
-    
-    setLoadingIds(prev => new Set(prev).add(id));
-    setEditingImage(null);
-    setFeedback("");
-
-    try {
-      await onRegenerateSingle(id, type, finalFeedback);
-    } catch (e) {
-      console.error(e);
-      alert("Failed to regenerate image.");
-    } finally {
-      setLoadingIds(prev => {
-        const newSet = new Set(prev);
-        newSet.delete(id);
-        return newSet;
-      });
-    }
-  };
-
   return (
     <>
       <div className="w-full max-w-6xl mx-auto relative mt-10">
@@ -96,21 +57,12 @@ export const ResultGallery: React.FC<ResultGalleryProps> = ({
 
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 {section.items.map((img) => {
-                  const isLoading = loadingIds.has(img.id);
                   const isReview = img.type === 'review';
                   const aspectRatioClass = isReview ? 'aspect-[3/4]' : 'aspect-square';
                   const containerClass = "bg-white rounded-3xl shadow-sm border border-slate-200 overflow-hidden flex flex-col h-full transform transition-all hover:shadow-lg";
-                  const limitReached = img.correctionCount >= MAX_CORRECTIONS;
 
                   return (
                     <div key={img.id} className={`${containerClass} relative`}>
-                      {isLoading && (
-                        <div className="absolute inset-0 z-50 bg-white/80 backdrop-blur-sm flex items-center justify-center flex-col">
-                          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600 mb-3"></div>
-                          <p className="text-indigo-800 text-xs font-black uppercase tracking-widest">{t.singleRegen.regenerating}</p>
-                        </div>
-                      )}
-
                       <div 
                         className={`relative ${aspectRatioClass} overflow-hidden bg-slate-50 group cursor-pointer`}
                         onClick={() => setSelectedImage(img)}
@@ -121,19 +73,11 @@ export const ResultGallery: React.FC<ResultGalleryProps> = ({
                           className="w-full h-full object-cover"
                         />
                         <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
-                           {!limitReached && (
-                             <button 
-                               onClick={(e) => handleEditClick(e, img)}
-                               className="bg-white px-4 py-2 rounded-xl text-slate-900 font-bold text-xs shadow-lg hover:bg-indigo-50 transition-all"
-                             >
-                               {t.singleRegen.editBtn}
-                             </button>
-                           )}
                            <a 
                              href={img.url} 
                              download={`studio-${img.id}.png`}
                              onClick={(e) => e.stopPropagation()}
-                             className="bg-indigo-600 px-4 py-2 rounded-xl text-white font-bold text-xs shadow-lg hover:bg-indigo-700 transition-all"
+                             className="bg-indigo-600 px-6 py-2 rounded-xl text-white font-bold text-xs shadow-lg hover:bg-indigo-700 transition-all"
                            >
                              {t.downloadBtn}
                            </a>
@@ -147,14 +91,6 @@ export const ResultGallery: React.FC<ResultGalleryProps> = ({
                             <p className="text-sm text-slate-700 italic">"{img.textReview}"</p>
                           )}
                         </div>
-                        
-                        {!isReview && (
-                          <div className="mt-4 pt-4 border-t border-slate-50 flex justify-between items-center">
-                            <span className={`text-[10px] font-black uppercase ${limitReached ? 'text-red-400' : 'text-slate-300'}`}>
-                              {limitReached ? t.singleRegen.limitReached : `${t.singleRegen.remaining}${MAX_CORRECTIONS - img.correctionCount}`}
-                            </span>
-                          </div>
-                        )}
                       </div>
                     </div>
                   );
@@ -164,49 +100,6 @@ export const ResultGallery: React.FC<ResultGalleryProps> = ({
           ))}
         </div>
       </div>
-
-      {editingImage && (
-        <div className="fixed inset-0 z-[100] bg-slate-900/60 backdrop-blur-md flex items-center justify-center p-4" onClick={() => setEditingImage(null)}>
-          <div className="bg-white rounded-3xl p-8 max-w-lg w-full shadow-2xl animate-scaleIn" onClick={(e) => e.stopPropagation()}>
-             <h3 className="text-xl font-black text-slate-900 mb-2">{t.singleRegen.modalTitle}</h3>
-             <p className="text-sm text-slate-500 mb-6">{editingImage.description}</p>
-             
-             <div className="mb-6">
-               <label className="block text-xs font-black text-slate-400 uppercase mb-3 ml-1">{t.singleRegen.suggestions}</label>
-               <div className="flex flex-wrap gap-2">
-                 {/* Fixed: Cast 'label' to string to resolve TypeScript 'unknown' assignment error on line 180 */}
-                 {Object.entries(t.singleRegen.mannequinFixes).map(([key, label]) => (
-                   <button
-                     key={key}
-                     onClick={() => submitRegeneration(label as string)}
-                     className="px-4 py-2 bg-slate-100 hover:bg-indigo-100 hover:text-indigo-700 text-slate-600 rounded-xl text-xs font-bold transition-colors"
-                   >
-                     {label as string}
-                   </button>
-                 ))}
-               </div>
-             </div>
-
-             <textarea
-               className="w-full p-4 rounded-2xl bg-slate-50 border border-slate-200 focus:ring-2 focus:ring-indigo-500 outline-none h-32 text-sm transition-all"
-               placeholder={t.singleRegen.placeholder}
-               value={feedback}
-               onChange={(e) => setFeedback(e.target.value)}
-               autoFocus
-             />
-             <div className="flex justify-end space-x-2 mt-6">
-               <button onClick={() => setEditingImage(null)} className="px-6 py-3 font-bold text-slate-400 hover:text-slate-600 transition-colors">{t.singleRegen.cancel}</button>
-               <button 
-                onClick={() => submitRegeneration()} 
-                disabled={!feedback.trim()} 
-                className="px-8 py-3 rounded-2xl bg-indigo-600 text-white font-black shadow-lg disabled:opacity-50 hover:bg-indigo-700 transition-all transform active:scale-95"
-               >
-                 {t.singleRegen.submit}
-               </button>
-             </div>
-          </div>
-        </div>
-      )}
 
       {selectedImage && (
         <div className="fixed inset-0 z-[100] bg-slate-900/95 flex items-center justify-center p-4 animate-fadeIn" onClick={() => setSelectedImage(null)}>

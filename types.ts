@@ -10,7 +10,17 @@ export interface GeneratedImage {
     | 'model-profile' 
     | 'flatlay-decor' 
     | 'flatlay-shoes' 
-    | 'flatlay-accessories' 
+    | 'flatlay-accessories'
+    | 'flatlay-gym'
+    | 'flatlay-street'
+    | 'flatlay-running'
+    | 'flatlay-cold'
+    | 'flatlay-home'
+    | 'flatlay-minimal'
+    | 'flatlay-outdoor'
+    | 'flatlay-power'
+    | 'flatlay-after'
+    | 'flatlay-active'
     | 'mannequin-far' 
     | 'mannequin-close'
     | 'mannequin-angle'
@@ -26,7 +36,6 @@ export interface GeneratedImage {
     | 'review';
   description: string;
   textReview?: string;
-  correctionCount: number;
 }
 
 export enum GenerationStatus {
