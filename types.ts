@@ -36,6 +36,7 @@ export interface GeneratedImage {
     | 'review';
   description: string;
   textReview?: string;
+  correctionCount: number;
 }
 
 export enum GenerationStatus {

@@ -2,7 +2,7 @@
 import React, { useState, useCallback } from 'react';
 import { ImageUploader } from './components/ImageUploader';
 import { ResultGallery } from './components/ResultGallery';
-import { generateCategoryImages, generateReviewImages } from './services/geminiService';
+import { generateCategoryImages, regenerateSingleImage, generateReviewImages } from './services/geminiService';
 import { GeneratedImage, GenerationStatus, Language, ReviewSettings, ImageCategory } from './types';
 import { translations } from './translations';
 
@@ -64,6 +64,35 @@ const App: React.FC = () => {
         next.delete(category);
         return next;
       });
+    }
+  };
+
+  const handleRegenerateSingle = async (id: string, type: string, feedback: string) => {
+    if (!sourceImage) return;
+    
+    const currentImg = allImages.find(img => img.id === id);
+    if (!currentImg || currentImg.correctionCount >= 3) return;
+
+    try {
+      const newImageUrl = await regenerateSingleImage(
+        sourceImage.base64,
+        sourceImage.mimeType,
+        currentImg.url,
+        type,
+        feedback,
+        currentLang
+      );
+
+      if (newImageUrl) {
+        setAllImages(prev => prev.map(img => 
+          img.id === id 
+            ? { ...img, url: newImageUrl, correctionCount: img.correctionCount + 1 } 
+            : img
+        ));
+      }
+    } catch (e) {
+      console.error("Single regeneration failed", e);
+      throw e;
     }
   };
 
@@ -182,6 +211,7 @@ const App: React.FC = () => {
           <ResultGallery 
             images={allImages} 
             t={t} 
+            onRegenerateSingle={handleRegenerateSingle}
           />
         )}
 

@@ -131,19 +131,19 @@ export const PROMPTS_CONFIG = [
     category: 'mannequin',
     type: 'mannequin-far',
     key: 'mannequinFar',
-    text: "Professional 1:1 SQUARE ghost mannequin product photo. ONLY the garment is visible, floating in the air. Remote full shot. Perfectly centered. NO body parts, NO face, NO hands, NO shoes, NO mannequin stand. Purely the garment alone. Clean white studio background. Sharp shadows."
+    text: "Professional 1:1 SQUARE ghost mannequin product photo. FRONT VIEW, ONLY the garment is visible, floating in the air. Remote full shot of the entire garment. Perfectly centered. NO body parts, NO face, NO hands, NO shoes, NO mannequin stand. Purely the garment alone. Clean white studio background. Sharp shadows."
   },
   {
     category: 'mannequin',
     type: 'mannequin-close',
     key: 'mannequinClose',
-    text: "Professional 1:1 SQUARE ghost mannequin product photo. Close-up zoomed shot of the garment torso, floating in air. ONLY the garment is visible. NO body parts, NO shoes, NO mannequin visible. High fabric detail. Clean white background."
+    text: "Professional 1:1 SQUARE ghost mannequin product photo. FRONT VIEW, close-up zoomed shot of the garment torso, floating in air. ONLY the garment is visible. NO body parts, NO shoes, NO mannequin visible. High fabric detail. Clean white background."
   },
   {
     category: 'mannequin',
     type: 'mannequin-angle',
     key: 'mannequinAngle',
-    text: "Professional 1:1 SQUARE ghost mannequin product photo. 3/4 turn angle view of the garment floating in the air. ONLY the garment is visible. NO body parts, NO shoes, NO accessories, NO mannequin visible. Clean white studio background."
+    text: "Professional 1:1 SQUARE ghost mannequin product photo. 3/4 TURN ANGLE VIEW, close-up zoomed shot of the garment floating in the air. ONLY the garment is visible. NO body parts, NO shoes, NO accessories, NO mannequin visible. Clean white studio background."
   },
   {
     category: 'nature',
@@ -207,7 +207,8 @@ export const generateCategoryImages = async (
         id: `img-${category}-${index}-${Date.now()}`,
         url: imageUrl,
         type: promptData.type as any,
-        description: description
+        description: description,
+        correctionCount: 0
       };
     } catch (error) {
       console.error(`Error generating image in category ${category}:`, error);
@@ -217,6 +218,60 @@ export const generateCategoryImages = async (
 
   const results = await Promise.all(promises);
   return results.filter((res): res is GeneratedImage => res !== null);
+};
+
+export const regenerateSingleImage = async (
+  sourceBase64: string,
+  sourceMimeType: string,
+  currentGeneratedBase64: string,
+  imageType: string, 
+  userFeedback: string,
+  lang: Language
+): Promise<string | null> => {
+  const cleanSource = stripBase64Header(sourceBase64);
+  const cleanCurrent = stripBase64Header(currentGeneratedBase64);
+  const currentAspectRatio = imageType === 'review' ? "3:4" : "1:1";
+
+  // IMPORTANT: Parts must be individual objects. Text and inlineData cannot coexist in one object.
+  const contents = {
+    parts: [
+      { text: "This is the source garment for reference:" },
+      { inlineData: { data: cleanSource, mimeType: sourceMimeType } },
+      { text: "This is the current image that needs fixing:" },
+      { inlineData: { data: cleanCurrent, mimeType: 'image/png' } },
+      { 
+        text: `USER INSTRUCTION: ${userFeedback}. 
+        Keep the garment from the first reference image identical. 
+        Modify the second image (current image) strictly following the user instruction. 
+        Focus on background, lighting, or atmosphere changes while preserving the product details.` 
+      },
+    ]
+  };
+
+  try {
+      const response = await ai.models.generateContent({
+        model: 'gemini-2.5-flash-image', 
+        contents: contents,
+        config: { 
+          imageConfig: { aspectRatio: currentAspectRatio as any },
+          temperature: 0.8
+        }
+      });
+
+      const candidate = response.candidates?.[0];
+      const parts = candidate?.content?.parts;
+      if (parts) {
+        for (const part of parts) {
+          if (part.inlineData && part.inlineData.data) {
+             return `data:${part.inlineData.mimeType || 'image/png'};base64,${part.inlineData.data}`;
+          }
+        }
+      }
+      return null;
+  } catch (error) {
+    console.error("Single image edit failed:", error);
+    throw error;
+  }
 };
 
 /**
@@ -351,7 +406,8 @@ export const generateReviewImages = async (
         url: imageUrl,
         type: 'review',
         description: situation,
-        textReview: txtResp.text?.trim() || "Great quality!"
+        textReview: txtResp.text?.trim() || "Great quality!",
+        correctionCount: 0
       };
     } catch (error) {
       console.error("Error generating review image:", error);
