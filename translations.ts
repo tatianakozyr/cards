@@ -81,6 +81,7 @@ export const translations = {
       reviewLang: "Мова відгуку",
       age: "Вік чоловіка",
       generateBtn: "Згенерувати",
+      clearBtn: "Очистити вибір",
       options: {
         age30_40: "30-40 років",
         age40_50: "40-50 років",
@@ -186,6 +187,7 @@ export const translations = {
       reviewLang: "Review Language",
       age: "Man's Age",
       generateBtn: "Generate",
+      clearBtn: "Clear Selection",
       options: {
         age30_40: "30-40 years",
         age40_50: "40-50 years",
@@ -291,6 +293,7 @@ export const translations = {
       reviewLang: "Язык отзыва",
       age: "Возраст мужчины",
       generateBtn: "Сгенерировать",
+      clearBtn: "Очистить выбор",
       options: {
         age30_40: "30-40 лет",
         age40_50: "40-50 лет",

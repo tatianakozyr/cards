@@ -188,17 +188,20 @@ export const regenerateSingleImage = async (
   const cleanCurrent = stripBase64Header(currentGeneratedBase64);
   const currentAspectRatio = imageType === 'review' ? "3:4" : "1:1";
 
+  // New logic: Primary focus on the GENERATED image (current state)
   const refinedPrompt = `
-    IMPORTANT TASK: You are an expert photo editor. 
-    You must MODIFY the 'Current Generated Image' based strictly on this USER FEEDBACK: "${userFeedback}".
+    ACTION: YOU ARE AN EXPERT PHOTO EDITOR. 
+    YOUR TASK IS TO MODIFY THE "IMAGE_TO_EDIT" TO SATISFY THIS REQUEST: "${userFeedback}".
+
+    RESOURCES PROVIDED:
+    1. IMAGE_TO_EDIT (The generated image you must modify).
+    2. SOURCE_GARMENT_REFERENCE (The original clothing photo). 
     
-    GUIDELINES:
-    1. The change MUST be clearly visible. If requested to change background, replace it entirely. If requested to change lighting, make a dramatic adjustment.
-    2. DO NOT change the design of the clothing. Use the 'Source Garment Reference' to ensure the product remains exactly the same.
-    3. Keep the general composition of the 'Current Generated Image' but transform the specific elements mentioned in the feedback.
-    4. Provide the result as a new high-quality image.
-    
-    User wants: ${userFeedback}
+    CRITICAL INSTRUCTIONS:
+    - Focus 100% on changing the "IMAGE_TO_EDIT". 
+    - Use "SOURCE_GARMENT_REFERENCE" ONLY as a reference to ensure the clothing item itself (texture, color, labels) remains identical. Do not restart from the source photo.
+    - Transform the background, lighting, model pose, or composition of the "IMAGE_TO_EDIT" based ONLY on the user request: "${userFeedback}".
+    - The output must be a new high-quality image that looks like a corrected version of the current one.
   `;
 
   try {
@@ -206,14 +209,14 @@ export const regenerateSingleImage = async (
         model: 'gemini-2.5-flash-image', 
         contents: {
           parts: [
-            { inlineData: { data: cleanSource, mimeType: sourceMimeType }, text: "Source Garment Reference (Keep the product identical to this)" },
-            { inlineData: { data: cleanCurrent, mimeType: 'image/png' }, text: "Current Generated Image (Modify this image)" },
+            { inlineData: { data: cleanCurrent, mimeType: 'image/png' }, text: "IMAGE_TO_EDIT (Primary workspace - modify this!)" },
+            { inlineData: { data: cleanSource, mimeType: sourceMimeType }, text: "SOURCE_GARMENT_REFERENCE (Reference for clothing identity only)" },
             { text: refinedPrompt },
           ],
         },
         config: { 
           imageConfig: { aspectRatio: currentAspectRatio as any },
-          temperature: 0.8 
+          temperature: 0.95 // High temperature for creative editing
         }
       });
 
@@ -228,7 +231,7 @@ export const regenerateSingleImage = async (
       }
       return null;
   } catch (error) {
-    console.error("Error regeneration failed", error);
+    console.error("Error regeneration failed:", error);
     throw error;
   }
 };

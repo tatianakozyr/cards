@@ -1,7 +1,7 @@
 
-import React, { useState, useMemo } from 'react';
 import { GeneratedImage } from '../types';
 import { Translation } from '../translations';
+import React, { useState, useMemo } from 'react';
 
 interface ResultGalleryProps {
   images: GeneratedImage[];
@@ -59,12 +59,16 @@ export const ResultGallery: React.FC<ResultGalleryProps> = ({
   const submitRegeneration = async (forcedFeedback?: string) => {
     const finalFeedback = forcedFeedback || feedback;
     if (!editingImage || !finalFeedback.trim()) return;
+    
     const id = editingImage.id;
+    const type = editingImage.type;
+    
     setLoadingIds(prev => new Set(prev).add(id));
     setEditingImage(null);
+    setFeedback("");
 
     try {
-      await onRegenerateSingle(id, editingImage.type, finalFeedback);
+      await onRegenerateSingle(id, type, finalFeedback);
     } catch (e) {
       console.error(e);
       alert("Failed to regenerate image.");
@@ -162,19 +166,41 @@ export const ResultGallery: React.FC<ResultGalleryProps> = ({
       </div>
 
       {editingImage && (
-        <div className="fixed inset-0 z-[100] bg-slate-900/40 backdrop-blur-md flex items-center justify-center p-4">
-          <div className="bg-white rounded-3xl p-8 max-w-lg w-full shadow-2xl">
-             <h3 className="text-xl font-black text-slate-900 mb-6">{t.singleRegen.modalTitle}</h3>
+        <div className="fixed inset-0 z-[100] bg-slate-900/60 backdrop-blur-md flex items-center justify-center p-4" onClick={() => setEditingImage(null)}>
+          <div className="bg-white rounded-3xl p-8 max-w-lg w-full shadow-2xl animate-scaleIn" onClick={(e) => e.stopPropagation()}>
+             <h3 className="text-xl font-black text-slate-900 mb-2">{t.singleRegen.modalTitle}</h3>
+             <p className="text-sm text-slate-500 mb-6">{editingImage.description}</p>
              
+             <div className="mb-6">
+               <label className="block text-xs font-black text-slate-400 uppercase mb-3 ml-1">{t.singleRegen.suggestions}</label>
+               <div className="flex flex-wrap gap-2">
+                 {/* Fixed: Cast 'label' to string to resolve TypeScript 'unknown' assignment error on line 180 */}
+                 {Object.entries(t.singleRegen.mannequinFixes).map(([key, label]) => (
+                   <button
+                     key={key}
+                     onClick={() => submitRegeneration(label as string)}
+                     className="px-4 py-2 bg-slate-100 hover:bg-indigo-100 hover:text-indigo-700 text-slate-600 rounded-xl text-xs font-bold transition-colors"
+                   >
+                     {label as string}
+                   </button>
+                 ))}
+               </div>
+             </div>
+
              <textarea
-               className="w-full p-4 rounded-2xl bg-slate-50 border border-slate-100 focus:ring-2 focus:ring-indigo-500 outline-none h-32 text-sm"
+               className="w-full p-4 rounded-2xl bg-slate-50 border border-slate-200 focus:ring-2 focus:ring-indigo-500 outline-none h-32 text-sm transition-all"
                placeholder={t.singleRegen.placeholder}
                value={feedback}
                onChange={(e) => setFeedback(e.target.value)}
+               autoFocus
              />
              <div className="flex justify-end space-x-2 mt-6">
-               <button onClick={() => setEditingImage(null)} className="px-6 py-3 font-bold text-slate-400">{t.singleRegen.cancel}</button>
-               <button onClick={() => submitRegeneration()} disabled={!feedback.trim()} className="px-6 py-3 rounded-2xl bg-indigo-600 text-white font-black shadow-lg disabled:opacity-50">
+               <button onClick={() => setEditingImage(null)} className="px-6 py-3 font-bold text-slate-400 hover:text-slate-600 transition-colors">{t.singleRegen.cancel}</button>
+               <button 
+                onClick={() => submitRegeneration()} 
+                disabled={!feedback.trim()} 
+                className="px-8 py-3 rounded-2xl bg-indigo-600 text-white font-black shadow-lg disabled:opacity-50 hover:bg-indigo-700 transition-all transform active:scale-95"
+               >
                  {t.singleRegen.submit}
                </button>
              </div>
@@ -184,11 +210,11 @@ export const ResultGallery: React.FC<ResultGalleryProps> = ({
 
       {selectedImage && (
         <div className="fixed inset-0 z-[100] bg-slate-900/95 flex items-center justify-center p-4 animate-fadeIn" onClick={() => setSelectedImage(null)}>
-          <div className="relative max-w-5xl max-h-[80vh] flex flex-col items-center">
+          <div className="relative max-w-5xl max-h-[80vh] flex flex-col items-center" onClick={(e) => e.stopPropagation()}>
              <img src={selectedImage.url} alt="View" className="max-w-full max-h-[70vh] object-contain rounded-2xl shadow-2xl" />
              <div className="mt-6 flex gap-4">
-               <a href={selectedImage.url} download className="bg-white px-8 py-3 rounded-2xl font-black text-slate-900">{t.downloadBtn}</a>
-               <button className="bg-white/10 px-8 py-3 rounded-2xl font-black text-white" onClick={() => setSelectedImage(null)}>{t.singleRegen.cancel}</button>
+               <a href={selectedImage.url} download className="bg-white px-8 py-3 rounded-2xl font-black text-slate-900 hover:bg-indigo-50 transition-colors">{t.downloadBtn}</a>
+               <button className="bg-white/10 px-8 py-3 rounded-2xl font-black text-white hover:bg-white/20 transition-colors" onClick={() => setSelectedImage(null)}>{t.singleRegen.cancel}</button>
              </div>
           </div>
         </div>

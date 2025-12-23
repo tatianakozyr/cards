@@ -106,6 +106,10 @@ const App: React.FC = () => {
     });
   };
 
+  const handleClearReviewSettings = () => {
+    setReviewSettings(prev => ({ ...prev, situations: [] }));
+  };
+
   const handleGenerateReviews = async () => {
     if (!sourceImage || reviewSettings.situations.length === 0) return;
     setReviewStatus(GenerationStatus.LOADING);
@@ -222,7 +226,20 @@ const App: React.FC = () => {
              
              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
                 <div className="md:col-span-2">
-                   <label className="block text-xs font-black text-slate-400 uppercase mb-4 ml-1">{t.reviews.situation} (виберіть декілька)</label>
+                   <div className="flex justify-between items-center mb-4 ml-1">
+                      <label className="block text-xs font-black text-slate-400 uppercase">{t.reviews.situation} (виберіть декілька)</label>
+                      {reviewSettings.situations.length > 0 && (
+                        <button 
+                          onClick={handleClearReviewSettings}
+                          className="text-[10px] font-black uppercase text-red-500 hover:text-red-700 transition-colors flex items-center space-x-1"
+                        >
+                          <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M6 18L18 6M6 6l12 12" />
+                          </svg>
+                          <span>{t.reviews.clearBtn}</span>
+                        </button>
+                      )}
+                   </div>
                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 h-64 overflow-y-auto p-2 border border-slate-100 rounded-2xl bg-slate-50/50">
                       {Object.keys(t.reviews.situations).map(key => {
                         const isSelected = reviewSettings.situations.includes(key);
