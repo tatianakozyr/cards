@@ -55,6 +55,12 @@ export const PROMPTS_CONFIG = [
   },
   {
     category: 'macro',
+    type: 'macro-fastener',
+    key: 'macroFastener',
+    text: "1:1 SQUARE MACRO CLOSE-UP. FASTENER detail, buttons or zipper. High precision."
+  },
+  {
+    category: 'macro',
     type: 'macro-cuff',
     key: 'macroCuff',
     text: "1:1 SQUARE MACRO CLOSE-UP. SLEEVE CUFF detail. Texture focus."
@@ -64,6 +70,18 @@ export const PROMPTS_CONFIG = [
     type: 'macro-pocket',
     key: 'macroPocket',
     text: "1:1 SQUARE MACRO CLOSE-UP. POCKET detail."
+  },
+  {
+    category: 'macro',
+    type: 'macro-waistband',
+    key: 'macroWaistband',
+    text: "1:1 SQUARE MACRO CLOSE-UP. WAISTBAND or elastic waist detail. Focus on fabric gather."
+  },
+  {
+    category: 'macro',
+    type: 'macro-hem',
+    key: 'macroHem',
+    text: "1:1 SQUARE MACRO CLOSE-UP. BOTTOM HEM or lower edge of the garment. Focus on stitching line."
   },
   {
     category: 'mannequin',
@@ -254,7 +272,7 @@ const getLocationDetails = (situationKey: string): string => {
  * Generates a unique persona description for a man to ensure variety.
  */
 const getManPersona = (ageGroup: string, index: number): string => {
-  const physiques = ["Average build", "Slightly muscular but realistic", "Round tummy (dad bod)", "Tall and lean", "Stocky and broad-shouldered"];
+  const physiques = ["Average build", "Slightly muscular but realistic", "Round tummy (dad bod)", "Tall and lean", "Stocky and broad-supported"];
   const hairStyles = ["Short black hair", "Buzz cut", "Slightly balding", "Greyish hair", "Brown hair", "Messy casual hair"];
   const features = ["glasses", "trimmed beard", "stubble", "clean-shaven", "friendly smile"];
 
@@ -323,7 +341,7 @@ export const generateReviewImages = async (
         },
         config: { 
           imageConfig: { aspectRatio: "3:4" },
-          temperature: 0.9 // Higher temperature for better variety in personas and backgrounds
+          temperature: 0.9 
         }
       });
 
