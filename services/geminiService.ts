@@ -29,7 +29,6 @@ export const PROMPTS_CONFIG = [
     key: 'modelProfile',
     text: "Professional 1:1 SQUARE fashion shot. MAN wearing this item. SIDE PROFILE. Face outside top border. Studio wall."
   },
-  // --- Flatlay Section (Updated with 10 detailed sport/active themes) ---
   {
     category: 'flatlay',
     type: 'flatlay-gym',
@@ -90,7 +89,6 @@ export const PROMPTS_CONFIG = [
     key: 'flatlayActive',
     text: "Professional 1:1 SQUARE flatlay. The central focus is the GARMENT. Composition: lifestyle sneakers, urban backpack, and wireless headphones. Background: city urban concrete. All-day active movement theme."
   },
-  // --- End of Flatlay Section ---
   {
     category: 'macro',
     type: 'macro-collar',
@@ -117,15 +115,15 @@ export const PROMPTS_CONFIG = [
   },
   {
     category: 'macro',
-    type: 'macro-waistband',
-    key: 'macroWaistband',
-    text: "1:1 SQUARE MACRO CLOSE-UP. WAISTBAND or elastic waist detail. Focus on fabric gather."
+    type: 'macro-fabric',
+    key: 'macroFabric',
+    text: "1:1 SQUARE MACRO CLOSE-UP. Extreme focus on the MAIN FABRIC TEXTURE and weave pattern. Show the high quality of the material and fiber detail."
   },
   {
     category: 'macro',
-    type: 'macro-hem',
-    key: 'macroHem',
-    text: "1:1 SQUARE MACRO CLOSE-UP. BOTTOM HEM or lower edge of the garment. Focus on stitching line."
+    type: 'macro-lining',
+    key: 'macroLining',
+    text: "1:1 SQUARE MACRO CLOSE-UP. Focus on the INTERNAL LINING fabric. Show the inside detail, stitching of the lining, and inner material texture."
   },
   {
     category: 'mannequin',
@@ -149,19 +147,25 @@ export const PROMPTS_CONFIG = [
     category: 'nature',
     type: 'nature-1',
     key: 'nature1',
-    text: "1:1 SQUARE product photo. On FRESH GREEN GRASS. Natural light."
+    text: "Professional 1:1 SQUARE outdoor product shot. The GARMENT is laid flat on FRESH GREEN GRASS. Clean composition. NO person, NO mannequin, NO body parts. Pure product photography in nature. Soft daylight."
   },
   {
     category: 'nature',
     type: 'nature-2',
     key: 'nature2',
-    text: "1:1 SQUARE product photo. On GREY CRUSHED STONE."
+    text: "Professional 1:1 SQUARE outdoor product shot. The GARMENT is laid flat on GREY CRUSHED STONE / GRAVEL. NO person, NO mannequin, NO body parts. Rugged and authentic texture focus. Sharp shadows."
   },
   {
     category: 'nature',
     type: 'nature-3',
     key: 'nature3',
-    text: "1:1 SQUARE product photo. On DARK SLATE."
+    text: "Professional 1:1 SQUARE outdoor product shot. The GARMENT is laid flat on a slab of DARK SLATE or textured rock. NO person, NO mannequin, NO body parts. High-end natural aesthetic. Moody lighting."
+  },
+  {
+    category: 'promo',
+    type: 'promo-banner',
+    key: 'promoBanner',
+    text: "High-end 1:1 SQUARE professional commercial advertising banner. A charismatic man with a strong presence wearing this EXACT garment. Premium urban or minimalist studio background. Cinematic lighting. Style like a luxury fashion brand ad. Must have space for a slogan."
   }
 ];
 
@@ -175,14 +179,28 @@ export const generateCategoryImages = async (
   const t = translations[lang];
   const configToRun = PROMPTS_CONFIG.filter(item => item.category === category);
 
-  const promises = configToRun.map(async (promptData, index) => {
+  // Fix: Explicitly type the map return as Promise<GeneratedImage | null> to resolve type predicate issues
+  const promises = configToRun.map(async (promptData, index): Promise<GeneratedImage | null> => {
     try {
+      let finalPrompt = promptData.text;
+      let generatedSlogan = "";
+
+      // Specific logic for promo banners
+      if (category === 'promo') {
+        const sloganResponse = await ai.models.generateContent({
+          model: 'gemini-3-flash-preview',
+          contents: `Create a short, punchy, catchy advertising slogan for this garment in ${lang === 'uk' ? 'Ukrainian' : lang === 'ru' ? 'Russian' : 'English'}. Max 5 words. ONLY output the slogan text.`
+        });
+        generatedSlogan = sloganResponse.text?.trim() || "Quality First";
+        finalPrompt += ` Include the following slogan text visually in the design with elegant modern typography: "${generatedSlogan}".`;
+      }
+
       const response = await ai.models.generateContent({
         model: 'gemini-2.5-flash-image', 
         contents: {
           parts: [
             { inlineData: { data: cleanBase64, mimeType: mimeType } },
-            { text: promptData.text },
+            { text: finalPrompt },
           ],
         },
         config: { imageConfig: { aspectRatio: "1:1" } }
@@ -208,6 +226,7 @@ export const generateCategoryImages = async (
         url: imageUrl,
         type: promptData.type as any,
         description: description,
+        slogan: generatedSlogan,
         correctionCount: 0
       };
     } catch (error) {
@@ -232,7 +251,6 @@ export const regenerateSingleImage = async (
   const cleanCurrent = stripBase64Header(currentGeneratedBase64);
   const currentAspectRatio = imageType === 'review' ? "3:4" : "1:1";
 
-  // IMPORTANT: Parts must be individual objects. Text and inlineData cannot coexist in one object.
   const contents = {
     parts: [
       { text: "This is the source garment for reference:" },
@@ -274,9 +292,6 @@ export const regenerateSingleImage = async (
   }
 };
 
-/**
- * Generates specific details for a location to ensure clarity in AI output.
- */
 const getLocationDetails = (situationKey: string): string => {
   const s = situationKey.toLowerCase();
   if (s.includes("рибал") || s.includes("fishing")) {
@@ -309,9 +324,6 @@ const getLocationDetails = (situationKey: string): string => {
   return "Realistic middle-class environment, authentic textures, no studio perfection.";
 };
 
-/**
- * Generates a unique persona description for a man to ensure variety.
- */
 const getManPersona = (ageGroup: string, index: number): string => {
   const physiques = ["Average build", "Slightly muscular but realistic", "Round tummy (dad bod)", "Tall and lean", "Stocky and broad-supported"];
   const hairStyles = ["Short black hair", "Buzz cut", "Slightly balding", "Greyish hair", "Brown hair", "Messy casual hair"];

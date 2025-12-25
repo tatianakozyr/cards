@@ -6,6 +6,41 @@ import { generateCategoryImages, regenerateSingleImage, generateReviewImages } f
 import { GeneratedImage, GenerationStatus, Language, ReviewSettings, ImageCategory } from './types';
 import { translations } from './translations';
 
+const VisualGuide: React.FC<{ t: any }> = ({ t }) => {
+  const guideItems = [
+    { key: 'model', icon: '👤', text: t.guide.model, color: 'bg-blue-50 text-blue-600' },
+    { key: 'flatlay', icon: '👕', text: t.guide.flatlay, color: 'bg-purple-50 text-purple-600' },
+    { key: 'macro', icon: '🔍', text: t.guide.macro, color: 'bg-emerald-50 text-emerald-600' },
+    { key: 'mannequin', icon: '✨', text: t.guide.mannequin, color: 'bg-amber-50 text-amber-600' },
+    { key: 'nature', icon: '🌲', text: t.guide.nature, color: 'bg-teal-50 text-teal-600' },
+    { key: 'promo', icon: '📢', text: t.guide.promo, color: 'bg-rose-50 text-rose-600' },
+  ];
+
+  return (
+    <div className="w-full max-w-4xl mx-auto mb-10 p-6 bg-white/40 backdrop-blur-md rounded-[2.5rem] border border-white/60 shadow-xl overflow-hidden relative group">
+      <div className="absolute top-0 right-0 -mt-4 -mr-4 w-32 h-32 bg-indigo-500/10 rounded-full blur-3xl group-hover:bg-indigo-500/20 transition-all duration-700"></div>
+      
+      <div className="relative z-10 text-center mb-6">
+        <h3 className="text-xl font-black text-slate-800 tracking-tight mb-1">{t.guide.title}</h3>
+        <p className="text-sm text-slate-500 font-medium">{t.guide.subtitle}</p>
+      </div>
+
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 relative z-10">
+        {guideItems.map((item) => (
+          <div key={item.key} className="flex flex-col items-center p-3 rounded-2xl bg-white/60 border border-white/80 shadow-sm transition-all duration-300 hover:scale-105 hover:shadow-md">
+            <div className={`w-10 h-10 ${item.color} rounded-xl flex items-center justify-center text-xl mb-2 shadow-inner`}>
+              {item.icon}
+            </div>
+            <span className="text-[10px] font-black text-slate-600 uppercase text-center leading-tight">
+              {item.text}
+            </span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
 const App: React.FC = () => {
   const [currentLang, setCurrentLang] = useState<Language>('uk');
   const [sourceImage, setSourceImage] = useState<{ base64: string, mimeType: string } | null>(null);
@@ -18,7 +53,7 @@ const App: React.FC = () => {
 
   const [reviewStatus, setReviewStatus] = useState<GenerationStatus>(GenerationStatus.IDLE);
   const [reviewSettings, setReviewSettings] = useState<ReviewSettings>({
-    situations: [], // Changed to empty array initially
+    situations: [], 
     reviewLanguage: currentLang,
     age: '30-40',
   });
@@ -50,6 +85,7 @@ const App: React.FC = () => {
              if (category === 'macro') return !img.type.startsWith('macro');
              if (category === 'mannequin') return !img.type.startsWith('mannequin');
              if (category === 'nature') return !img.type.startsWith('nature');
+             if (category === 'promo') return !img.type.startsWith('promo');
              return true;
           });
           return [...filtered, ...images];
@@ -114,7 +150,6 @@ const App: React.FC = () => {
     setReviewStatus(GenerationStatus.LOADING);
     
     try {
-      // Map keys to their translated texts
       const situationTexts = reviewSettings.situations.map(key => (t.reviews.situations as any)[key]);
       const settingsForService = { ...reviewSettings, situations: situationTexts };
 
@@ -153,7 +188,7 @@ const App: React.FC = () => {
     </div>
   );
 
-  const categories: Exclude<ImageCategory, 'review'>[] = ['model', 'flatlay', 'macro', 'mannequin', 'nature'];
+  const categories: Exclude<ImageCategory, 'review'>[] = ['model', 'flatlay', 'macro', 'mannequin', 'nature', 'promo'];
 
   return (
     <div className="min-h-screen bg-slate-50 pb-20 selection:bg-indigo-100">
@@ -180,24 +215,27 @@ const App: React.FC = () => {
         />
 
         {sourceImage && (
-          <div className="flex flex-wrap justify-center gap-3 mb-12">
-            {categories.map(cat => (
-              <button
-                key={cat}
-                onClick={() => handleGenerateCategory(cat)}
-                disabled={loadingCategories.has(cat)}
-                className={`flex items-center space-x-2 px-6 py-4 rounded-2xl border-2 transition-all font-bold text-sm
-                  ${loadingCategories.has(cat) 
-                    ? 'bg-slate-100 border-slate-100 cursor-not-allowed text-slate-400' 
-                    : 'bg-white border-slate-200 hover:border-indigo-600 hover:text-indigo-600 hover:shadow-md'}
-                `}
-              >
-                <span>{t.gallerySections[cat]}</span>
-                {loadingCategories.has(cat) && (
-                  <div className="animate-spin h-4 w-4 border-2 border-indigo-600 border-t-transparent rounded-full" />
-                )}
-              </button>
-            ))}
+          <div className="animate-fadeIn">
+            <VisualGuide t={t} />
+            <div className="flex flex-wrap justify-center gap-3 mb-12">
+              {categories.map(cat => (
+                <button
+                  key={cat}
+                  onClick={() => handleGenerateCategory(cat)}
+                  disabled={loadingCategories.has(cat)}
+                  className={`flex items-center space-x-2 px-6 py-4 rounded-2xl border-2 transition-all font-bold text-sm
+                    ${loadingCategories.has(cat) 
+                      ? 'bg-slate-100 border-slate-100 cursor-not-allowed text-slate-400' 
+                      : 'bg-white border-slate-200 hover:border-indigo-600 hover:text-indigo-600 hover:shadow-md hover:-translate-y-1'}
+                  `}
+                >
+                  <span>{t.gallerySections[cat]}</span>
+                  {loadingCategories.has(cat) && (
+                    <div className="animate-spin h-4 w-4 border-2 border-indigo-600 border-t-transparent rounded-full" />
+                  )}
+                </button>
+              ))}
+            </div>
           </div>
         )}
 

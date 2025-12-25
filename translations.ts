@@ -20,6 +20,16 @@ export const translations = {
     downloadBtn: "Завантажити",
     retryTitle: "Бажаєте змінити?",
     retryBtn: "Перегенерувати блок",
+    guide: {
+      title: "Що входить у картку товару?",
+      subtitle: "Повний набір професійного контенту в один клік",
+      model: "3 ракурси на людині",
+      flatlay: "10 сюжетних розкладок",
+      macro: "6 фокусів на деталях",
+      mannequin: "3 ракурси \"у повітрі\"",
+      nature: "3 фото на локаціях",
+      promo: "Рекламний креатив"
+    },
     prompts: {
       modelFront: "Модель: Спереду (Без обличчя)",
       modelBack: "Модель: Ззаду (Без голови)",
@@ -41,11 +51,12 @@ export const translations = {
       macroFastener: "Деталі: Застібка",
       macroCuff: "Деталі: Манжет рукава",
       macroPocket: "Деталі: Кишеня",
-      macroWaistband: "Деталі: Резинка на поясі",
-      macroHem: "Деталі: Низ виробу",
-      nature1: "Природа: Трава",
-      nature2: "Природа: Каміння",
-      nature3: "Природа: Сланець"
+      macroFabric: "Деталі: Фактура тканини",
+      macroLining: "Деталі: Фактура підкладу",
+      nature1: "Природа: Трава (Flatlay)",
+      nature2: "Природа: Каміння (Flatlay)",
+      nature3: "Природа: Сланець (Flatlay)",
+      promoBanner: "Реклама: Креативний банер зі слоганом"
     },
     gallerySections: {
       model: "Фото на моделі",
@@ -54,6 +65,7 @@ export const translations = {
       mannequin: "Одяг у повітрі",
       nature: "Фото на природі",
       review: "Побутові відгуки",
+      promo: "Рекламні креативи",
       other: "Інше"
     },
     payment: {
@@ -77,8 +89,13 @@ export const translations = {
         warm: "Тепле сонячне світло",
         cool: "Холодне студійне світло",
         dark: "Темний драматичний фон",
-        abstract: "Абстрактний геометричний фон",
-        white: "Чистий білий фон"
+        white: "Чистий білий фон",
+        abstract: "Абстрактний фон",
+        urban: "На вулиці (City)",
+        nature: "На природі",
+        studio: "В професійній студії",
+        industrial: "Індустріальний фон",
+        soft: "М'яке розсіяне світло"
       }
     },
     reviews: {
@@ -133,6 +150,16 @@ export const translations = {
     downloadBtn: "Download",
     retryTitle: "Need a change?",
     retryBtn: "Regenerate",
+    guide: {
+      title: "What's inside the card?",
+      subtitle: "Full set of professional content in one click",
+      model: "3 shots on a person",
+      flatlay: "10 story flatlays",
+      macro: "6 macro details",
+      mannequin: "3 ghost mannequin shots",
+      nature: "3 location shots",
+      promo: "Marketing creative"
+    },
     prompts: {
       modelFront: "Model: Front (No face)",
       modelBack: "Model: Back (No head)",
@@ -154,11 +181,12 @@ export const translations = {
       macroFastener: "Detail: Fastener",
       macroCuff: "Detail: Sleeve Cuff",
       macroPocket: "Detail: Pocket",
-      macroWaistband: "Detail: Waistband",
-      macroHem: "Detail: Bottom Hem",
-      nature1: "Nature: Grass",
-      nature2: "Nature: Stones",
-      nature3: "Nature: Slate"
+      macroFabric: "Detail: Fabric Texture",
+      macroLining: "Detail: Lining Texture",
+      nature1: "Nature: Grass (Flatlay)",
+      nature2: "Nature: Stones (Flatlay)",
+      nature3: "Nature: Slate (Flatlay)",
+      promoBanner: "Promo: Creative banner with slogan"
     },
     gallerySections: {
       model: "Model Shots",
@@ -167,6 +195,7 @@ export const translations = {
       mannequin: "Ghost Mannequin",
       nature: "Lifestyle Nature",
       review: "Realistic Reviews",
+      promo: "Marketing Assets",
       other: "Other"
     },
     payment: {
@@ -190,8 +219,13 @@ export const translations = {
         warm: "Warm Golden Hour Light",
         cool: "Cool Studio Lighting",
         dark: "Moody Dark Background",
-        abstract: "Abstract Geometric Background",
-        white: "Clean White Background"
+        white: "Clean White Background",
+        abstract: "Abstract Background",
+        urban: "Outdoors (Urban)",
+        nature: "In Nature",
+        studio: "Professional Studio",
+        industrial: "Industrial Style",
+        soft: "Soft Diffused Light"
       }
     },
     reviews: {
@@ -240,12 +274,22 @@ export const translations = {
     processing: "Обработка...",
     generateBtn: "Сгенерировать",
     generatingBtn: "Генерируем...",
-    errorGeneric: "Ошибка AI сервиса.",
+    errorGeneric: "Ошибка AI сервіса.",
     errorNoImage: "Не удалось сгенерировать.",
     resultsTitle: "Results",
     downloadBtn: "Скачать",
     retryTitle: "Не понравилось?",
     retryBtn: "Переделать",
+    guide: {
+      title: "Что входит в карточку?",
+      subtitle: "Полный набор профессионального контента в один клик",
+      model: "3 ракурса на человеке",
+      flatlay: "10 сюжетных раскладок",
+      macro: "6 фокусов на деталях",
+      mannequin: "3 ракурса \"в воздухе\"",
+      nature: "3 фото на локациях",
+      promo: "Рекламный креатив"
+    },
     prompts: {
       modelFront: "Модель: Спереди (Без лица)",
       modelBack: "Модель: Сзади (Без головы)",
@@ -267,11 +311,12 @@ export const translations = {
       macroFastener: "Детали: Застібка",
       macroCuff: "Детали: Манжет рукава",
       macroPocket: "Детали: Карман",
-      macroWaistband: "Детали: Резинка на поясе",
-      macroHem: "Детали: Низ изделия",
-      nature1: "Природа: Трава",
-      nature2: "Природа: Камни",
-      nature3: "Природа: Сланец"
+      macroFabric: "Детали: Фактура ткани",
+      macroLining: "Детали: Фактура подклада",
+      nature1: "Природа: Трава (Flatlay)",
+      nature2: "Природа: Камни (Flatlay)",
+      nature3: "Природа: Сланец (Flatlay)",
+      promoBanner: "Реклама: Креативный баннер со слоганом"
     },
     gallerySections: {
       model: "Фото на модели",
@@ -280,6 +325,7 @@ export const translations = {
       mannequin: "Одежда в воздухе",
       nature: "На природе",
       review: "Бытовые отзывы",
+      promo: "Рекламные креативы",
       other: "Другое"
     },
     payment: {
@@ -303,8 +349,13 @@ export const translations = {
         warm: "Теплый солнечный свет",
         cool: "Холодный студийный свет",
         dark: "Темный драматичный фон",
-        abstract: "Абстрактный геометрический фон",
-        white: "Чистый белый фон"
+        white: "Чистый белый фон",
+        abstract: "Абстрактный фон",
+        urban: "На улице (City)",
+        nature: "На природе",
+        studio: "В профессиональной студии",
+        industrial: "Индустриальный фон",
+        soft: "Мягкий рассеянный свет"
       }
     },
     reviews: {
@@ -331,7 +382,7 @@ export const translations = {
         fishing: "Рыбалка",
         park_love: "В парке с любимой",
         gym: "В спортзале",
-        supermarket: "В супермаркете",
+        supermarket: "В супермаркеті",
         military: "В военных условиях",
         garage: "Возле гаража",
         yard: "Во дворе дома",

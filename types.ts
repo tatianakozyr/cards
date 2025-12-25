@@ -1,5 +1,5 @@
 
-export type ImageCategory = 'model' | 'flatlay' | 'macro' | 'mannequin' | 'nature' | 'review';
+export type ImageCategory = 'model' | 'flatlay' | 'macro' | 'mannequin' | 'nature' | 'review' | 'promo';
 
 export interface GeneratedImage {
   id: string;
@@ -28,14 +28,16 @@ export interface GeneratedImage {
     | 'macro-cuff' 
     | 'macro-pocket' 
     | 'macro-fastener'
-    | 'macro-waistband'
-    | 'macro-hem'
+    | 'macro-fabric'
+    | 'macro-lining'
     | 'nature-1' 
     | 'nature-2' 
     | 'nature-3'
-    | 'review';
+    | 'review'
+    | 'promo-banner';
   description: string;
   textReview?: string;
+  slogan?: string;
   correctionCount: number;
 }
 
@@ -56,7 +58,7 @@ export type Language = 'uk' | 'en' | 'ru';
 export type AgeGroup = '30-40' | '40-50' | '50+';
 
 export interface ReviewSettings {
-  situations: string[]; // Changed from single situation to multiple
+  situations: string[];
   reviewLanguage: Language;
   age: AgeGroup;
 }
