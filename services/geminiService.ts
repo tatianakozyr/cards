@@ -85,7 +85,7 @@ export const PROMPTS_CONFIG = [
   },
   {
     category: 'flatlay',
-    type: 'flatlay-after',
+    type: 'flatlay-active',
     key: 'flatlayActive',
     text: "Professional 1:1 SQUARE flatlay. The central focus is the GARMENT. Composition: lifestyle sneakers, urban backpack, and wireless headphones. Background: city urban concrete. All-day active movement theme."
   },
@@ -165,37 +165,37 @@ export const PROMPTS_CONFIG = [
     category: 'promo',
     type: 'promo-1',
     key: 'promo1',
-    text: "High-end 1:1 SQUARE professional fashion ad. A charismatic man wearing this EXACT garment. SITUATION: Urban street scene with motion blur. Cinematic lighting, look of a premium street fashion brand. NO TEXT."
+    text: "High-end 1:1 SQUARE professional fashion ad. A charismatic man of UKRAINIAN (SLAVIC) appearance wearing this EXACT garment. SITUATION: Urban street scene, walking towards camera. Cinematic lighting, premium street fashion brand aesthetic. NO TEXT."
   },
   {
     category: 'promo',
     type: 'promo-2',
     key: 'promo2',
-    text: "High-end 1:1 SQUARE professional fashion ad. A charismatic man wearing this EXACT garment. SITUATION: Minimalist high-key studio. Dramatic sharp shadows, focus on posture and silhouette. NO TEXT."
+    text: "High-end 1:1 SQUARE professional fashion ad. A charismatic man of UKRAINIAN (SLAVIC) appearance wearing this EXACT garment. SITUATION: Minimalist high-key studio, sitting on a designer stool. 3/4 angle view. Dramatic sharp shadows. NO TEXT."
   },
   {
     category: 'promo',
     type: 'promo-3',
     key: 'promo3',
-    text: "High-end 1:1 SQUARE professional fashion ad. A charismatic man wearing this EXACT garment. SITUATION: Moody industrial warehouse, dark background with blue rim light. Gritty and powerful vibe. NO TEXT."
+    text: "High-end 1:1 SQUARE professional fashion ad. A charismatic man of UKRAINIAN (SLAVIC) appearance wearing this EXACT garment. SITUATION: Moody industrial warehouse, leaning against a rough brick wall. Rim lighting. Gritty and powerful vibe. NO TEXT."
   },
   {
     category: 'promo',
     type: 'promo-4',
     key: 'promo4',
-    text: "High-end 1:1 SQUARE professional fashion ad. A charismatic man wearing this EXACT garment. SITUATION: Modern office/glass skyscraper rooftop. Bright natural morning light, clean professional look. NO TEXT."
+    text: "High-end 1:1 SQUARE professional fashion ad. A charismatic man of UKRAINIAN (SLAVIC) appearance wearing this EXACT garment. SITUATION: Modern office/glass skyscraper rooftop. Side view profile shot. Bright natural morning light. NO TEXT."
   },
   {
     category: 'promo',
     type: 'promo-5',
     key: 'promo5',
-    text: "High-end 1:1 SQUARE professional fashion ad. A charismatic man wearing this EXACT garment. SITUATION: Wilderness, natural rock formations, outdoor sunset. Rugged adventure aesthetic. NO TEXT."
+    text: "High-end 1:1 SQUARE professional fashion ad. A charismatic man of UKRAINIAN (SLAVIC) appearance wearing this EXACT garment. SITUATION: Wilderness, natural rock formations. Low angle hero shot. Sunset backlighting. Adventure aesthetic. NO TEXT."
   },
   {
     category: 'promo',
     type: 'promo-6',
     key: 'promo6',
-    text: "High-end 1:1 SQUARE professional fashion ad. A charismatic man wearing this EXACT garment. SITUATION: Vibrant night city scene, neon lights reflections. High energy and modern aesthetic. NO TEXT."
+    text: "High-end 1:1 SQUARE professional fashion ad. A charismatic man of UKRAINIAN (SLAVIC) appearance wearing this EXACT garment. SITUATION: Vibrant night city scene, neon signs. Portrait shot from waist up. High energy and modern aesthetic. NO TEXT."
   }
 ];
 
