@@ -85,7 +85,7 @@ export const PROMPTS_CONFIG = [
   },
   {
     category: 'flatlay',
-    type: 'flatlay-active',
+    type: 'flatlay-after',
     key: 'flatlayActive',
     text: "Professional 1:1 SQUARE flatlay. The central focus is the GARMENT. Composition: lifestyle sneakers, urban backpack, and wireless headphones. Background: city urban concrete. All-day active movement theme."
   },
@@ -163,9 +163,39 @@ export const PROMPTS_CONFIG = [
   },
   {
     category: 'promo',
-    type: 'promo-banner',
-    key: 'promoBanner',
-    text: "High-end 1:1 SQUARE professional commercial advertising banner. A charismatic man with a strong presence wearing this EXACT garment. Premium urban or minimalist studio background. Cinematic lighting. Style like a luxury fashion brand ad. Must have space for a slogan."
+    type: 'promo-1',
+    key: 'promo1',
+    text: "High-end 1:1 SQUARE professional fashion ad. A charismatic man wearing this EXACT garment. SITUATION: Urban street scene with motion blur. Cinematic lighting, look of a premium street fashion brand. NO TEXT."
+  },
+  {
+    category: 'promo',
+    type: 'promo-2',
+    key: 'promo2',
+    text: "High-end 1:1 SQUARE professional fashion ad. A charismatic man wearing this EXACT garment. SITUATION: Minimalist high-key studio. Dramatic sharp shadows, focus on posture and silhouette. NO TEXT."
+  },
+  {
+    category: 'promo',
+    type: 'promo-3',
+    key: 'promo3',
+    text: "High-end 1:1 SQUARE professional fashion ad. A charismatic man wearing this EXACT garment. SITUATION: Moody industrial warehouse, dark background with blue rim light. Gritty and powerful vibe. NO TEXT."
+  },
+  {
+    category: 'promo',
+    type: 'promo-4',
+    key: 'promo4',
+    text: "High-end 1:1 SQUARE professional fashion ad. A charismatic man wearing this EXACT garment. SITUATION: Modern office/glass skyscraper rooftop. Bright natural morning light, clean professional look. NO TEXT."
+  },
+  {
+    category: 'promo',
+    type: 'promo-5',
+    key: 'promo5',
+    text: "High-end 1:1 SQUARE professional fashion ad. A charismatic man wearing this EXACT garment. SITUATION: Wilderness, natural rock formations, outdoor sunset. Rugged adventure aesthetic. NO TEXT."
+  },
+  {
+    category: 'promo',
+    type: 'promo-6',
+    key: 'promo6',
+    text: "High-end 1:1 SQUARE professional fashion ad. A charismatic man wearing this EXACT garment. SITUATION: Vibrant night city scene, neon lights reflections. High energy and modern aesthetic. NO TEXT."
   }
 ];
 
@@ -179,21 +209,9 @@ export const generateCategoryImages = async (
   const t = translations[lang];
   const configToRun = PROMPTS_CONFIG.filter(item => item.category === category);
 
-  // Fix: Explicitly type the map return as Promise<GeneratedImage | null> to resolve type predicate issues
   const promises = configToRun.map(async (promptData, index): Promise<GeneratedImage | null> => {
     try {
       let finalPrompt = promptData.text;
-      let generatedSlogan = "";
-
-      // Specific logic for promo banners
-      if (category === 'promo') {
-        const sloganResponse = await ai.models.generateContent({
-          model: 'gemini-3-flash-preview',
-          contents: `Create a short, punchy, catchy advertising slogan for this garment in ${lang === 'uk' ? 'Ukrainian' : lang === 'ru' ? 'Russian' : 'English'}. Max 5 words. ONLY output the slogan text.`
-        });
-        generatedSlogan = sloganResponse.text?.trim() || "Quality First";
-        finalPrompt += ` Include the following slogan text visually in the design with elegant modern typography: "${generatedSlogan}".`;
-      }
 
       const response = await ai.models.generateContent({
         model: 'gemini-2.5-flash-image', 
@@ -219,14 +237,13 @@ export const generateCategoryImages = async (
       }
 
       if (!imageUrl) return null;
-      const description = t.prompts[promptData.key as keyof typeof t.prompts];
+      const description = t.prompts[promptData.key as keyof typeof t.prompts] || promptData.key;
 
       return {
         id: `img-${category}-${index}-${Date.now()}`,
         url: imageUrl,
         type: promptData.type as any,
         description: description,
-        slogan: generatedSlogan,
         correctionCount: 0
       };
     } catch (error) {

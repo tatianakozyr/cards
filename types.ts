@@ -34,7 +34,12 @@ export interface GeneratedImage {
     | 'nature-2' 
     | 'nature-3'
     | 'review'
-    | 'promo-banner';
+    | 'promo-1'
+    | 'promo-2'
+    | 'promo-3'
+    | 'promo-4'
+    | 'promo-5'
+    | 'promo-6';
   description: string;
   textReview?: string;
   slogan?: string;

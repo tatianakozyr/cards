@@ -28,7 +28,7 @@ export const translations = {
       macro: "6 фокусів на деталях",
       mannequin: "3 ракурси \"у повітрі\"",
       nature: "3 фото на локаціях",
-      promo: "Рекламний креатив"
+      promo: "6 рекламних креативів"
     },
     prompts: {
       modelFront: "Модель: Спереду (Без обличчя)",
@@ -56,7 +56,12 @@ export const translations = {
       nature1: "Природа: Трава (Flatlay)",
       nature2: "Природа: Каміння (Flatlay)",
       nature3: "Природа: Сланець (Flatlay)",
-      promoBanner: "Реклама: Креативний банер зі слоганом"
+      promo1: "Реклама: Urban Street",
+      promo2: "Реклама: Studio High-Key",
+      promo3: "Реклама: Moody Industrial",
+      promo4: "Реклама: Modern Business",
+      promo5: "Реклама: Nature Adventure",
+      promo6: "Реклама: Night City Neon"
     },
     gallerySections: {
       model: "Фото на моделі",
@@ -158,7 +163,7 @@ export const translations = {
       macro: "6 macro details",
       mannequin: "3 ghost mannequin shots",
       nature: "3 location shots",
-      promo: "Marketing creative"
+      promo: "6 marketing creatives"
     },
     prompts: {
       modelFront: "Model: Front (No face)",
@@ -186,7 +191,12 @@ export const translations = {
       nature1: "Nature: Grass (Flatlay)",
       nature2: "Nature: Stones (Flatlay)",
       nature3: "Nature: Slate (Flatlay)",
-      promoBanner: "Promo: Creative banner with slogan"
+      promo1: "Promo: Urban Street",
+      promo2: "Promo: Studio High-Key",
+      promo3: "Promo: Moody Industrial",
+      promo4: "Promo: Modern Business",
+      promo5: "Promo: Nature Adventure",
+      promo6: "Promo: Night City Neon"
     },
     gallerySections: {
       model: "Model Shots",
@@ -288,7 +298,7 @@ export const translations = {
       macro: "6 фокусов на деталях",
       mannequin: "3 ракурса \"в воздухе\"",
       nature: "3 фото на локациях",
-      promo: "Рекламный креатив"
+      promo: "6 рекламных креативов"
     },
     prompts: {
       modelFront: "Модель: Спереди (Без лица)",
@@ -316,7 +326,12 @@ export const translations = {
       nature1: "Природа: Трава (Flatlay)",
       nature2: "Природа: Камни (Flatlay)",
       nature3: "Природа: Сланец (Flatlay)",
-      promoBanner: "Реклама: Креативный баннер со слоганом"
+      promo1: "Реклама: Urban Street",
+      promo2: "Реклама: Studio High-Key",
+      promo3: "Реклама: Moody Industrial",
+      promo4: "Реклама: Modern Business",
+      promo5: "Реклама: Nature Adventure",
+      promo6: "Реклама: Night City Neon"
     },
     gallerySections: {
       model: "Фото на модели",
@@ -379,7 +394,7 @@ export const translations = {
         dog: "Прогулка с собакой",
         home_try: "Примерка дома",
         store_try: "Примерка в магазине",
-        fishing: "Рыбалка",
+        fishing: "Рибалка",
         park_love: "В парке с любимой",
         gym: "В спортзале",
         supermarket: "В супермаркеті",
