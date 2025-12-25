@@ -6,36 +6,71 @@ import { generateCategoryImages, regenerateSingleImage, generateReviewImages } f
 import { GeneratedImage, GenerationStatus, Language, ReviewSettings, ImageCategory } from './types';
 import { translations } from './translations';
 
-const VisualGuide: React.FC<{ t: any }> = ({ t }) => {
+interface VisualGuideProps {
+  t: any;
+  onGenerate: (category: Exclude<ImageCategory, 'review'>) => void;
+  loadingCategories: Set<string>;
+  hasResults: (category: string) => boolean;
+}
+
+const VisualGuide: React.FC<VisualGuideProps> = ({ t, onGenerate, loadingCategories, hasResults }) => {
   const guideItems = [
-    { key: 'model', icon: '👤', text: t.guide.model, color: 'bg-blue-50 text-blue-600' },
-    { key: 'flatlay', icon: '👕', text: t.guide.flatlay, color: 'bg-purple-50 text-purple-600' },
-    { key: 'macro', icon: '🔍', text: t.guide.macro, color: 'bg-emerald-50 text-emerald-600' },
-    { key: 'mannequin', icon: '✨', text: t.guide.mannequin, color: 'bg-amber-50 text-amber-600' },
-    { key: 'nature', icon: '🌲', text: t.guide.nature, color: 'bg-teal-50 text-teal-600' },
-    { key: 'promo', icon: '📢', text: t.guide.promo, color: 'bg-rose-50 text-rose-600' },
+    { key: 'model', icon: '👤', text: t.guide.model, color: 'hover:border-blue-400 hover:bg-blue-50/50', iconColor: 'bg-blue-50 text-blue-600', dot: 'bg-blue-500' },
+    { key: 'flatlay', icon: '👕', text: t.guide.flatlay, color: 'hover:border-purple-400 hover:bg-purple-50/50', iconColor: 'bg-purple-50 text-purple-600', dot: 'bg-purple-500' },
+    { key: 'macro', icon: '🔍', text: t.guide.macro, color: 'hover:border-emerald-400 hover:bg-emerald-50/50', iconColor: 'bg-emerald-50 text-emerald-600', dot: 'bg-emerald-500' },
+    { key: 'mannequin', icon: '✨', text: t.guide.mannequin, color: 'hover:border-amber-400 hover:bg-amber-50/50', iconColor: 'bg-amber-50 text-amber-600', dot: 'bg-amber-500' },
+    { key: 'nature', icon: '🌲', text: t.guide.nature, color: 'hover:border-teal-400 hover:bg-teal-50/50', iconColor: 'bg-teal-50 text-teal-600', dot: 'bg-teal-500' },
+    { key: 'promo', icon: '📢', text: t.guide.promo, color: 'hover:border-rose-400 hover:bg-rose-50/50', iconColor: 'bg-rose-50 text-rose-600', dot: 'bg-rose-500' },
   ];
 
   return (
-    <div className="w-full max-w-4xl mx-auto mb-10 p-6 bg-white/40 backdrop-blur-md rounded-[2.5rem] border border-white/60 shadow-xl overflow-hidden relative group">
-      <div className="absolute top-0 right-0 -mt-4 -mr-4 w-32 h-32 bg-indigo-500/10 rounded-full blur-3xl group-hover:bg-indigo-500/20 transition-all duration-700"></div>
+    <div className="w-full max-w-5xl mx-auto mb-16 p-8 bg-white/40 backdrop-blur-md rounded-[3rem] border border-white/60 shadow-2xl overflow-hidden relative group">
+      <div className="absolute top-0 right-0 -mt-10 -mr-10 w-64 h-64 bg-indigo-500/5 rounded-full blur-3xl"></div>
       
-      <div className="relative z-10 text-center mb-6">
-        <h3 className="text-xl font-black text-slate-800 tracking-tight mb-1">{t.guide.title}</h3>
-        <p className="text-sm text-slate-500 font-medium">{t.guide.subtitle}</p>
+      <div className="relative z-10 text-center mb-10">
+        <h3 className="text-2xl font-black text-slate-800 tracking-tight mb-2">{t.guide.title}</h3>
+        <p className="text-slate-500 font-medium">{t.guide.subtitle}</p>
       </div>
 
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 relative z-10">
-        {guideItems.map((item) => (
-          <div key={item.key} className="flex flex-col items-center p-3 rounded-2xl bg-white/60 border border-white/80 shadow-sm transition-all duration-300 hover:scale-105 hover:shadow-md">
-            <div className={`w-10 h-10 ${item.color} rounded-xl flex items-center justify-center text-xl mb-2 shadow-inner`}>
-              {item.icon}
-            </div>
-            <span className="text-[10px] font-black text-slate-600 uppercase text-center leading-tight">
-              {item.text}
-            </span>
-          </div>
-        ))}
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 relative z-10">
+        {guideItems.map((item) => {
+          const isLoading = loadingCategories.has(item.key);
+          const completed = hasResults(item.key);
+
+          return (
+            <button
+              key={item.key}
+              disabled={isLoading}
+              onClick={() => onGenerate(item.key as any)}
+              className={`flex flex-col items-center p-4 rounded-3xl bg-white/70 border-2 border-transparent shadow-sm transition-all duration-300 transform 
+                ${isLoading ? 'animate-pulse scale-95 border-indigo-200' : `${item.color} hover:-translate-y-2 hover:shadow-xl active:scale-95`}
+                ${completed && !isLoading ? 'border-slate-100 shadow-inner' : 'border-white/80'}
+              `}
+            >
+              <div className={`w-14 h-14 ${item.iconColor} rounded-2xl flex items-center justify-center text-2xl mb-4 shadow-sm relative`}>
+                {isLoading ? (
+                  <div className="animate-spin h-6 w-6 border-3 border-current border-t-transparent rounded-full" />
+                ) : (
+                  <>
+                    {item.icon}
+                    {completed && (
+                      <div className={`absolute -top-1 -right-1 w-4 h-4 ${item.dot} rounded-full border-2 border-white shadow-sm ring-4 ring-white/50 animate-bounce`}></div>
+                    )}
+                  </>
+                )}
+              </div>
+              <span className="text-[11px] font-black text-slate-700 uppercase text-center leading-tight tracking-wide">
+                {item.text}
+              </span>
+              
+              <div className="mt-3 opacity-0 group-hover:opacity-100 transition-opacity">
+                <span className={`text-[9px] font-bold px-2 py-0.5 rounded-full ${isLoading ? 'bg-slate-100 text-slate-400' : 'bg-indigo-50 text-indigo-600'}`}>
+                  {isLoading ? t.processing : (completed ? t.retryBtn : t.generateBtn)}
+                </span>
+              </div>
+            </button>
+          );
+        })}
       </div>
     </div>
   );
@@ -57,6 +92,10 @@ const App: React.FC = () => {
     reviewLanguage: currentLang,
     age: '30-40',
   });
+
+  const hasResults = (category: string) => {
+    return allImages.some(img => img.type.startsWith(category));
+  };
 
   const handleImageSelected = useCallback((base64: string, mimeType: string) => {
     setSourceImage({ base64, mimeType });
@@ -188,8 +227,6 @@ const App: React.FC = () => {
     </div>
   );
 
-  const categories: Exclude<ImageCategory, 'review'>[] = ['model', 'flatlay', 'macro', 'mannequin', 'nature', 'promo'];
-
   return (
     <div className="min-h-screen bg-slate-50 pb-20 selection:bg-indigo-100">
       <header className="fixed w-full top-0 z-50 bg-white/80 backdrop-blur-xl border-b border-slate-200 shadow-sm">
@@ -204,8 +241,8 @@ const App: React.FC = () => {
 
       <main className="relative z-10 max-w-7xl mx-auto px-4 pt-24">
         <div className="text-center mb-10">
-          <h2 className="text-3xl font-black text-slate-900 mb-2">{t.heroTitle}</h2>
-          <p className="text-slate-500 max-w-2xl mx-auto">{t.heroSubtitle}</p>
+          <h2 className="text-4xl font-black text-slate-900 mb-3 tracking-tight">{t.heroTitle}</h2>
+          <p className="text-slate-500 max-w-2xl mx-auto text-lg">{t.heroSubtitle}</p>
         </div>
 
         <ImageUploader 
@@ -216,31 +253,17 @@ const App: React.FC = () => {
 
         {sourceImage && (
           <div className="animate-fadeIn">
-            <VisualGuide t={t} />
-            <div className="flex flex-wrap justify-center gap-3 mb-12">
-              {categories.map(cat => (
-                <button
-                  key={cat}
-                  onClick={() => handleGenerateCategory(cat)}
-                  disabled={loadingCategories.has(cat)}
-                  className={`flex items-center space-x-2 px-6 py-4 rounded-2xl border-2 transition-all font-bold text-sm
-                    ${loadingCategories.has(cat) 
-                      ? 'bg-slate-100 border-slate-100 cursor-not-allowed text-slate-400' 
-                      : 'bg-white border-slate-200 hover:border-indigo-600 hover:text-indigo-600 hover:shadow-md hover:-translate-y-1'}
-                  `}
-                >
-                  <span>{t.gallerySections[cat]}</span>
-                  {loadingCategories.has(cat) && (
-                    <div className="animate-spin h-4 w-4 border-2 border-indigo-600 border-t-transparent rounded-full" />
-                  )}
-                </button>
-              ))}
-            </div>
+            <VisualGuide 
+              t={t} 
+              onGenerate={handleGenerateCategory} 
+              loadingCategories={loadingCategories}
+              hasResults={hasResults}
+            />
           </div>
         )}
 
         {error && (
-          <div className="max-w-xl mx-auto mb-10 p-4 bg-red-50 border border-red-100 rounded-2xl text-red-700 font-medium text-center">
+          <div className="max-w-xl mx-auto mb-10 p-5 bg-red-50 border-2 border-red-100 rounded-3xl text-red-700 font-bold text-center shadow-sm">
              {error}
           </div>
         )}
@@ -254,21 +277,23 @@ const App: React.FC = () => {
         )}
 
         {sourceImage && (
-          <div className="mt-16 max-w-5xl mx-auto bg-white rounded-3xl p-8 border border-slate-200 shadow-xl">
-             <div className="text-center mb-10">
-                <span className="text-xs font-black text-indigo-600 uppercase tracking-widest bg-indigo-50 px-3 py-1 rounded-full mb-4 inline-block">UGC Generator</span>
-                <h3 className="text-2xl font-black text-slate-800 mb-2">{t.reviews.title}</h3>
-                <p className="text-slate-500">{t.reviews.subtitle}</p>
+          <div className="mt-20 max-w-5xl mx-auto bg-white rounded-[3rem] p-10 border border-slate-200 shadow-2xl relative overflow-hidden">
+             <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500"></div>
+             
+             <div className="text-center mb-12">
+                <span className="text-[10px] font-black text-indigo-600 uppercase tracking-[0.2em] bg-indigo-50 px-4 py-1.5 rounded-full mb-4 inline-block shadow-sm">UGC Lifestyle Engine</span>
+                <h3 className="text-3xl font-black text-slate-800 mb-3">{t.reviews.title}</h3>
+                <p className="text-slate-500 text-lg font-medium">{t.reviews.subtitle}</p>
              </div>
              
-             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
                 <div className="md:col-span-2">
-                   <div className="flex justify-between items-center mb-4 ml-1">
-                      <label className="block text-xs font-black text-slate-400 uppercase">{t.reviews.situation} (виберіть декілька)</label>
+                   <div className="flex justify-between items-center mb-5 ml-1">
+                      <label className="block text-xs font-black text-slate-400 uppercase tracking-widest">{t.reviews.situation} (виберіть декілька)</label>
                       {reviewSettings.situations.length > 0 && (
                         <button 
                           onClick={handleClearReviewSettings}
-                          className="text-[10px] font-black uppercase text-red-500 hover:text-red-700 transition-colors flex items-center space-x-1"
+                          className="text-[10px] font-black uppercase text-red-500 hover:text-red-700 transition-colors flex items-center space-x-1.5 bg-red-50 px-3 py-1 rounded-full border border-red-100"
                         >
                           <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M6 18L18 6M6 6l12 12" />
@@ -277,16 +302,16 @@ const App: React.FC = () => {
                         </button>
                       )}
                    </div>
-                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 h-64 overflow-y-auto p-2 border border-slate-100 rounded-2xl bg-slate-50/50">
+                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 h-80 overflow-y-auto p-3 border-2 border-slate-50 rounded-[2rem] bg-slate-50/30 scrollbar-hide">
                       {Object.keys(t.reviews.situations).map(key => {
                         const isSelected = reviewSettings.situations.includes(key);
                         return (
                           <button
                             key={key}
                             onClick={() => toggleSituation(key)}
-                            className={`p-3 text-left text-xs font-bold rounded-xl border transition-all ${
+                            className={`p-4 text-left text-xs font-bold rounded-2xl border-2 transition-all duration-200 ${
                               isSelected 
-                                ? 'bg-indigo-600 border-indigo-600 text-white shadow-md' 
+                                ? 'bg-indigo-600 border-indigo-600 text-white shadow-lg shadow-indigo-100 translate-y-[-2px]' 
                                 : 'bg-white border-slate-100 text-slate-600 hover:border-indigo-200'
                             }`}
                           >
@@ -297,11 +322,11 @@ const App: React.FC = () => {
                    </div>
                 </div>
                 
-                <div className="space-y-6">
-                   <div>
-                      <label className="block text-xs font-black text-slate-400 uppercase mb-2 ml-1">{t.reviews.age}</label>
+                <div className="space-y-8 flex flex-col justify-center">
+                   <div className="bg-slate-50/50 p-6 rounded-[2rem] border border-slate-100">
+                      <label className="block text-xs font-black text-slate-400 uppercase tracking-widest mb-3 ml-1">{t.reviews.age}</label>
                       <select 
-                        className="w-full p-4 rounded-2xl bg-slate-50 border border-slate-200 outline-none focus:ring-2 focus:ring-indigo-500"
+                        className="w-full p-4 rounded-2xl bg-white border-2 border-slate-100 outline-none focus:border-indigo-500 transition-all font-bold text-slate-700"
                         value={reviewSettings.age}
                         onChange={(e) => setReviewSettings({...reviewSettings, age: e.target.value as any})}
                       >
@@ -310,10 +335,10 @@ const App: React.FC = () => {
                          <option value="50+">{t.reviews.options.age50_plus}</option>
                       </select>
                    </div>
-                   <div>
-                      <label className="block text-xs font-black text-slate-400 uppercase mb-2 ml-1">{t.reviews.reviewLang}</label>
+                   <div className="bg-slate-50/50 p-6 rounded-[2rem] border border-slate-100">
+                      <label className="block text-xs font-black text-slate-400 uppercase tracking-widest mb-3 ml-1">{t.reviews.reviewLang}</label>
                       <select 
-                        className="w-full p-4 rounded-2xl bg-slate-50 border border-slate-200 outline-none focus:ring-2 focus:ring-indigo-500"
+                        className="w-full p-4 rounded-2xl bg-white border-2 border-slate-100 outline-none focus:border-indigo-500 transition-all font-bold text-slate-700"
                         value={reviewSettings.reviewLanguage}
                         onChange={(e) => setReviewSettings({...reviewSettings, reviewLanguage: e.target.value as any})}
                       >
@@ -328,15 +353,15 @@ const App: React.FC = () => {
              <button
                onClick={handleGenerateReviews}
                disabled={reviewStatus === GenerationStatus.LOADING || reviewSettings.situations.length === 0}
-               className="w-full py-5 rounded-2xl bg-indigo-600 text-white font-black shadow-lg hover:bg-indigo-700 disabled:bg-slate-300 transition-all flex items-center justify-center space-x-3 group"
+               className="w-full py-6 rounded-[2rem] bg-indigo-600 text-white font-black shadow-2xl shadow-indigo-100 hover:bg-indigo-700 disabled:bg-slate-300 transition-all flex items-center justify-center space-x-4 group"
              >
                {reviewStatus === GenerationStatus.LOADING ? (
-                 <div className="animate-spin h-5 w-5 border-2 border-white border-t-transparent rounded-full" />
+                 <div className="animate-spin h-6 w-6 border-3 border-white border-t-transparent rounded-full" />
                ) : (
                  <>
-                   <span>{t.reviews.generateBtn} ({reviewSettings.situations.length})</span>
-                   <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 transform group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                   <span className="text-lg">{t.reviews.generateBtn} ({reviewSettings.situations.length})</span>
+                   <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 transform group-hover:translate-x-2 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M14 5l7 7m0 0l-7 7m7-7H3" />
                    </svg>
                  </>
                )}
