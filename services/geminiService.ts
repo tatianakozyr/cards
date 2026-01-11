@@ -145,21 +145,39 @@ export const PROMPTS_CONFIG = [
   },
   {
     category: 'nature',
-    type: 'nature-1',
-    key: 'nature1',
-    text: "Professional 1:1 SQUARE outdoor product shot. THE GARMENT is laid flat on FRESH GREEN GRASS. Clean composition. NO person, NO mannequin, NO body parts. Pure product photography in nature. Soft daylight."
+    type: 'nature-eco',
+    key: 'natureEco',
+    text: "Professional 1:1 SQUARE product shot. STYLE: Eco / Nature. THE GARMENT ALONE, laid flat or carefully draped to show maximum surface area. STRICTLY NO PERSON, NO MANNEQUIN, NO BODY PARTS. Background: Warm texture of wood, dried flowers. The background colors must CONTRAST SHARPLY with the garment's colors. HIGH-END DEPTH OF FIELD (blurred background). Natural warm lighting."
   },
   {
     category: 'nature',
-    type: 'nature-2',
-    key: 'nature2',
-    text: "Professional 1:1 SQUARE outdoor product shot. THE GARMENT is laid flat on GREY CRUSHED STONE / GRAVEL. NO person, NO mannequin, NO body parts. Rugged and authentic texture focus. Sharp shadows."
+    type: 'nature-industrial',
+    key: 'natureIndustrial',
+    text: "Professional 1:1 SQUARE product shot. STYLE: Industrial / Loft. THE GARMENT ALONE, presented for maximum visibility. STRICTLY NO PERSON, NO MANNEQUIN, NO BODY PARTS. Background: Grey concrete wall and minimalist metal structures. The background colors must CONTRAST SHARPLY with the garment's colors. SHALLOW DEPTH OF FIELD. Cool-toned studio lighting consistent with the scene."
   },
   {
     category: 'nature',
-    type: 'nature-3',
-    key: 'nature3',
-    text: "Professional 1:1 SQUARE outdoor product shot. THE GARMENT is laid flat on a slab of DARK SLATE or textured rock. NO person, NO mannequin, NO body parts. High-end natural aesthetic. Moody lighting."
+    type: 'nature-abstract',
+    key: 'natureAbstract',
+    text: "Professional 1:1 SQUARE product shot. STYLE: Abstract / Color Block. THE GARMENT ALONE, displayed on a designer podium. STRICTLY NO PERSON, NO MANNEQUIN, NO BODY PARTS. Background: Smooth matte solid surface. CHOOSE A BACKGROUND COLOR THAT MAXIMALLY CONTRASTS with the item's primary color. Geometric podiums. Minimalist artistic mood. Clean professional lighting."
+  },
+  {
+    category: 'nature',
+    type: 'nature-home',
+    key: 'natureHome',
+    text: "Professional 1:1 SQUARE product shot. STYLE: Home / Cozy. THE GARMENT ALONE, laid out in a domestic setting. STRICTLY NO PERSON, NO MANNEQUIN, NO BODY PARTS. Background: Bright airy interior, soft linen textures, soft carpet. The background colors must CONTRAST SHARPLY with the garment's colors. BLURRED BACKGROUND (depth of field). Soft diffused morning light."
+  },
+  {
+    category: 'nature',
+    type: 'nature-street',
+    key: 'natureStreet',
+    text: "Professional 1:1 SQUARE product shot. STYLE: Street Light. THE GARMENT ALONE, positioned for full product visibility. STRICTLY NO PERSON, NO MANNEQUIN, NO BODY PARTS. Background: Neutral minimalist wall with dramatic sunlight patterns (blinds/window shadows). The background colors must CONTRAST SHARPLY with the garment's colors. Dynamic play of light and shadow. High contrast studio photography feel."
+  },
+  {
+    category: 'nature',
+    type: 'nature-grass',
+    key: 'natureGrass',
+    text: "Professional 1:1 SQUARE product shot. STYLE: Outdoor / Fresh. THE GARMENT ALONE, laid out on LUSH VIBRANT GREEN GRASS. STRICTLY NO PERSON, NO MANNEQUIN, NO BODY PARTS. The bright green of the grass must CONTRAST SHARPLY with the garment's colors. SHALLOW DEPTH OF FIELD (blurred background). Bright natural daylight, soft shadows."
   },
   {
     category: 'promo',
@@ -214,6 +232,11 @@ export const generateCategoryImages = async (
     try {
       let finalPrompt = promptData.text;
       
+      // Additional strict instruction for 'nature' category to ensure no person
+      if (category === 'nature') {
+        finalPrompt = "THIS IS A PRODUCT-ONLY SHOT. YOU MUST REMOVE ANY PEOPLE, MODELS, OR BODY PARTS FROM THE SOURCE IMAGE. SHOW ONLY THE GARMENT. " + finalPrompt;
+      }
+
       // Handle slogan for promo category
       if (category === 'promo') {
         if (slogan && slogan.trim() !== '') {
