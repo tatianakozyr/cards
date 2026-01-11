@@ -244,6 +244,11 @@ export const generateCategoryImages = async (
         finalPrompt = "STRICT INSTRUCTION: THE MODEL IN THE GENERATED IMAGE MUST BE A COMPLETELY DIFFERENT PERSON FROM ANYONE VISIBLE IN THE SOURCE IMAGE. FACE MUST BE HIDDEN OR OUTSIDE THE FRAME. " + finalPrompt;
       }
 
+      // Special instruction for promo category to ensure different Ukrainian model
+      if (category === 'promo') {
+        finalPrompt = "STRICT INSTRUCTION: THE MODEL IN THIS PROMO IMAGE MUST BE A COMPLETELY DIFFERENT PERSON FROM ANYONE VISIBLE IN THE SOURCE IMAGE. HE MUST BE A CHARISMATIC MAN WITH A DISTINCT UKRAINIAN APPEARANCE. " + finalPrompt;
+      }
+
       // Handle slogan for promo category
       if (category === 'promo') {
         if (slogan && slogan.trim() !== '') {
