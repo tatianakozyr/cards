@@ -1,6 +1,17 @@
 
 export type ImageCategory = 'model' | 'flatlay' | 'macro' | 'mannequin' | 'nature' | 'review' | 'promo';
 
+export interface User {
+  id: string;
+  email: string;
+  name: string;
+  password?: string; // Додано для імітації БД
+  isPaid: boolean;
+  isAdmin?: boolean;
+  uploadCount: number;
+  avatar?: string;
+}
+
 export interface GeneratedImage {
   id: string;
   url: string;
@@ -8,9 +19,6 @@ export interface GeneratedImage {
     | 'model-front' 
     | 'model-back' 
     | 'model-profile' 
-    | 'flatlay-decor' 
-    | 'flatlay-shoes' 
-    | 'flatlay-accessories'
     | 'flatlay-gym'
     | 'flatlay-street'
     | 'flatlay-running'
@@ -54,11 +62,6 @@ export enum GenerationStatus {
   LOADING = 'LOADING',
   SUCCESS = 'SUCCESS',
   ERROR = 'ERROR'
-}
-
-export interface GenerationRequest {
-  image: string; // Base64
-  mimeType: string;
 }
 
 export type Language = 'uk' | 'en' | 'ru';
