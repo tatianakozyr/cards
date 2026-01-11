@@ -15,19 +15,19 @@ export const PROMPTS_CONFIG = [
     category: 'model',
     type: 'model-front',
     key: 'modelFront',
-    text: "Professional 1:1 SQUARE fashion shot. A MAN of UKRAINIAN appearance, aged 30-40 years, wearing this exact item. NECK DOWNWARD VIEW. The face MUST BE COMPLETELY OUTSIDE THE FRAME. Focus strictly on the clothing textures, fit, and silhouette. The model should be DIFFERENT from any person in the source image. Studio wall background. The garment is the absolute priority."
+    text: "Professional 1:1 SQUARE fashion shot. FRONT VIEW. A MAN of UKRAINIAN appearance, aged 30-40 years, wearing this exact item. The model MUST be different from the person in the source photo. NECK DOWNWARD VIEW: the face MUST be completely outside the top border or obscured. Focus strictly on the clothing fit and silhouette. Studio background. No face, no distractions."
   },
   {
     category: 'model',
     type: 'model-back',
     key: 'modelBack',
-    text: "Professional 1:1 SQUARE fashion shot. A MAN of UKRAINIAN appearance, aged 30-40 years, wearing this item. REAR VIEW. Head excluded or cropped out. Focus on the back construction and drape of the fabric. The model should be DIFFERENT from any person in the source image. Studio wall background."
+    text: "Professional 1:1 SQUARE fashion shot. BACK VIEW. A MAN of UKRAINIAN appearance, aged 30-40 years, wearing this item. The model MUST be different from the person in the source photo. Head is excluded from the frame. Focus on the back construction and drape. Studio background."
   },
   {
     category: 'model',
     type: 'model-profile',
     key: 'modelProfile',
-    text: "Professional 1:1 SQUARE fashion shot. A MAN of UKRAINIAN appearance, aged 30-40 years, wearing this item. SIDE PROFILE. FACE MUST BE COMPLETELY HIDDEN or outside the frame. Focus on the profile silhouette and sleeve detail. The model should be DIFFERENT from any person in the source image. Studio wall background."
+    text: "Professional 1:1 SQUARE fashion shot. SIDE PROFILE VIEW. A MAN of UKRAINIAN appearance, aged 30-40 years, wearing this item. The model MUST be different from the person in the source photo. The face must NOT be visible (turned away or out of frame). Focus on the profile silhouette and sleeve length. Studio background."
   },
   {
     category: 'flatlay',
@@ -129,19 +129,19 @@ export const PROMPTS_CONFIG = [
     category: 'mannequin',
     type: 'mannequin-front',
     key: 'mannequinFront',
-    text: "Professional 1:1 SQUARE product photo. FRONT VIEW, perfectly centered and MAXIMALLY ZOOMED IN, extremely close to the viewer. Focus on the garment's 3D VOLUME and structural integrity. The item must appear as if worn by an INVISIBLE PERSON with STRAIGHT LIMBS: strictly NO BENDS in knees or elbows. The garment must be perfectly symmetrical. NO body parts, NO face, NO hands, NO feet, NO shoes, NO mannequin visible. Clean white studio background. Sharp realistic shadows."
+    text: "Professional 1:1 SQUARE product photo. FRONT VIEW, maximally zoomed in and extremely close to the viewer. Focus on the garment's 3D VOLUME and structural integrity. The item must appear as if worn by an INVISIBLE PERSON with perfectly STRAIGHT LIMBS: strictly NO BENDS in knees or elbows. Perfectly symmetrical pose. NO human parts, NO face, NO hands, NO feet, NO shoes, NO mannequin visible. Clean white studio background. Sharp realistic shadows."
   },
   {
     category: 'mannequin',
     type: 'mannequin-motion',
     key: 'mannequinMotion',
-    text: "Professional 1:1 SQUARE product photo. DYNAMIC ACTION SHOT. The garment is shown floating in air as if worn by an invisible body. The item is UNZIPPED or UNBUTTONED so the INTERNAL LINING is visible, or it has a strong WIND-BLOWN EFFECT where the front is opened/fluttering to show depth. The silhouette shows fluid movement. NO body parts, NO people, NO shoes, NO mannequin visible. Clean white studio background."
+    text: "Professional 1:1 SQUARE product photo. DYNAMIC ACTION SHOT on an invisible body. The garment is UNZIPPED or UNBUTTONED so the INTERNAL LINING is visible. The front is BLOWN OPEN by wind (flying effect) to show depth and structure. NO body parts, NO people, NO shoes, NO mannequin visible. Clean white studio background."
   },
   {
     category: 'mannequin',
     type: 'mannequin-angle',
     key: 'mannequinAngle',
-    text: "Professional 1:1 SQUARE product photo. 3/4 TURN VIEW (semi-profile). The garment floats in air, appearing to have full 3D VOLUME on an invisible person. Focus on the depth, layering, and dimensional structure. NO body parts, NO people, NO shoes, NO mannequin visible. Clean white studio background. Sharp shadows."
+    text: "Professional 1:1 SQUARE product photo. 3/4 TURN VIEW (semi-profile). The garment floats in air with full 3D VOLUME on an invisible person. Focus on the side depth and layering. NO body parts, NO people, NO shoes, NO mannequin visible. Clean white studio background. Sharp shadows."
   },
   {
     category: 'nature',
@@ -234,9 +234,14 @@ export const generateCategoryImages = async (
       
       // Global strict instruction for mannequin and nature categories to ensure no people/mannequins
       if (category === 'mannequin' || category === 'nature') {
-        finalPrompt = "CRITICAL INSTRUCTION: THIS IS A PRODUCT-ONLY SHOT. YOU MUST REMOVE ANY PEOPLE, MODELS, MANNEQUINS, SHOES, OR BODY PARTS FROM THE SOURCE IMAGE. SHOW ONLY THE CLOTHING GARMENT. " + 
+        finalPrompt = "CRITICAL INSTRUCTION: THIS IS A PRODUCT-ONLY SHOT. YOU MUST REMOVE ANY PEOPLE, MODELS, MANNEQUINS, SHOES, SOCKS, OR BODY PARTS FROM THE SOURCE IMAGE. SHOW ONLY THE CLOTHING ITEM ITSELF. " + 
           (category === 'mannequin' ? "THE GARMENT MUST LOOK AS IF IT IS WORN BY AN INVISIBLE PERSON (GHOST MANNEQUIN STYLE), SHOWING FULL 3D VOLUME AND INTERNAL STRUCTURE. " : "") + 
           finalPrompt;
+      }
+
+      // Special instruction for model category to ensure it's a different person and face is hidden
+      if (category === 'model') {
+        finalPrompt = "STRICT INSTRUCTION: THE MODEL IN THE GENERATED IMAGE MUST BE A COMPLETELY DIFFERENT PERSON FROM ANYONE VISIBLE IN THE SOURCE IMAGE. FACE MUST BE HIDDEN OR OUTSIDE THE FRAME. " + finalPrompt;
       }
 
       // Handle slogan for promo category
