@@ -287,22 +287,8 @@ const App: React.FC = () => {
           </div>
         )}
 
-        {error && (
-          <div className="max-w-xl mx-auto mb-10 p-5 bg-red-50 border-2 border-red-100 rounded-3xl text-red-700 font-bold text-center shadow-sm">
-             {error}
-          </div>
-        )}
-
-        {allImages.length > 0 && (
-          <ResultGallery 
-            images={allImages} 
-            t={t} 
-            onRegenerateSingle={handleRegenerateSingle}
-          />
-        )}
-
         {sourceImage && (
-          <div className="mt-20 max-w-5xl mx-auto bg-white rounded-[3rem] p-10 border border-slate-200 shadow-2xl relative overflow-hidden">
+          <div className="mt-8 mb-16 max-w-5xl mx-auto bg-white rounded-[3rem] p-10 border border-slate-200 shadow-2xl relative overflow-hidden animate-fadeIn">
              <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500"></div>
              
              <div className="text-center mb-12">
@@ -392,6 +378,20 @@ const App: React.FC = () => {
                )}
              </button>
           </div>
+        )}
+
+        {error && (
+          <div className="max-w-xl mx-auto mb-10 p-5 bg-red-50 border-2 border-red-100 rounded-3xl text-red-700 font-bold text-center shadow-sm">
+             {error}
+          </div>
+        )}
+
+        {allImages.length > 0 && (
+          <ResultGallery 
+            images={allImages} 
+            t={t} 
+            onRegenerateSingle={handleRegenerateSingle}
+          />
         )}
       </main>
     </div>

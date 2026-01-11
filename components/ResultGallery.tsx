@@ -21,7 +21,8 @@ export const ResultGallery: React.FC<ResultGalleryProps> = ({
 
   const groupedImages = useMemo(() => {
     const groups: Record<string, GeneratedImage[]> = {};
-    const order = ['model', 'flatlay', 'macro', 'mannequin', 'nature', 'review', 'other'];
+    // Moved 'review' to the first place in the order
+    const order = ['review', 'model', 'flatlay', 'macro', 'mannequin', 'nature', 'promo', 'other'];
 
     images.forEach(img => {
       let category = 'other';
@@ -30,6 +31,7 @@ export const ResultGallery: React.FC<ResultGalleryProps> = ({
       else if (img.type.startsWith('macro')) category = 'macro';
       else if (img.type.startsWith('mannequin')) category = 'mannequin';
       else if (img.type.startsWith('nature')) category = 'nature';
+      else if (img.type.startsWith('promo')) category = 'promo';
       else if (img.type === 'review') category = 'review';
       
       if (!groups[category]) groups[category] = [];
@@ -152,7 +154,6 @@ export const ResultGallery: React.FC<ResultGalleryProps> = ({
             <div className="mb-6">
                <p className="text-xs font-black text-slate-400 uppercase tracking-widest mb-3">{t.singleRegen.suggestions}</p>
                <div className="flex flex-wrap gap-2">
-                  {/* Fixed: Cast 'text' to string to satisfy handleSuggestion parameter type */}
                   {Object.entries(t.singleRegen.mannequinFixes).map(([key, text]) => (
                     <button 
                       key={key} 
