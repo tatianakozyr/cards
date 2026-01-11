@@ -56,12 +56,12 @@ export const translations = {
       nature1: "Природа: Трава (Flatlay)",
       nature2: "Природа: Каміння (Flatlay)",
       nature3: "Природа: Сланець (Flatlay)",
-      promo1: "Реклама: Urban Street",
-      promo2: "Реклама: Studio High-Key",
-      promo3: "Реклама: Moody Industrial",
-      promo4: "Реклама: Modern Business",
-      promo5: "Реклама: Nature Adventure",
-      promo6: "Реклама: Night City Neon"
+      promo1: "Реклама: Lifestyle (Urban)",
+      promo2: "Реклама: Minimalist Studio",
+      promo3: "Реклама: Dynamic Action",
+      promo4: "Реклама: Texture & Material",
+      promo5: "Реклама: Editorial High Fashion",
+      promo6: "Реклама: Thematic Environment"
     },
     gallerySections: {
       model: "Фото на моделі",
@@ -191,12 +191,12 @@ export const translations = {
       nature1: "Nature: Grass (Flatlay)",
       nature2: "Nature: Stones (Flatlay)",
       nature3: "Nature: Slate (Flatlay)",
-      promo1: "Promo: Urban Street",
-      promo2: "Promo: Studio High-Key",
-      promo3: "Promo: Moody Industrial",
-      promo4: "Promo: Modern Business",
-      promo5: "Promo: Nature Adventure",
-      promo6: "Promo: Night City Neon"
+      promo1: "Promo: Lifestyle Urban",
+      promo2: "Promo: Minimalist Studio",
+      promo3: "Promo: Dynamic Action",
+      promo4: "Promo: Texture & Material",
+      promo5: "Promo: Editorial High Fashion",
+      promo6: "Promo: Thematic Environment"
     },
     gallerySections: {
       model: "Model Shots",
@@ -326,12 +326,12 @@ export const translations = {
       nature1: "Природа: Трава (Flatlay)",
       nature2: "Природа: Камни (Flatlay)",
       nature3: "Природа: Сланец (Flatlay)",
-      promo1: "Реклама: Urban Street",
-      promo2: "Реклама: Studio High-Key",
-      promo3: "Реклама: Moody Industrial",
-      promo4: "Реклама: Modern Business",
-      promo5: "Реклама: Nature Adventure",
-      promo6: "Реклама: Night City Neon"
+      promo1: "Реклама: Lifestyle (Urban)",
+      promo2: "Реклама: Minimalist Studio",
+      promo3: "Реклама: Dynamic Action",
+      promo4: "Реклама: Texture & Material",
+      promo5: "Реклама: Editorial High Fashion",
+      promo6: "Реклама: Thematic Environment"
     },
     gallerySections: {
       model: "Фото на модели",
@@ -345,7 +345,7 @@ export const translations = {
     },
     payment: {
       title: "Разблокировать",
-      description: "Оплатите для удаления водяных знаков.",
+      description: "Оплатите для удаления водяних знаков.",
       payBtn: "Оплатить $4.99",
       unlockBtn: "Разблокировать",
       watermark: "ПРЕДПРОСМОТР"

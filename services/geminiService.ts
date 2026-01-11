@@ -165,37 +165,37 @@ export const PROMPTS_CONFIG = [
     category: 'promo',
     type: 'promo-1',
     key: 'promo1',
-    text: "High-end 1:1 SQUARE professional fashion ad. A charismatic man of UKRAINIAN (SLAVIC) appearance wearing this EXACT garment. SITUATION: Urban street scene, walking towards camera. Cinematic lighting, premium street fashion brand aesthetic. NO TEXT."
+    text: "COMMERCIAL AD: Lifestyle (Urban). 1:1 SQUARE. A charismatic man of UKRAINIAN appearance wearing this exact garment. Sitting in a modern cafe or walking in a Kyiv-style contemporary urban setting. Realistic lifestyle context. COMPOSITION: Leave a clear SAFE ZONE (empty space) on the left side for marketing text. High quality, authentic colors."
   },
   {
     category: 'promo',
     type: 'promo-2',
     key: 'promo2',
-    text: "High-end 1:1 SQUARE professional fashion ad. A charismatic man of UKRAINIAN (SLAVIC) appearance wearing this EXACT garment. SITUATION: Minimalist high-key studio, sitting on a designer stool. 3/4 angle view. Dramatic sharp shadows. NO TEXT."
+    text: "COMMERCIAL AD: Minimalist Studio. 1:1 SQUARE. Premium fashion aesthetic. Clean centered shot of a UKRAINIAN model wearing the garment. Background: solid light neutral grey or beige. Soft diffused lighting, minimal shadows. COMPOSITION: Balanced with space at the top for a brand logo. Elegant and high-end look."
   },
   {
     category: 'promo',
     type: 'promo-3',
     key: 'promo3',
-    text: "High-end 1:1 SQUARE professional fashion ad. A charismatic man of UKRAINIAN (SLAVIC) appearance wearing this EXACT garment. SITUATION: Moody industrial warehouse, leaning against a rough brick wall. Rim lighting. Gritty and powerful vibe. NO TEXT."
+    text: "COMMERCIAL AD: Dynamic Action. 1:1 SQUARE. UKRAINIAN model in a dynamic pose (walking fast or jumping). Background has subtle MOTION BLUR. Highlight the movement of the fabric. COMPOSITION: Subject shifted to the right, leaving a SAFE ZONE on the left for a 'LIMITED OFFER' text overlay. Energetic vibe."
   },
   {
     category: 'promo',
     type: 'promo-4',
     key: 'promo4',
-    text: "High-end 1:1 SQUARE professional fashion ad. A charismatic man of UKRAINIAN (SLAVIC) appearance wearing this EXACT garment. SITUATION: Modern office/glass skyscraper rooftop. Side view profile shot. Bright natural morning light. NO TEXT."
+    text: "COMMERCIAL AD: Texture & Material. 1:1 SQUARE. A sophisticated artistic composition showing a close-up detail of the fabric texture (stitching, weave) blended with a full view of the garment on a man. Focus on premium quality materials. Studio lighting highlighting fibers. COMPOSITION: Clear space for a 'QUALITY GUARANTEED' seal."
   },
   {
     category: 'promo',
     type: 'promo-5',
     key: 'promo5',
-    text: "High-end 1:1 SQUARE professional fashion ad. A charismatic man of UKRAINIAN (SLAVIC) appearance wearing this EXACT garment. SITUATION: Wilderness, natural rock formations. Low angle hero shot. Sunset backlighting. Adventure aesthetic. NO TEXT."
+    text: "COMMERCIAL AD: Editorial / High Fashion. 1:1 SQUARE. Bold and trendy журнальна стилістика. UKRAINIAN model. Hard lighting with deep shadows. Creative camera angle (low angle). Background: textured concrete or bold contrast color. COMPOSITION: Edgy layout, leave space at the bottom for an 'AUTUMN COLLECTION' title."
   },
   {
     category: 'promo',
     type: 'promo-6',
     key: 'promo6',
-    text: "High-end 1:1 SQUARE professional fashion ad. A charismatic man of UKRAINIAN (SLAVIC) appearance wearing this EXACT garment. SITUATION: Vibrant night city scene, neon signs. Portrait shot from waist up. High energy and modern aesthetic. NO TEXT."
+    text: "COMMERCIAL AD: Thematic Environment. 1:1 SQUARE. Atmospheric scene matching the garment's purpose. If it's warm: cold blue tones, frost/pine background. If it's light: warm sunny backyard or industrial interior. Use natural elements (wood/stone). COMPOSITION: Wide shot, man is part of the environment. Safe zone for call-to-action button."
   }
 ];
 
