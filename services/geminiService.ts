@@ -15,19 +15,19 @@ export const PROMPTS_CONFIG = [
     category: 'model',
     type: 'model-front',
     key: 'modelFront',
-    text: "Professional 1:1 SQUARE fashion shot. MAN wearing this exact item. SLAVIC appearance. Neck downward. FACE OUTSIDE FRAME. Studio wall."
+    text: "Professional 1:1 SQUARE fashion shot. A MAN of UKRAINIAN appearance, aged 30-40 years, wearing this exact item. NECK DOWNWARD VIEW. The face MUST BE COMPLETELY OUTSIDE THE FRAME. Focus strictly on the clothing textures, fit, and silhouette. The model should be DIFFERENT from any person in the source image. Studio wall background. The garment is the absolute priority."
   },
   {
     category: 'model',
     type: 'model-back',
     key: 'modelBack',
-    text: "Professional 1:1 SQUARE fashion shot. MAN wearing this item. BACK view. Head excluded. Studio wall."
+    text: "Professional 1:1 SQUARE fashion shot. A MAN of UKRAINIAN appearance, aged 30-40 years, wearing this item. REAR VIEW. Head excluded or cropped out. Focus on the back construction and drape of the fabric. The model should be DIFFERENT from any person in the source image. Studio wall background."
   },
   {
     category: 'model',
     type: 'model-profile',
     key: 'modelProfile',
-    text: "Professional 1:1 SQUARE fashion shot. MAN wearing this item. SIDE PROFILE. Face outside top border. Studio wall."
+    text: "Professional 1:1 SQUARE fashion shot. A MAN of UKRAINIAN appearance, aged 30-40 years, wearing this item. SIDE PROFILE. FACE MUST BE COMPLETELY HIDDEN or outside the frame. Focus on the profile silhouette and sleeve detail. The model should be DIFFERENT from any person in the source image. Studio wall background."
   },
   {
     category: 'flatlay',
