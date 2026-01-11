@@ -127,21 +127,21 @@ export const PROMPTS_CONFIG = [
   },
   {
     category: 'mannequin',
-    type: 'mannequin-far',
-    key: 'mannequinFar',
-    text: "Professional 1:1 SQUARE ghost mannequin product photo. FRONT VIEW, ONLY the garment is visible, floating in the air. Remote full shot of the entire garment. Perfectly centered. NO body parts, NO face, NO hands, NO shoes, NO mannequin stand. Purely the garment alone. Clean white studio background. Sharp shadows."
+    type: 'mannequin-front',
+    key: 'mannequinFront',
+    text: "Professional 1:1 SQUARE product photo. FRONT VIEW, perfectly centered and MAXIMALLY ZOOMED IN, extremely close to the viewer. Focus on the garment's 3D VOLUME and structural integrity. The item must appear as if worn by an INVISIBLE PERSON with STRAIGHT LIMBS: strictly NO BENDS in knees or elbows. The garment must be perfectly symmetrical. NO body parts, NO face, NO hands, NO feet, NO shoes, NO mannequin visible. Clean white studio background. Sharp realistic shadows."
   },
   {
     category: 'mannequin',
-    type: 'mannequin-close',
-    key: 'mannequinClose',
-    text: "Professional 1:1 SQUARE ghost mannequin product photo. FRONT VIEW, close-up zoomed shot of the garment torso, floating in air. ONLY the garment is visible. NO body parts, NO shoes, NO mannequin visible. High fabric detail. Clean white background."
+    type: 'mannequin-motion',
+    key: 'mannequinMotion',
+    text: "Professional 1:1 SQUARE product photo. DYNAMIC ACTION SHOT. The garment is shown floating in air as if worn by an invisible body. The item is UNZIPPED or UNBUTTONED so the INTERNAL LINING is visible, or it has a strong WIND-BLOWN EFFECT where the front is opened/fluttering to show depth. The silhouette shows fluid movement. NO body parts, NO people, NO shoes, NO mannequin visible. Clean white studio background."
   },
   {
     category: 'mannequin',
     type: 'mannequin-angle',
     key: 'mannequinAngle',
-    text: "Professional 1:1 SQUARE ghost mannequin product photo. 3/4 TURN ANGLE VIEW, close-up zoomed shot of the garment floating in the air. ONLY the garment is visible. NO body parts, NO shoes, NO accessories, NO mannequin visible. Clean white studio background."
+    text: "Professional 1:1 SQUARE product photo. 3/4 TURN VIEW (semi-profile). The garment floats in air, appearing to have full 3D VOLUME on an invisible person. Focus on the depth, layering, and dimensional structure. NO body parts, NO people, NO shoes, NO mannequin visible. Clean white studio background. Sharp shadows."
   },
   {
     category: 'nature',
@@ -232,9 +232,11 @@ export const generateCategoryImages = async (
     try {
       let finalPrompt = promptData.text;
       
-      // Additional strict instruction for 'nature' category to ensure no person
-      if (category === 'nature') {
-        finalPrompt = "THIS IS A PRODUCT-ONLY SHOT. YOU MUST REMOVE ANY PEOPLE, MODELS, OR BODY PARTS FROM THE SOURCE IMAGE. SHOW ONLY THE GARMENT. " + finalPrompt;
+      // Global strict instruction for mannequin and nature categories to ensure no people/mannequins
+      if (category === 'mannequin' || category === 'nature') {
+        finalPrompt = "CRITICAL INSTRUCTION: THIS IS A PRODUCT-ONLY SHOT. YOU MUST REMOVE ANY PEOPLE, MODELS, MANNEQUINS, SHOES, OR BODY PARTS FROM THE SOURCE IMAGE. SHOW ONLY THE CLOTHING GARMENT. " + 
+          (category === 'mannequin' ? "THE GARMENT MUST LOOK AS IF IT IS WORN BY AN INVISIBLE PERSON (GHOST MANNEQUIN STYLE), SHOWING FULL 3D VOLUME AND INTERNAL STRUCTURE. " : "") + 
+          finalPrompt;
       }
 
       // Handle slogan for promo category
