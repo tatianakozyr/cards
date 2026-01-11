@@ -26,7 +26,7 @@ const VisualGuide: React.FC<VisualGuideProps> = ({ t, onGenerate, loadingCategor
   ];
 
   return (
-    <div className="w-full max-w-5xl mx-auto mb-16 p-8 bg-white/40 backdrop-blur-md rounded-[3rem] border border-white/60 shadow-2xl overflow-hidden relative group">
+    <div className="w-full max-w-5xl mx-auto mb-10 p-8 bg-white/40 backdrop-blur-md rounded-[3rem] border border-white/60 shadow-2xl overflow-hidden relative group">
       <div className="absolute top-0 right-0 -mt-10 -mr-10 w-64 h-64 bg-indigo-500/5 rounded-full blur-3xl"></div>
       
       <div className="relative z-10 text-center mb-10">
@@ -287,6 +287,17 @@ const App: React.FC = () => {
           </div>
         )}
 
+        {/* Галерея результатів тепер знаходиться між гідом та генератором відгуків */}
+        {allImages.length > 0 && (
+          <div className="mb-16">
+            <ResultGallery 
+              images={allImages} 
+              t={t} 
+              onRegenerateSingle={handleRegenerateSingle}
+            />
+          </div>
+        )}
+
         {sourceImage && (
           <div className="mt-8 mb-16 max-w-5xl mx-auto bg-white rounded-[3rem] p-10 border border-slate-200 shadow-2xl relative overflow-hidden animate-fadeIn">
              <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500"></div>
@@ -386,13 +397,6 @@ const App: React.FC = () => {
           </div>
         )}
 
-        {allImages.length > 0 && (
-          <ResultGallery 
-            images={allImages} 
-            t={t} 
-            onRegenerateSingle={handleRegenerateSingle}
-          />
-        )}
       </main>
     </div>
   );
