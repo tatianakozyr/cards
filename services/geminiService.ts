@@ -147,55 +147,55 @@ export const PROMPTS_CONFIG = [
     category: 'nature',
     type: 'nature-1',
     key: 'nature1',
-    text: "Professional 1:1 SQUARE outdoor product shot. The GARMENT is laid flat on FRESH GREEN GRASS. Clean composition. NO person, NO mannequin, NO body parts. Pure product photography in nature. Soft daylight."
+    text: "Professional 1:1 SQUARE outdoor product shot. THE GARMENT is laid flat on FRESH GREEN GRASS. Clean composition. NO person, NO mannequin, NO body parts. Pure product photography in nature. Soft daylight."
   },
   {
     category: 'nature',
     type: 'nature-2',
     key: 'nature2',
-    text: "Professional 1:1 SQUARE outdoor product shot. The GARMENT is laid flat on GREY CRUSHED STONE / GRAVEL. NO person, NO mannequin, NO body parts. Rugged and authentic texture focus. Sharp shadows."
+    text: "Professional 1:1 SQUARE outdoor product shot. THE GARMENT is laid flat on GREY CRUSHED STONE / GRAVEL. NO person, NO mannequin, NO body parts. Rugged and authentic texture focus. Sharp shadows."
   },
   {
     category: 'nature',
     type: 'nature-3',
     key: 'nature3',
-    text: "Professional 1:1 SQUARE outdoor product shot. The GARMENT is laid flat on a slab of DARK SLATE or textured rock. NO person, NO mannequin, NO body parts. High-end natural aesthetic. Moody lighting."
+    text: "Professional 1:1 SQUARE outdoor product shot. THE GARMENT is laid flat on a slab of DARK SLATE or textured rock. NO person, NO mannequin, NO body parts. High-end natural aesthetic. Moody lighting."
   },
   {
     category: 'promo',
     type: 'promo-1',
     key: 'promo1',
-    text: "COMMERCIAL AD: Lifestyle (Urban). 1:1 SQUARE. A charismatic man of UKRAINIAN appearance wearing this exact garment. Sitting in a modern cafe or walking in a Kyiv-style contemporary urban setting. Realistic lifestyle context. COMPOSITION: Leave a clear SAFE ZONE (empty space) on the left side for marketing text. High quality, authentic colors."
+    text: "COMMERCIAL AD: Lifestyle (Urban). 1:1 SQUARE. A charismatic man of UKRAINIAN appearance, AGED 30-50 YEARS, wearing this exact garment. Sitting in a modern cafe or walking in a Kyiv-style contemporary urban setting. Realistic lifestyle context. COMPOSITION: Leave a clear SAFE ZONE (empty space) on the left side. "
   },
   {
     category: 'promo',
     type: 'promo-2',
     key: 'promo2',
-    text: "COMMERCIAL AD: Minimalist Studio. 1:1 SQUARE. Premium fashion aesthetic. Clean centered shot of a UKRAINIAN model wearing the garment. Background: solid light neutral grey or beige. Soft diffused lighting, minimal shadows. COMPOSITION: Balanced with space at the top for a brand logo. Elegant and high-end look."
+    text: "COMMERCIAL AD: Minimalist Studio. 1:1 SQUARE. Premium fashion aesthetic. Clean centered shot of a UKRAINIAN model, AGED 30-50 YEARS, wearing the garment. Background: solid light neutral grey or beige. Soft diffused lighting, minimal shadows. COMPOSITION: Balanced with space at the top for a brand logo. "
   },
   {
     category: 'promo',
     type: 'promo-3',
     key: 'promo3',
-    text: "COMMERCIAL AD: Dynamic Action. 1:1 SQUARE. UKRAINIAN model in a dynamic pose (walking fast or jumping). Background has subtle MOTION BLUR. Highlight the movement of the fabric. COMPOSITION: Subject shifted to the right, leaving a SAFE ZONE on the left for a 'LIMITED OFFER' text overlay. Energetic vibe."
+    text: "COMMERCIAL AD: Dynamic Action. 1:1 SQUARE. UKRAINIAN model, AGED 30-50 YEARS, in a dynamic pose (walking fast or jumping). Background has subtle MOTION BLUR. Highlight the movement of the fabric. COMPOSITION: Subject shifted to the right, leaving a SAFE ZONE on the left. "
   },
   {
     category: 'promo',
     type: 'promo-4',
     key: 'promo4',
-    text: "COMMERCIAL AD: Texture & Material. 1:1 SQUARE. A sophisticated artistic composition showing a close-up detail of the fabric texture (stitching, weave) blended with a full view of the garment on a man. Focus on premium quality materials. Studio lighting highlighting fibers. COMPOSITION: Clear space for a 'QUALITY GUARANTEED' seal."
+    text: "COMMERCIAL AD: Texture & Material. 1:1 SQUARE. A sophisticated artistic composition showing a close-up detail of the fabric texture (stitching, weave) blended with a full view of the garment on a UKRAINIAN man AGED 30-50 YEARS. Focus on premium quality materials. Studio lighting highlighting fibers. "
   },
   {
     category: 'promo',
     type: 'promo-5',
     key: 'promo5',
-    text: "COMMERCIAL AD: Editorial / High Fashion. 1:1 SQUARE. Bold and trendy журнальна стилістика. UKRAINIAN model. Hard lighting with deep shadows. Creative camera angle (low angle). Background: textured concrete or bold contrast color. COMPOSITION: Edgy layout, leave space at the bottom for an 'AUTUMN COLLECTION' title."
+    text: "COMMERCIAL AD: Editorial / High Fashion. 1:1 SQUARE. Bold and trendy журнальна стилістика. UKRAINIAN model, AGED 30-50 YEARS. Hard lighting with deep shadows. Creative camera angle (low angle). Background: textured concrete or bold contrast color. COMPOSITION: Edgy layout, leave space at the bottom. "
   },
   {
     category: 'promo',
     type: 'promo-6',
     key: 'promo6',
-    text: "COMMERCIAL AD: Thematic Environment. 1:1 SQUARE. Atmospheric scene matching the garment's purpose. If it's warm: cold blue tones, frost/pine background. If it's light: warm sunny backyard or industrial interior. Use natural elements (wood/stone). COMPOSITION: Wide shot, man is part of the environment. Safe zone for call-to-action button."
+    text: "COMMERCIAL AD: Thematic Environment. 1:1 SQUARE. Atmospheric scene matching the garment's purpose. UKRAINIAN man, AGED 30-50 YEARS, is part of the environment. If it's warm: cold blue tones, frost/pine background. If it's light: warm sunny backyard or industrial interior. Use natural elements (wood/stone). COMPOSITION: Wide shot. Safe zone available. "
   }
 ];
 
@@ -203,7 +203,8 @@ export const generateCategoryImages = async (
   base64Image: string,
   mimeType: string,
   category: Exclude<ImageCategory, 'review'>,
-  lang: Language
+  lang: Language,
+  slogan?: string
 ): Promise<GeneratedImage[]> => {
   const cleanBase64 = stripBase64Header(base64Image);
   const t = translations[lang];
@@ -212,6 +213,15 @@ export const generateCategoryImages = async (
   const promises = configToRun.map(async (promptData, index): Promise<GeneratedImage | null> => {
     try {
       let finalPrompt = promptData.text;
+      
+      // Handle slogan for promo category
+      if (category === 'promo') {
+        if (slogan && slogan.trim() !== '') {
+          finalPrompt += ` TEXT OVERLAY: Include the following text: "${slogan}". Place it tastefully within the safe zone using a professional, modern sans-serif font. Ensure high legibility and aesthetic integration with the scene.`;
+        } else {
+          finalPrompt += ` STRICTLY NO TEXT OVERLAY. The image must contain no letters, no characters, and no numbers. Pure visual content only.`;
+        }
+      }
 
       const response = await ai.models.generateContent({
         model: 'gemini-2.5-flash-image', 
@@ -244,7 +254,8 @@ export const generateCategoryImages = async (
         url: imageUrl,
         type: promptData.type as any,
         description: description,
-        correctionCount: 0
+        correctionCount: 0,
+        slogan: slogan // Store the slogan used
       };
     } catch (error) {
       console.error(`Error generating image in category ${category}:`, error);

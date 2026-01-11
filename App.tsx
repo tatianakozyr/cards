@@ -11,9 +11,11 @@ interface VisualGuideProps {
   onGenerate: (category: Exclude<ImageCategory, 'review'>) => void;
   loadingCategories: Set<string>;
   hasResults: (category: string) => boolean;
+  promoSlogan: string;
+  setPromoSlogan: (val: string) => void;
 }
 
-const VisualGuide: React.FC<VisualGuideProps> = ({ t, onGenerate, loadingCategories, hasResults }) => {
+const VisualGuide: React.FC<VisualGuideProps> = ({ t, onGenerate, loadingCategories, hasResults, promoSlogan, setPromoSlogan }) => {
   const guideItems = [
     { key: 'model', icon: '👤', text: t.guide.model, color: 'hover:border-blue-400 hover:bg-blue-50/50', iconColor: 'bg-blue-50 text-blue-600', dot: 'bg-blue-500' },
     { key: 'flatlay', icon: '👕', text: t.guide.flatlay, color: 'hover:border-purple-400 hover:bg-purple-50/50', iconColor: 'bg-purple-50 text-purple-600', dot: 'bg-purple-500' },
@@ -36,39 +38,53 @@ const VisualGuide: React.FC<VisualGuideProps> = ({ t, onGenerate, loadingCategor
         {guideItems.map((item) => {
           const isLoading = loadingCategories.has(item.key);
           const completed = hasResults(item.key);
+          const isPromo = item.key === 'promo';
 
           return (
-            <button
-              key={item.key}
-              disabled={isLoading}
-              onClick={() => onGenerate(item.key as any)}
-              className={`flex flex-col items-center p-4 rounded-3xl bg-white/70 border-2 border-transparent shadow-sm transition-all duration-300 transform 
-                ${isLoading ? 'animate-pulse scale-95 border-indigo-200' : `${item.color} hover:-translate-y-2 hover:shadow-xl active:scale-95`}
-                ${completed && !isLoading ? 'border-slate-100 shadow-inner' : 'border-white/80'}
-              `}
-            >
-              <div className={`w-14 h-14 ${item.iconColor} rounded-2xl flex items-center justify-center text-2xl mb-4 shadow-sm relative`}>
-                {isLoading ? (
-                  <div className="animate-spin h-6 w-6 border-3 border-current border-t-transparent rounded-full" />
-                ) : (
-                  <>
-                    {item.icon}
-                    {completed && (
-                      <div className={`absolute -top-1 -right-1 w-4 h-4 ${item.dot} rounded-full border-2 border-white shadow-sm ring-4 ring-white/50 animate-bounce`}></div>
-                    )}
-                  </>
-                )}
-              </div>
-              <span className="text-[11px] font-black text-slate-700 uppercase text-center leading-tight tracking-wide">
-                {item.text}
-              </span>
-              
-              <div className="mt-3 opacity-0 group-hover:opacity-100 transition-opacity">
-                <span className={`text-[9px] font-bold px-2 py-0.5 rounded-full ${isLoading ? 'bg-slate-100 text-slate-400' : 'bg-indigo-50 text-indigo-600'}`}>
-                  {isLoading ? t.processing : (completed ? t.retryBtn : t.generateBtn)}
+            <div key={item.key} className="flex flex-col space-y-2">
+              <button
+                disabled={isLoading}
+                onClick={() => onGenerate(item.key as any)}
+                className={`w-full flex flex-col items-center p-4 rounded-3xl bg-white/70 border-2 border-transparent shadow-sm transition-all duration-300 transform 
+                  ${isLoading ? 'animate-pulse scale-95 border-indigo-200' : `${item.color} hover:-translate-y-2 hover:shadow-xl active:scale-95`}
+                  ${completed && !isLoading ? 'border-slate-100 shadow-inner' : 'border-white/80'}
+                `}
+              >
+                <div className={`w-14 h-14 ${item.iconColor} rounded-2xl flex items-center justify-center text-2xl mb-4 shadow-sm relative`}>
+                  {isLoading ? (
+                    <div className="animate-spin h-6 w-6 border-3 border-current border-t-transparent rounded-full" />
+                  ) : (
+                    <>
+                      {item.icon}
+                      {completed && (
+                        <div className={`absolute -top-1 -right-1 w-4 h-4 ${item.dot} rounded-full border-2 border-white shadow-sm ring-4 ring-white/50 animate-bounce`}></div>
+                      )}
+                    </>
+                  )}
+                </div>
+                <span className="text-[11px] font-black text-slate-700 uppercase text-center leading-tight tracking-wide">
+                  {item.text}
                 </span>
-              </div>
-            </button>
+                
+                <div className="mt-3 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <span className={`text-[9px] font-bold px-2 py-0.5 rounded-full ${isLoading ? 'bg-slate-100 text-slate-400' : 'bg-indigo-50 text-indigo-600'}`}>
+                    {isLoading ? t.processing : (completed ? t.retryBtn : t.generateBtn)}
+                  </span>
+                </div>
+              </button>
+              
+              {isPromo && (
+                <div className="px-2">
+                  <input 
+                    type="text" 
+                    placeholder={t.promoSloganPlaceholder}
+                    value={promoSlogan}
+                    onChange={(e) => setPromoSlogan(e.target.value)}
+                    className="w-full text-[10px] p-2 rounded-xl bg-white/80 border border-slate-200 outline-none focus:border-rose-300 transition-all font-medium text-slate-600 placeholder:text-slate-300"
+                  />
+                </div>
+              )}
+            </div>
           );
         })}
       </div>
@@ -83,6 +99,7 @@ const App: React.FC = () => {
   const [allImages, setAllImages] = useState<GeneratedImage[]>([]);
   const [loadingCategories, setLoadingCategories] = useState<Set<string>>(new Set());
   const [error, setError] = useState<string | null>(null);
+  const [promoSlogan, setPromoSlogan] = useState('');
 
   const t = translations[currentLang];
 
@@ -112,7 +129,13 @@ const App: React.FC = () => {
     setError(null);
 
     try {
-      const images = await generateCategoryImages(sourceImage.base64, sourceImage.mimeType, category, currentLang);
+      const images = await generateCategoryImages(
+        sourceImage.base64, 
+        sourceImage.mimeType, 
+        category, 
+        currentLang,
+        category === 'promo' ? promoSlogan : undefined
+      );
       
       if (images.length === 0) {
         setError(t.errorNoImage);
@@ -258,6 +281,8 @@ const App: React.FC = () => {
               onGenerate={handleGenerateCategory} 
               loadingCategories={loadingCategories}
               hasResults={hasResults}
+              promoSlogan={promoSlogan}
+              setPromoSlogan={setPromoSlogan}
             />
           </div>
         )}

@@ -20,12 +20,13 @@ export const translations = {
     downloadBtn: "Завантажити",
     retryTitle: "Бажаєте змінити?",
     retryBtn: "Перегенерувати блок",
+    promoSloganPlaceholder: "Слоган (опц.)",
     guide: {
       title: "Що входить у картку товару?",
       subtitle: "Повний набір професійного контенту в один клік",
       model: "3 ракурси на людині",
       flatlay: "10 сюжетних розкладок",
-      macro: "6 фокусів на деталях",
+      macro: "6 фокусов на деталях",
       mannequin: "3 ракурси \"у повітрі\"",
       nature: "3 фото на локаціях",
       promo: "6 рекламних креативів"
@@ -155,6 +156,7 @@ export const translations = {
     downloadBtn: "Download",
     retryTitle: "Need a change?",
     retryBtn: "Regenerate",
+    promoSloganPlaceholder: "Slogan (opt.)",
     guide: {
       title: "What's inside the card?",
       subtitle: "Full set of professional content in one click",
@@ -290,6 +292,7 @@ export const translations = {
     downloadBtn: "Скачать",
     retryTitle: "Не понравилось?",
     retryBtn: "Переделать",
+    promoSloganPlaceholder: "Слоган (опц.)",
     guide: {
       title: "Что входит в карточку?",
       subtitle: "Полный набор профессионального контента в один клик",
