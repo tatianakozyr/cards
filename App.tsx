@@ -123,7 +123,8 @@ const App: React.FC = () => {
   });
 
   // Limits Logic
-  const uploadLimit = user?.isPaid ? 50 : 3;
+  // Адміну встановлюємо Infinity для безліміту
+  const uploadLimit = user?.isAdmin ? Infinity : (user?.isPaid ? 50 : 3);
   const isLimitReached = (user?.uploadCount ?? 0) >= uploadLimit;
 
   useEffect(() => {
@@ -394,11 +395,13 @@ const App: React.FC = () => {
                                <p className="text-xs text-slate-400">{u.name}</p>
                             </td>
                             <td className="py-4">
-                               <span className={`px-3 py-1 rounded-full text-[10px] font-black ${u.isPaid ? 'bg-green-50 text-green-600' : 'bg-slate-50 text-slate-400'}`}>
-                                  {u.isPaid ? 'PRO' : 'FREE'}
+                               <span className={`px-3 py-1 rounded-full text-[10px] font-black ${u.isAdmin ? 'bg-indigo-50 text-indigo-600' : u.isPaid ? 'bg-green-50 text-green-600' : 'bg-slate-50 text-slate-400'}`}>
+                                  {u.isAdmin ? 'ADMIN' : u.isPaid ? 'PRO' : 'FREE'}
                                </span>
                             </td>
-                            <td className="py-4 font-bold text-slate-600">{u.uploadCount} / {u.isPaid ? 50 : 3}</td>
+                            <td className="py-4 font-bold text-slate-600">
+                               {u.uploadCount} / {u.isAdmin ? '∞' : (u.isPaid ? 50 : 3)}
+                            </td>
                             <td className="py-4">
                                {!u.isAdmin && (
                                  <button 
@@ -408,7 +411,7 @@ const App: React.FC = () => {
                                     {u.isPaid ? t.admin.freeBtn : t.admin.proBtn}
                                  </button>
                                )}
-                               {u.isAdmin && <span className="text-[10px] font-black text-indigo-600 uppercase">Master</span>}
+                               {u.isAdmin && <span className="text-[10px] font-black text-indigo-600 uppercase tracking-widest">Master</span>}
                             </td>
                          </tr>
                       ))}
@@ -437,13 +440,17 @@ const App: React.FC = () => {
                  <p className="text-xs font-black text-slate-400 uppercase mb-3">{t.limits.title}</p>
                  <div className="w-full bg-slate-200 h-2 rounded-full overflow-hidden mb-2">
                     <div 
-                      className={`h-full transition-all duration-1000 ${isLimitReached ? 'bg-red-500' : 'bg-indigo-600'}`} 
-                      style={{ width: `${Math.min(100, (user.uploadCount / uploadLimit) * 100)}%` }}
+                      className={`h-full transition-all duration-1000 ${user.isAdmin ? 'bg-gradient-to-r from-indigo-500 to-purple-600' : isLimitReached ? 'bg-red-500' : 'bg-indigo-600'}`} 
+                      style={{ width: `${user.isAdmin ? 100 : Math.min(100, (user.uploadCount / uploadLimit) * 100)}%` }}
                     />
                  </div>
                  <div className="flex justify-between text-[11px] font-black">
-                    <span className={isLimitReached ? 'text-red-500' : 'text-slate-600'}>{user.uploadCount} / {uploadLimit} фото</span>
-                    <span className="text-slate-400">{user.isPaid ? t.cabinet.active : t.cabinet.inactive}</span>
+                    <span className={!user.isAdmin && isLimitReached ? 'text-red-500' : 'text-slate-600'}>
+                       {user.uploadCount} / {user.isAdmin ? '∞' : uploadLimit} фото
+                    </span>
+                    <span className="text-slate-400">
+                       {user.isAdmin ? 'Unlimited' : (user.isPaid ? t.cabinet.active : t.cabinet.inactive)}
+                    </span>
                  </div>
               </div>
 
@@ -453,7 +460,7 @@ const App: React.FC = () => {
                       <span>{t.cabinet.adminBtn}</span>
                    </button>
                  )}
-                 {!user.isPaid && <button onClick={handleRequestPayment} className="w-full p-6 text-left bg-green-50 text-green-600 rounded-3xl font-black">Запит на PRO доступ</button>}
+                 {!user.isPaid && !user.isAdmin && <button onClick={handleRequestPayment} className="w-full p-6 text-left bg-green-50 text-green-600 rounded-3xl font-black">Запит на PRO доступ</button>}
                  
                  <button 
                    onClick={() => setShowPassChange(!showPassChange)} 
@@ -494,7 +501,7 @@ const App: React.FC = () => {
       )}
 
       <main className="max-w-7xl mx-auto px-4 pt-24">
-        {isLimitReached && (
+        {isLimitReached && !user.isAdmin && (
            <div className="max-w-3xl mx-auto mb-10 p-8 bg-red-50 border-2 border-red-100 rounded-[2.5rem] text-center animate-fadeIn">
               <h3 className="text-xl font-black text-red-700 mb-2">{t.limits.reached}</h3>
               <p className="text-red-600 font-medium mb-4">{user.isPaid ? t.limits.proLimitMsg : t.limits.freeLimitMsg}</p>
