@@ -8,7 +8,7 @@ export const translations = {
     heroSubtitle: "Професійний контент для вашого бренду.",
     auth: {
       loginTitle: "Вхід у Studio",
-      loginSubtitle: "Для доступу до адмінки: admin@fashion.studio (пароль: Is_2026)",
+      loginSubtitle: "Авторизуйтесь, щоб почати створення професійного контенту",
       emailPlaceholder: "Ваш Email",
       passPlaceholder: "Пароль",
       loginBtn: "Увійти",
@@ -120,7 +120,7 @@ export const translations = {
       model: "Фото на моделі",
       flatlay: "Предметная зйомка",
       macro: "Макро деталі",
-      mannequin: "Одяг у повітрі",
+      mannequin: "Одежда в повітрі",
       nature: "Фото на локаціях",
       review: "Побутові відгуки",
       promo: "Рекламні креативи",
@@ -184,7 +184,7 @@ export const translations = {
     heroSubtitle: "Professional content for your brand.",
     auth: {
       loginTitle: "Sign in to Studio",
-      loginSubtitle: "Owner access: admin@fashion.studio (pass: Is_2026)",
+      loginSubtitle: "Sign in to start creating professional content",
       emailPlaceholder: "Email",
       passPlaceholder: "Password",
       loginBtn: "Sign In",
@@ -360,7 +360,7 @@ export const translations = {
     heroSubtitle: "Профессиональный контент для вашего бренда.",
     auth: {
       loginTitle: "Вход в Studio",
-      loginSubtitle: "Для доступа к админке: admin@fashion.studio (пароль: Is_2026)",
+      loginSubtitle: "Авторизуйтесь, чтобы начать создание профессионального контента",
       emailPlaceholder: "Ваш Email",
       passPlaceholder: "Пароль",
       loginBtn: "Войти",
@@ -434,7 +434,7 @@ export const translations = {
     },
     prompts: {
       modelFront: "Спереди",
-      modelBack: "Сзади",
+      modelBack: "Ззаду",
       modelProfile: "Профиль",
       flatlayGym: "Gym Core",
       flatlayStreet: "Street Sport",
@@ -481,7 +481,7 @@ export const translations = {
     singleRegen: {
       editBtn: "Исправить",
       modalTitle: "Исправить изображение",
-      placeholder: "Например: 'сделай светлее'",
+      placeholder: "Наприклад: 'сделай светлее'",
       submit: "Обновить",
       cancel: "Отмена",
       regenerating: "Обновляем...",
@@ -517,7 +517,7 @@ export const translations = {
         dog: "С собакой",
         home_try: "Примерка дома",
         store_try: "В магазине",
-        fishing: "Рыбалка",
+        fishing: "Рибалка",
         park_love: "В парке",
         gym: "В зале",
         supermarket: "В маркете",
