@@ -33,97 +33,85 @@ export const PROMPTS_CONFIG = [
     category: 'flatlay',
     type: 'flatlay-gym',
     key: 'flatlayGym',
-    text: "Professional 1:1 SQUARE flatlay. The central focus is the GARMENT. Composition: flat lay with training sneakers, sports bottle, and towel. Background: dark grey concrete gym floor. High contrast lighting. Authentic athletic vibe."
+    text: "Professional 1:1 SQUARE flatlay. The central focus is the GARMENT, which MUST BE FULLY UNIFOLDED AND SPREAD OUT to clearly show its cut and silhouette. Composition: flat lay with training sneakers, sports bottle, and towel. Background: dark grey concrete gym floor. High contrast lighting."
   },
   {
     category: 'flatlay',
     type: 'flatlay-street',
     key: 'flatlayStreet',
-    text: "Professional 1:1 SQUARE flatlay. The central focus is the GARMENT. Composition: street/chunky sneakers, baseball cap, and over-ear headphones. Background: cold grey asphalt. Urban sport style, cool neutral tones."
+    text: "Professional 1:1 SQUARE flatlay. The central focus is the GARMENT, which MUST BE FULLY UNIFOLDED AND SPREAD OUT to clearly show its cut and silhouette. Composition: street/chunky sneakers, baseball cap, and over-ear headphones. Background: cold grey asphalt. Urban sport style."
   },
   {
     category: 'flatlay',
     type: 'flatlay-running',
     key: 'flatlayRunning',
-    text: "Professional 1:1 SQUARE flatlay. The central focus is the GARMENT. Composition: lightweight running shoes, sports watch, and headband/buff. Background: matte light grey studio surface. Breathable and movement-oriented atmosphere."
+    text: "Professional 1:1 SQUARE flatlay. The central focus is the GARMENT, which MUST BE FULLY UNIFOLDED AND SPREAD OUT to clearly show its cut and silhouette. Composition: lightweight running shoes, sports watch, and headband/buff. Background: matte light grey studio surface."
   },
   {
     category: 'flatlay',
     type: 'flatlay-cold',
     key: 'flatlayCold',
-    text: "Professional 1:1 SQUARE flatlay. The central focus is the GARMENT. Composition: winter training gloves, neck buff, and a metal thermos. Background: dark graphite concrete. Cold-weather training theme."
+    text: "Professional 1:1 SQUARE flatlay. The central focus is the GARMENT, which MUST BE FULLY UNIFOLDED AND SPREAD OUT to clearly show its cut and silhouette. Composition: winter training gloves, neck buff, and a metal thermos. Background: dark graphite concrete."
   },
   {
     category: 'flatlay',
     type: 'flatlay-home',
     key: 'flatlayHome',
-    text: "Professional 1:1 SQUARE flatlay. The central focus is the GARMENT. Composition: fitness resistance bands, bottle of water, and a sports timer/watch. Background: warm natural wood surface. Home discipline theme."
+    text: "Professional 1:1 SQUARE flatlay. The central focus is the GARMENT, which MUST BE FULLY UNIFOLDED AND SPREAD OUT to clearly show its cut and silhouette. Composition: fitness resistance bands, bottle of water, and a sports timer/watch. Background: warm natural wood surface."
   },
   {
     category: 'flatlay',
     type: 'flatlay-minimal',
     key: 'flatlayMinimal',
-    text: "Professional 1:1 SQUARE flatlay. The central focus is the GARMENT. Composition: minimal sneakers, sleek digital watch, and a smartphone. Background: perfectly clean solid grey surface. Functional and modern aesthetic."
+    text: "Professional 1:1 SQUARE flatlay. The central focus is the GARMENT, which MUST BE FULLY UNIFOLDED AND SPREAD OUT to clearly show its cut and silhouette. Composition: minimal sneakers, sleek digital watch, and a smartphone. Background: perfectly clean solid grey surface."
   },
   {
     category: 'flatlay',
     type: 'flatlay-outdoor',
     key: 'flatlayOutdoor',
-    text: "Professional 1:1 SQUARE flatlay. The central focus is the GARMENT. Composition: trail running shoes, folded lightweight windbreaker, and an outdoor flask. Background: dark wood and natural stone elements. Wilderness and freedom theme."
+    text: "Professional 1:1 SQUARE flatlay. The central focus is the GARMENT, which MUST BE FULLY UNIFOLDED AND SPREAD OUT to clearly show its cut and silhouette. Composition: trail running shoes, folded lightweight windbreaker, and an outdoor flask. Background: dark wood and natural stone elements."
   },
   {
     category: 'flatlay',
     type: 'flatlay-power',
     key: 'flatlayPower',
-    text: "Professional 1:1 SQUARE flatlay. The central focus is the GARMENT. Composition: weightlifting straps/gloves, protein shaker, and a rugged watch. Background: industrial rough concrete. Strength and power vibe."
+    text: "Professional 1:1 SQUARE flatlay. The central focus is the GARMENT, which MUST BE FULLY UNIFOLDED AND SPREAD OUT to clearly show its cut and silhouette. Composition: weightlifting straps/gloves, protein shaker, and a rugged watch. Background: industrial rough concrete."
   },
   {
     category: 'flatlay',
     type: 'flatlay-after',
     key: 'flatlayAfter',
-    text: "Professional 1:1 SQUARE flatlay. The central focus is the GARMENT. Composition: folded towel, thermos, and sneakers. Background: warm grey-brown aesthetic surface. Recovery and post-training calm theme."
+    text: "Professional 1:1 SQUARE flatlay. The central focus is the GARMENT, which MUST BE FULLY UNIFOLDED AND SPREAD OUT to clearly show its cut and silhouette. Composition: folded towel, thermos, and sneakers. Background: warm grey-brown aesthetic surface."
   },
   {
     category: 'flatlay',
     type: 'flatlay-active',
     key: 'flatlayActive',
-    text: "Professional 1:1 SQUARE flatlay. The central focus is the GARMENT. Composition: lifestyle sneakers, urban backpack, and wireless headphones. Background: city urban concrete. All-day active movement theme."
+    text: "Professional 1:1 SQUARE flatlay. The central focus is the GARMENT, which MUST BE FULLY UNIFOLDED AND SPREAD OUT to clearly show its cut and silhouette. Composition: lifestyle sneakers, urban backpack, and wireless headphones. Background: city urban concrete."
   },
   {
     category: 'macro',
     type: 'macro-collar',
     key: 'macroCollar',
-    text: "1:1 SQUARE MACRO CLOSE-UP. COLLAR detail. Sharp stitching."
-  },
-  {
-    category: 'macro',
-    type: 'macro-fastener',
-    key: 'macroFastener',
-    text: "1:1 SQUARE MACRO CLOSE-UP. FASTENER detail, buttons or zipper. High precision."
-  },
-  {
-    category: 'macro',
-    type: 'macro-cuff',
-    key: 'macroCuff',
-    text: "1:1 SQUARE MACRO CLOSE-UP. SLEEVE CUFF detail. Texture focus."
+    text: "1:1 SQUARE MACRO CLOSE-UP. Detailed view of the COLLAR construction and neckline. Sharp stitching and high precision. Professional lighting."
   },
   {
     category: 'macro',
     type: 'macro-pocket',
     key: 'macroPocket',
-    text: "1:1 SQUARE MACRO CLOSE-UP. POCKET detail."
+    text: "1:1 SQUARE MACRO CLOSE-UP. Detailed view of the POCKET. Focus on the pocket opening, stitching, and depth. Studio lighting."
+  },
+  {
+    category: 'macro',
+    type: 'macro-cuff',
+    key: 'macroCuff',
+    text: "1:1 SQUARE MACRO CLOSE-UP. Detailed view of the SLEEVE CUFF. Focus on the edge finishing, elastic or buttons if present, and stitching."
   },
   {
     category: 'macro',
     type: 'macro-fabric',
     key: 'macroFabric',
-    text: "1:1 SQUARE MACRO CLOSE-UP. Extreme focus on the MAIN FABRIC TEXTURE and weave pattern. Show the high quality of the material and fiber detail."
-  },
-  {
-    category: 'macro',
-    type: 'macro-lining',
-    key: 'macroLining',
-    text: "1:1 SQUARE MACRO CLOSE-UP. Focus on the INTERNAL LINING fabric. Show the inside detail, stitching of the lining, and inner material texture."
+    text: "1:1 SQUARE MACRO CLOSE-UP. Extreme focus on the FABRIC TEXTURE and weave pattern. Show the high quality of the material fibers and the unique texture of the garment."
   },
   {
     category: 'mannequin',
@@ -237,6 +225,11 @@ export const generateCategoryImages = async (
         finalPrompt = "CRITICAL INSTRUCTION: THIS IS A PRODUCT-ONLY SHOT. YOU MUST REMOVE ANY PEOPLE, MODELS, MANNEQUINS, SHOES, SOCKS, OR BODY PARTS FROM THE SOURCE IMAGE. SHOW ONLY THE CLOTHING ITEM ITSELF. " + 
           (category === 'mannequin' ? "THE GARMENT MUST LOOK AS IF IT IS WORN BY AN INVISIBLE PERSON (GHOST MANNEQUIN STYLE), SHOWING FULL 3D VOLUME AND INTERNAL STRUCTURE. " : "") + 
           finalPrompt;
+      }
+
+      // Add strict unfolding instruction for flatlay category
+      if (category === 'flatlay') {
+        finalPrompt = "STRICT INSTRUCTION: The garment MUST be completely unfolded and spread out on the surface. Ensure the entire cut, silhouette, and design are visible. No part of the clothing should be folded over another part. " + finalPrompt;
       }
 
       // Special instruction for model category to ensure it's a different person and face is hidden
