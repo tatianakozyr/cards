@@ -135,37 +135,37 @@ export const PROMPTS_CONFIG = [
     category: 'nature',
     type: 'nature-eco',
     key: 'natureEco',
-    text: "Professional 1:1 SQUARE product shot. STYLE: Eco / Nature. THE GARMENT ALONE, laid flat or carefully draped to show maximum surface area. STRICTLY NO PERSON, NO MANNEQUIN, NO BODY PARTS. Background: Warm texture of wood, dried flowers. The background colors must CONTRAST SHARPLY with the garment's colors. HIGH-END DEPTH OF FIELD (blurred background). Natural warm lighting."
+    text: "Professional 1:1 SQUARE product shot. STYLE: Eco / Nature. THE GARMENT ALONE, laid flat and fully unfolded to show maximum surface area. Background: Warm texture of wood, dried flowers. The background colors must CONTRAST SHARPLY with the garment's colors. HIGH-END DEPTH OF FIELD (blurred background). Natural warm lighting."
   },
   {
     category: 'nature',
     type: 'nature-industrial',
     key: 'natureIndustrial',
-    text: "Professional 1:1 SQUARE product shot. STYLE: Industrial / Loft. THE GARMENT ALONE, presented for maximum visibility. STRICTLY NO PERSON, NO MANNEQUIN, NO BODY PARTS. Background: Grey concrete wall and minimalist metal structures. The background colors must CONTRAST SHARPLY with the garment's colors. SHALLOW DEPTH OF FIELD. Cool-toned studio lighting consistent with the scene."
+    text: "Professional 1:1 SQUARE product shot. STYLE: Industrial / Loft. THE GARMENT ALONE, laid flat and fully unfolded for maximum visibility. Background: Grey concrete wall and minimalist metal structures. The background colors must CONTRAST SHARPLY with the garment's colors. SHALLOW DEPTH OF FIELD. Cool-toned studio lighting consistent with the scene."
   },
   {
     category: 'nature',
     type: 'nature-abstract',
     key: 'natureAbstract',
-    text: "Professional 1:1 SQUARE product shot. STYLE: Abstract / Color Block. THE GARMENT ALONE, displayed on a designer podium. STRICTLY NO PERSON, NO MANNEQUIN, NO BODY PARTS. Background: Smooth matte solid surface. CHOOSE A BACKGROUND COLOR THAT MAXIMALLY CONTRASTS with the item's primary color. Geometric podiums. Minimalist artistic mood. Clean professional lighting."
+    text: "Professional 1:1 SQUARE product shot. STYLE: Abstract / Color Block. THE GARMENT ALONE, displayed on a designer podium, laid flat and fully unfolded. Background: Smooth matte solid surface. CHOOSE A BACKGROUND COLOR THAT MAXIMALLY CONTRASTS with the item's primary color. Geometric podiums. Minimalist artistic mood. Clean professional lighting."
   },
   {
     category: 'nature',
     type: 'nature-home',
     key: 'natureHome',
-    text: "Professional 1:1 SQUARE product shot. STYLE: Home / Cozy. THE GARMENT ALONE, laid out in a domestic setting. STRICTLY NO PERSON, NO MANNEQUIN, NO BODY PARTS. Background: Bright airy interior, soft linen textures, soft carpet. The background colors must CONTRAST SHARPLY with the garment's colors. BLURRED BACKGROUND (depth of field). Soft diffused morning light."
+    text: "Professional 1:1 SQUARE product shot. STYLE: Home / Cozy. THE GARMENT ALONE, laid flat and fully unfolded in a domestic setting. Background: Bright airy interior, soft linen textures, soft carpet. The background colors must CONTRAST SHARPLY with the garment's colors. BLURRED BACKGROUND (depth of field). Soft diffused morning light."
   },
   {
     category: 'nature',
     type: 'nature-street',
     key: 'natureStreet',
-    text: "Professional 1:1 SQUARE product shot. STYLE: Street Light. THE GARMENT ALONE, positioned for full product visibility. STRICTLY NO PERSON, NO MANNEQUIN, NO BODY PARTS. Background: Neutral minimalist wall with dramatic sunlight patterns (blinds/window shadows). The background colors must CONTRAST SHARPLY with the garment's colors. Dynamic play of light and shadow. High contrast studio photography feel."
+    text: "Professional 1:1 SQUARE product shot. STYLE: Street Light. THE GARMENT ALONE, laid flat and fully unfolded for full product visibility. Background: Neutral minimalist wall with dramatic sunlight patterns (blinds/window shadows). The background colors must CONTRAST SHARPLY with the garment's colors. Dynamic play of light and shadow. High contrast studio photography feel."
   },
   {
     category: 'nature',
     type: 'nature-grass',
     key: 'natureGrass',
-    text: "Professional 1:1 SQUARE product shot. STYLE: Outdoor / Fresh. THE GARMENT ALONE, laid out on LUSH VIBRANT GREEN GRASS. STRICTLY NO PERSON, NO MANNEQUIN, NO BODY PARTS. The bright green of the grass must CONTRAST SHARPLY with the garment's colors. SHALLOW DEPTH OF FIELD (blurred background). Bright natural daylight, soft shadows."
+    text: "Professional 1:1 SQUARE product shot. STYLE: Outdoor / Fresh. THE GARMENT ALONE, laid flat and fully unfolded on LUSH VIBRANT GREEN GRASS. The bright green of the grass must CONTRAST SHARPLY with the garment's colors. SHALLOW DEPTH OF FIELD (blurred background). Bright natural daylight, soft shadows."
   },
   {
     category: 'promo',
@@ -227,9 +227,9 @@ export const generateCategoryImages = async (
           finalPrompt;
       }
 
-      // Add strict unfolding instruction for flatlay category
-      if (category === 'flatlay') {
-        finalPrompt = "STRICT INSTRUCTION: The garment MUST be completely unfolded and spread out on the surface. Ensure the entire cut, silhouette, and design are visible. No part of the clothing should be folded over another part. " + finalPrompt;
+      // Add strict unfolding instruction for flatlay and nature category
+      if (category === 'flatlay' || category === 'nature') {
+        finalPrompt = "STRICT INSTRUCTION: The garment MUST be LAID FLAT (laying down) and COMPLETELY UNFOLDED and SPREAD OUT on the surface. Ensure the entire cut, silhouette, and design are perfectly visible. No part of the clothing should be folded over another part. " + finalPrompt;
       }
 
       // Special instruction for model category to ensure it's a different person and face is hidden

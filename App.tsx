@@ -1,5 +1,5 @@
 
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useEffect, useRef } from 'react';
 import { ImageUploader } from './components/ImageUploader';
 import { ResultGallery } from './components/ResultGallery';
 import { generateCategoryImages, regenerateSingleImage, generateReviewImages } from './services/geminiService';
@@ -113,6 +113,7 @@ const App: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [promoSlogan, setPromoSlogan] = useState('');
 
+  const resultsRef = useRef<HTMLDivElement>(null);
   const t = translations[currentLang];
 
   const [reviewStatus, setReviewStatus] = useState<GenerationStatus>(GenerationStatus.IDLE);
@@ -123,7 +124,6 @@ const App: React.FC = () => {
   });
 
   // Limits Logic
-  // Адміну встановлюємо Infinity для безліміту
   const uploadLimit = user?.isAdmin ? Infinity : (user?.isPaid ? 50 : 3);
   const isLimitReached = (user?.uploadCount ?? 0) >= uploadLimit;
 
@@ -131,6 +131,15 @@ const App: React.FC = () => {
     const currentUser = AuthService.getCurrentUser();
     if (currentUser) setUser(currentUser);
   }, []);
+
+  const scrollToResults = () => {
+    // Невелика затримка для того, щоб React встиг відрендерити нові елементи
+    setTimeout(() => {
+      if (resultsRef.current) {
+        resultsRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }, 300);
+  };
 
   const handleAuthSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -181,7 +190,6 @@ const App: React.FC = () => {
     alert(t.billing.success);
   };
 
-  // --- Admin Logic ---
   const loadAdminUsers = () => {
     if (!user?.isAdmin) return;
     setAdminUsers(AuthService.getAllUsers());
@@ -240,6 +248,7 @@ const App: React.FC = () => {
           const filtered = prev.filter(img => !img.type.startsWith(category));
           return [...filtered, ...images];
         });
+        scrollToResults();
       }
     } catch (err) {
       console.error(err);
@@ -297,6 +306,7 @@ const App: React.FC = () => {
       const images = await generateReviewImages(sourceImage.base64, sourceImage.mimeType, settingsForService, currentLang);
       setAllImages(prev => [...prev.filter(img => img.type !== 'review'), ...images]);
       setReviewStatus(GenerationStatus.SUCCESS);
+      scrollToResults();
     } catch (e) {
       setReviewStatus(GenerationStatus.ERROR);
     } finally {
@@ -360,7 +370,6 @@ const App: React.FC = () => {
         </div>
       </header>
 
-      {/* Admin Panel Modal */}
       {showAdmin && user.isAdmin && (
         <div className="fixed inset-0 z-[120] bg-slate-900/80 backdrop-blur-xl p-6 overflow-y-auto">
           <div className="max-w-4xl mx-auto bg-white rounded-[3rem] p-10 shadow-2xl animate-scaleUp">
@@ -422,7 +431,6 @@ const App: React.FC = () => {
         </div>
       )}
 
-      {/* Cabinet Sidebar */}
       {showCabinet && (
         <div className="fixed inset-0 z-[100] bg-slate-900/60 backdrop-blur-md flex justify-end animate-fadeIn" onClick={() => setShowCabinet(false)}>
            <div className="w-full max-w-md bg-white h-full shadow-2xl animate-slideInRight p-8 overflow-y-auto" onClick={(e) => e.stopPropagation()}>
@@ -522,7 +530,9 @@ const App: React.FC = () => {
           </div>
         )}
 
-        {allImages.length > 0 && <div className="mb-16"><ResultGallery images={allImages} t={t} onRegenerateSingle={handleRegenerateSingle} /></div>}
+        <div ref={resultsRef} className="scroll-mt-24">
+          {allImages.length > 0 && <div className="mb-16"><ResultGallery images={allImages} t={t} onRegenerateSingle={handleRegenerateSingle} /></div>}
+        </div>
 
         {sourceImage && (
           <div className="mt-8 mb-16 max-w-5xl mx-auto bg-white rounded-[3rem] p-10 border border-slate-200 shadow-2xl relative overflow-hidden">

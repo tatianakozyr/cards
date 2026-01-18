@@ -21,9 +21,8 @@ export const ResultGallery: React.FC<ResultGalleryProps> = ({
 
   const groupedImages = useMemo(() => {
     const groups: Record<string, GeneratedImage[]> = {};
-    // Moved 'review' to the first place in the order
-    const order = ['review', 'model', 'flatlay', 'macro', 'mannequin', 'nature', 'promo', 'other'];
-
+    
+    // Групуємо зображення за категоріями
     images.forEach(img => {
       let category = 'other';
       if (img.type.startsWith('model')) category = 'model';
@@ -38,13 +37,27 @@ export const ResultGallery: React.FC<ResultGalleryProps> = ({
       groups[category].push(img);
     });
 
-    return order
-      .filter(key => groups[key] && groups[key].length > 0)
+    // Отримуємо список категорій, які мають зображення
+    const activeCategories = Object.keys(groups);
+
+    // Функція для отримання мітки часу з ID (id закінчується на Date.now())
+    const getLatestTimestamp = (items: GeneratedImage[]) => {
+      return Math.max(...items.map(img => {
+        const parts = img.id.split('-');
+        const ts = parseInt(parts[parts.length - 1]);
+        return isNaN(ts) ? 0 : ts;
+      }));
+    };
+
+    // Сортуємо категорії так, щоб ті, де є найсвіжіші зображення, були зверху
+    return activeCategories
       .map(key => ({
         key,
         title: t.gallerySections[key as keyof typeof t.gallerySections] || key,
-        items: groups[key]
-      }));
+        items: groups[key],
+        latestTs: getLatestTimestamp(groups[key])
+      }))
+      .sort((a, b) => b.latestTs - a.latestTs);
   }, [images, t]);
 
   const handleUpdate = async () => {
