@@ -114,6 +114,12 @@ export const PROMPTS_CONFIG = [
     text: "1:1 SQUARE MACRO CLOSE-UP. Extreme focus on the FABRIC TEXTURE and weave pattern. Show the high quality of the material fibers and the unique texture of the garment."
   },
   {
+    category: 'macro',
+    type: 'macro-lining',
+    key: 'macroLining',
+    text: "1:1 SQUARE MACRO CLOSE-UP. Focus on the INTERNAL LINING and inside seams of the garment. Show the quality of the inner finishing, materials, and internal branding tags if applicable. Professional lighting."
+  },
+  {
     category: 'mannequin',
     type: 'mannequin-front',
     key: 'mannequinFront',
