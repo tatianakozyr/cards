@@ -123,9 +123,8 @@ const App: React.FC = () => {
     age: '30-40',
   });
 
-  // Limits Logic
-  const uploadLimit = user?.isAdmin ? Infinity : (user?.isPaid ? 50 : 3);
-  const isLimitReached = (user?.uploadCount ?? 0) >= uploadLimit;
+  // Limits Logic - No limits now
+  const isLimitReached = false;
 
   useEffect(() => {
     const currentUser = AuthService.getCurrentUser();
@@ -133,7 +132,6 @@ const App: React.FC = () => {
   }, []);
 
   const scrollToResults = () => {
-    // Невелика затримка для того, щоб React встиг відрендерити нові елементи
     setTimeout(() => {
       if (resultsRef.current) {
         resultsRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -209,11 +207,6 @@ const App: React.FC = () => {
   };
 
   const handleImageSelected = useCallback(async (base64: string, mimeType: string) => {
-    if (isLimitReached) {
-      alert(t.limits.reached + ". " + t.limits.contactAdmin);
-      return;
-    }
-
     setSourceImage({ base64, mimeType });
     setAllImages([]);
     setError(null);
@@ -224,7 +217,7 @@ const App: React.FC = () => {
       const updatedUser = await AuthService.incrementUploadCount(user.id);
       setUser(updatedUser);
     }
-  }, [user, isLimitReached, t]);
+  }, [user]);
 
   const handleGenerateCategory = async (category: Exclude<ImageCategory, 'review'>) => {
     if (!sourceImage) return;
@@ -409,7 +402,7 @@ const App: React.FC = () => {
                                </span>
                             </td>
                             <td className="py-4 font-bold text-slate-600">
-                               {u.uploadCount} / {u.isAdmin ? '∞' : (u.isPaid ? 50 : 3)}
+                               {u.uploadCount} / ∞
                             </td>
                             <td className="py-4">
                                {!u.isAdmin && (
@@ -446,18 +439,12 @@ const App: React.FC = () => {
               
               <div className="p-6 bg-slate-50 rounded-3xl border border-slate-100 mb-6">
                  <p className="text-xs font-black text-slate-400 uppercase mb-3">{t.limits.title}</p>
-                 <div className="w-full bg-slate-200 h-2 rounded-full overflow-hidden mb-2">
-                    <div 
-                      className={`h-full transition-all duration-1000 ${user.isAdmin ? 'bg-gradient-to-r from-indigo-500 to-purple-600' : isLimitReached ? 'bg-red-500' : 'bg-indigo-600'}`} 
-                      style={{ width: `${user.isAdmin ? 100 : Math.min(100, (user.uploadCount / uploadLimit) * 100)}%` }}
-                    />
-                 </div>
                  <div className="flex justify-between text-[11px] font-black">
-                    <span className={!user.isAdmin && isLimitReached ? 'text-red-500' : 'text-slate-600'}>
-                       {user.uploadCount} / {user.isAdmin ? '∞' : uploadLimit} фото
+                    <span className="text-slate-600">
+                       Згенеровано: {user.uploadCount} фото
                     </span>
-                    <span className="text-slate-400">
-                       {user.isAdmin ? 'Unlimited' : (user.isPaid ? t.cabinet.active : t.cabinet.inactive)}
+                    <span className="text-indigo-600">
+                       {t.limits.freeLimitMsg}
                     </span>
                  </div>
               </div>
@@ -509,14 +496,6 @@ const App: React.FC = () => {
       )}
 
       <main className="max-w-7xl mx-auto px-4 pt-24">
-        {isLimitReached && !user.isAdmin && (
-           <div className="max-w-3xl mx-auto mb-10 p-8 bg-red-50 border-2 border-red-100 rounded-[2.5rem] text-center animate-fadeIn">
-              <h3 className="text-xl font-black text-red-700 mb-2">{t.limits.reached}</h3>
-              <p className="text-red-600 font-medium mb-4">{user.isPaid ? t.limits.proLimitMsg : t.limits.freeLimitMsg}</p>
-              {!user.isPaid && <button onClick={handleRequestPayment} className="bg-red-600 text-white px-8 py-3 rounded-2xl font-black hover:bg-red-700 transition-all">{t.billing.payBtn}</button>}
-           </div>
-        )}
-
         <div className="text-center mb-10">
           <h2 className="text-4xl font-black text-slate-900 mb-3 tracking-tight">{t.heroTitle}</h2>
           <p className="text-slate-500 text-lg">{t.heroSubtitle}</p>

@@ -15,18 +15,18 @@ export const translations = {
       demoNote: "Введіть валідний пароль"
     },
     limits: {
-      title: "Використання ліміту",
-      reached: "Ліміт вичерпано",
-      freeLimitMsg: "Безкоштовний доступ: 3 фото. Придбайте PRO для 50 фото.",
-      proLimitMsg: "PRO доступ: 50 фото.",
-      contactAdmin: "Зверніться до адміністратора для розширення."
+      title: "Використання сервісу",
+      reached: "Обмежень немає",
+      freeLimitMsg: "Безлімітний доступ активовано.",
+      proLimitMsg: "Безлімітний доступ активовано.",
+      contactAdmin: "Сервіс працює у повному режимі."
     },
     admin: {
       title: "Керування користувачами",
       userCount: "Всього користувачів",
       tableEmail: "Email / Ім'я",
       tableStatus: "План",
-      tableUploads: "Завантажень",
+      tableUploads: "Генерацій",
       tableAction: "Дія",
       proBtn: "Активувати PRO",
       freeBtn: "Зняти PRO",
@@ -191,11 +191,11 @@ export const translations = {
       demoNote: "Enter a valid password"
     },
     limits: {
-      title: "Usage limit",
-      reached: "Limit reached",
-      freeLimitMsg: "Free: 3 photos. Buy PRO for 50.",
-      proLimitMsg: "PRO access: 50 photos.",
-      contactAdmin: "Contact support to extend your limit."
+      title: "Usage details",
+      reached: "No limits",
+      freeLimitMsg: "Unlimited access enabled.",
+      proLimitMsg: "Unlimited access enabled.",
+      contactAdmin: "Service is fully operational."
     },
     admin: {
       title: "User Management",
@@ -225,8 +225,8 @@ export const translations = {
     },
     billing: {
       title: "Go PRO",
-      subtitle: "Unlock 50 professional product cards per month.",
-      feature1: "Limit: 50 photos",
+      subtitle: "Unlock professional product cards.",
+      feature1: "Unlimited generations",
       feature2: "4K High Resolution",
       feature3: "Priority Support",
       payBtn: "Buy PRO — $29/mo",
@@ -367,18 +367,18 @@ export const translations = {
       demoNote: "Введите валидный пароль"
     },
     limits: {
-      title: "Использование лимита",
-      reached: "Лимит исчерпан",
-      freeLimitMsg: "Бесплатный доступ: 3 фото. Купите PRO для 50 фото.",
-      proLimitMsg: "PRO доступ: 50 фото.",
-      contactAdmin: "Обратитесь к администратору для расширения."
+      title: "Использование сервиса",
+      reached: "Ограничений нет",
+      freeLimitMsg: "Безлимитный доступ активирован.",
+      proLimitMsg: "Безлимитный доступ активирован.",
+      contactAdmin: "Сервис работает в полном режиме."
     },
     admin: {
       title: "Управление пользователями",
       userCount: "Всего пользователей",
       tableEmail: "Email / Имя",
       tableStatus: "План",
-      tableUploads: "Загрузок",
+      tableUploads: "Генераций",
       tableAction: "Действие",
       proBtn: "Активировать PRO",
       freeBtn: "Снять PRO",
@@ -401,8 +401,8 @@ export const translations = {
     },
     billing: {
       title: "Хотите PRO доступ?",
-      subtitle: "Расширьте возможности до 50 профессиональных карточек в месяц.",
-      feature1: "Лимит 50 фотографий",
+      subtitle: "Расширьте возможности.",
+      feature1: "Безлимит генераций",
       feature2: "Высокое разрешение 4K",
       feature3: "Приоритетная поддержка",
       payBtn: "Купить PRO — $29/мес",
