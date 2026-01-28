@@ -53,7 +53,7 @@ const VisualGuide: React.FC<VisualGuideProps> = ({ t, onGenerate, loadingCategor
               >
                 <div className={`w-14 h-14 ${item.iconColor} rounded-2xl flex items-center justify-center text-2xl mb-4 shadow-sm relative`}>
                   {isLoading ? (
-                    <div className="animate-spin h-6 w-6 border-3 border-current border-t-transparent rounded-full" />
+                    <div className="animate-spin h-6 w-6 border-3 border-white border-t-transparent rounded-full" />
                   ) : (
                     <>
                       {item.icon}
@@ -258,7 +258,7 @@ const App: React.FC = () => {
   const handleRegenerateSingle = async (id: string, type: string, feedback: string) => {
     if (!sourceImage) return;
     const currentImg = allImages.find(img => img.id === id);
-    if (!currentImg || currentImg.correctionCount >= 3) return;
+    if (!currentImg) return;
 
     try {
       const newImageUrl = await regenerateSingleImage(

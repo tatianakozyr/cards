@@ -99,7 +99,8 @@ export const ResultGallery: React.FC<ResultGalleryProps> = ({
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 {section.items.map((img) => {
                   const isReview = img.type === 'review';
-                  const canEdit = img.correctionCount < 3;
+                  // Обмеження прибрано: canEdit завжди true
+                  const canEdit = true;
                   const aspectRatioClass = isReview ? 'aspect-[3/4]' : 'aspect-square';
                   const containerClass = "bg-white rounded-3xl shadow-sm border border-slate-200 overflow-hidden flex flex-col h-full transform transition-all hover:shadow-lg";
 
@@ -137,7 +138,7 @@ export const ResultGallery: React.FC<ResultGalleryProps> = ({
                         </div>
                         {img.correctionCount > 0 && (
                            <div className="absolute top-3 left-3 bg-white/90 backdrop-blur-sm text-[10px] font-black px-2 py-1 rounded-lg text-indigo-600 shadow-sm border border-indigo-100">
-                             MOD {img.correctionCount}/3
+                             MOD {img.correctionCount}
                            </div>
                         )}
                       </div>
