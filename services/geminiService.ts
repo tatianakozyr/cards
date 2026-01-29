@@ -419,7 +419,7 @@ export const generateReviewImages = async (
       const manPersona = getManPersona(settings.age, index);
 
       const imagePromptText = `
-        STYLE: RAW CANDID SMARTPHONE PHOTO for a product review. 
+        STYLE: AUTHENTIC AMATEUR SMARTPHONE PHOTO for a customer review section. 
         SITUATION: A real man is ${situation}.
         LOCATION/ENVIRONMENT: ${envDetails} 
         
@@ -428,13 +428,15 @@ export const generateReviewImages = async (
         - ETHNICITY: ${appearance}
         - PERSONA: ${manPersona}
         - HE IS WEARING THE EXACT CLOTHING FROM THE SOURCE IMAGE.
-        - The clothing is the main focus but fits naturally in the scene.
         
-        PHOTO QUALITY: 
-        - Amateur composition. 
-        - Shot on iPhone/Android. 
-        - Slightly soft focus on background. 
-        - No professional studio lights, no white background, no modeling poses.
+        PHOTO CHARACTERISTICS (MANDATORY IMPERFECTIONS):
+        - CRITICAL: NO studio lighting. Use only harsh natural light or dim indoor lamps.
+        - CRITICAL: Authentic smartphone sensor noise and slight digital grain.
+        - CRITICAL: Slightly imperfect focus, as if taken quickly by a friend or family member.
+        - NO professional editing, NO color grading, NO skin retouching.
+        - Composition should be slightly off-center, tilted, or imperfectly framed (candid).
+        - Natural lens flare, blown out highlights, or deep natural shadows typical for mobile sensors in real environments.
+        - The clothing should look realistic, slightly wrinkled from actual wear, and integrated into the scene.
         
         FORMAT: Vertical 3:4 portrait.
       `;
@@ -442,7 +444,7 @@ export const generateReviewImages = async (
       const textPromptText = `
         Write a short, realistic 5-star customer review (1-2 sentences) in ${settings.reviewLanguage === 'uk' ? 'Ukrainian' : settings.reviewLanguage === 'ru' ? 'Russian' : 'English'}. 
         Subject: A ${settings.age} year old man who is ${situation} and happy with the garment quality. 
-        Tone: Genuine customer, practical, informal.
+        Tone: Genuine customer, practical, informal, slightly unpolished.
         ONLY output the review text.
       `;
 
